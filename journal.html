@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero's Journal — Legend of Istoria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-deep:    #0d0a07;
+  --bg-mid:     #1a1008;
+  --bg-card:    #f2e6c8;
+  --bg-card2:   #e8d5a8;
+  --ink:        #1e0f06;
+  --ink-light:  #5a3820;
+  --gold:       #c9981f;
+  --gold-light: #f0c040;
+  --gold-glow:  rgba(201,152,31,0.3);
+  --crimson:    #7a1515;
+  --green:      #2d5c2d;
+  --radius:     12px;
+}
+
+body {
+  font-family: 'Crimson Text', Georgia, serif;
+  background: var(--bg-deep);
+  color: var(--ink);
+  min-height: 100vh;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+/* ─── STARS ─── */
+#stars { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+.star { position:absolute; background:white; border-radius:50%; animation:twinkle var(--dur) var(--delay) infinite; }
+@keyframes twinkle {
+  0%,100% { opacity:0.15; transform:scale(1); }
+  50%      { opacity:0.7;  transform:scale(1.4); }
+}
+
+/* ─── APP SHELL ─── */
+#app { position:relative; z-index:1; }
+
+/* ─── HEADER ─── */
+#app-header {
+  background: linear-gradient(135deg, #1a0f0a 0%, #2d1a08 100%);
+  border-bottom: 2px solid var(--gold);
+  padding: 10px 16px;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+#app-header h1 {
+  font-family: 'Cinzel Decorative', serif;
+  color: var(--gold-light);
+  font-size: 0.95rem;
+  text-shadow: 0 0 20px var(--gold-glow);
+  white-space: nowrap;
+}
+#nav-tabs { display:flex; gap:4px; flex-wrap:wrap; }
+.nav-btn {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold-light);
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+  letter-spacing: 0.04em;
+}
+.nav-btn:hover, .nav-btn.active {
+  background: var(--gold);
+  color: var(--bg-deep);
+}
+
+/* ─── SCREENS ─── */
+.screen { display:none; }
+.screen.active { display:block; }
+.page-wrap { max-width: 760px; margin: 0 auto; padding: 20px 16px 40px; }
+
+/* ─── PARCHMENT ─── */
+.parchment {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 28px 28px 24px;
+  box-shadow: 0 0 0 3px #7a5c10, 0 0 0 6px var(--gold), 0 12px 40px rgba(0,0,0,0.65);
+  position: relative;
+  margin-bottom: 20px;
+}
+.parchment::before {
+  content:'';
+  position:absolute;
+  inset:8px;
+  border:1px solid rgba(139,105,20,0.25);
+  border-radius:8px;
+  pointer-events:none;
+}
+@media(max-width:520px) { .parchment { padding:16px 14px; } }
+
+/* ─── TYPOGRAPHY ─── */
+.section-title {
+  font-family: 'Cinzel', serif;
+  color: var(--crimson);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(201,152,31,0.5);
+  padding-bottom: 4px;
+  margin: 18px 0 10px;
+}
+.section-title:first-child { margin-top: 0; }
+.fantasy-h { font-family:'Cinzel Decorative',serif; color:var(--gold-light); }
+
+/* ─── INPUTS ─── */
+input[type=text], input[type=date], textarea, select {
+  width: 100%;
+  background: rgba(255,255,255,0.55);
+  border: 1px solid #b8943c;
+  border-radius: 6px;
+  padding: 8px 11px;
+  font-family: 'Crimson Text', serif;
+  font-size: 1rem;
+  color: var(--ink);
+  resize: vertical;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+input[type=text]:focus, input[type=date]:focus, textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-glow);
+}
+textarea { min-height: 76px; }
+
+/* ─── BUTTONS ─── */
+.btn {
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  padding: 9px 22px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #c9981f, #8b6914);
+  color: var(--bg-deep);
+  box-shadow: 0 3px 12px rgba(201,152,31,0.4);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #f0c040, #c9981f);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 18px rgba(201,152,31,0.55);
+}
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold-light);
+}
+.btn-secondary:hover { background: rgba(201,152,31,0.12); }
+.btn-row { display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap; }
+
+/* ─── ONBOARDING ─── */
+.ob-step { display:none; }
+.ob-step.active { display:block; }
+.ob-welcome {
+  text-align:center;
+  padding: 40px 0 24px;
+}
+.ob-welcome .big-title {
+  font-family:'Cinzel Decorative',serif;
+  color: var(--gold-light);
+  font-size: clamp(1.4rem, 5vw, 2.2rem);
+  text-shadow: 0 0 30px var(--gold-glow), 0 0 60px rgba(201,152,31,0.15);
+  margin-bottom: 6px;
+}
+.ob-welcome .sub-title {
+  font-family:'Cinzel',serif;
+  font-size:0.65rem;
+  letter-spacing:0.3em;
+  color:var(--gold);
+  margin-bottom:20px;
+}
+.ob-quote {
+  color: rgba(242,230,200,0.7);
+  font-style: italic;
+  font-size: 1.05rem;
+  max-width: 480px;
+  margin: 0 auto 28px;
+  line-height: 1.7;
+}
+.acceptance-box {
+  font-style: italic;
+  line-height: 1.85;
+  font-size: 1rem;
+  border: 1px solid rgba(139,105,20,0.5);
+  padding: 16px 20px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.35);
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+
+/* ─── DAILY PAGE ─── */
+.quest-banner {
+  background: linear-gradient(135deg, #2d1a0a, #1a0f0a);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 11px 18px;
+  color: var(--gold-light);
+  font-family: 'Crimson Text', serif;
+  font-size: 1rem;
+  font-style: italic;
+  margin-bottom: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+.quest-banner:hover { box-shadow: 0 0 0 2px var(--gold); }
+.quest-banner strong {
+  font-family:'Cinzel',serif;
+  font-size:0.6rem;
+  letter-spacing:0.15em;
+  display:block;
+  color:var(--gold);
+  margin-bottom:3px;
+  font-style:normal;
+}
+
+.date-row {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:16px;
+  flex-wrap:wrap;
+}
+.date-row input[type=date] { width:auto; flex:1; min-width:140px; }
+.day-pills { display:flex; gap:4px; }
+.dpill {
+  width:26px; height:26px;
+  border-radius:50%;
+  border:1px solid #b8943c;
+  background:transparent;
+  font-family:'Cinzel',serif;
+  font-size:0.52rem;
+  cursor:default;
+  color:var(--ink-light);
+  display:flex; align-items:center; justify-content:center;
+}
+.dpill.active { background:var(--gold); color:var(--bg-deep); border-color:var(--gold); }
+
+.grat-list { display:flex; flex-direction:column; gap:8px; }
+.grat-row { display:flex; align-items:center; gap:8px; }
+.grat-num { font-family:'Cinzel',serif; font-size:0.8rem; color:var(--gold); width:18px; text-align:center; flex-shrink:0; }
+
+.task-list { display:flex; flex-direction:column; gap:8px; }
+.task-row {
+  display:flex; align-items:center; gap:8px;
+  padding: 6px 10px;
+  border-radius:6px;
+  background: rgba(255,255,255,0.3);
+  border: 1px solid rgba(184,148,60,0.3);
+  transition: opacity 0.2s;
+}
+.task-row.done { opacity:0.55; }
+.task-row input[type=checkbox] { width:18px; height:18px; accent-color:var(--gold); flex-shrink:0; cursor:pointer; }
+.task-row .frog { font-size:1.1rem; flex-shrink:0; }
+.task-row input[type=text] { border:none; background:transparent; box-shadow:none; padding:2px 4px; }
+.task-row.done input[type=text] { text-decoration:line-through; }
+
+.quote-box {
+  background: linear-gradient(135deg, #2a1508 0%, #160c04 100%);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  padding: 12px 18px;
+  margin: 16px 0;
+  color: #f0d898;
+  font-style: italic;
+  font-size: 1.02rem;
+  line-height: 1.65;
+}
+.quote-box cite {
+  display:block; margin-top:6px;
+  font-size:0.7rem; color:var(--gold);
+  font-style:normal; font-family:'Cinzel',serif;
+  letter-spacing:0.05em;
+}
+
+.force-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media(max-width:500px) { .force-grid { grid-template-columns:1fr; } }
+.force-card { border-radius:8px; padding:12px; }
+.force-card.allies { background:rgba(45,92,45,0.12); border:1px solid rgba(58,124,58,0.5); }
+.force-card.threats { background:rgba(122,21,21,0.1); border:1px solid rgba(122,21,21,0.45); }
+.force-card .force-lbl { font-family:'Cinzel',serif; font-size:0.66rem; letter-spacing:0.1em; margin-bottom:7px; }
+.force-card.allies .force-lbl { color:#3a7c3a; }
+.force-card.threats .force-lbl { color:var(--crimson); }
+.force-card textarea { min-height:64px; font-size:0.95rem; }
+
+/* ─── CHAPTER REVIEW ─── */
+.ch-header { text-align:center; padding:10px 0 18px; }
+.ch-num-label { font-family:'Cinzel',serif; font-size:0.68rem; letter-spacing:0.2em; color:var(--gold); text-transform:uppercase; }
+.ch-name { font-family:'Cinzel Decorative',serif; font-size:clamp(1.3rem,4vw,1.9rem); color:var(--crimson); margin:4px 0; }
+.ch-act { font-size:0.85rem; color:var(--ink-light); font-style:italic; }
+.ch-intro { color:var(--ink-light); font-style:italic; text-align:center; margin-bottom:4px; font-size:0.97rem; }
+
+.xp-grid { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:14px 0; }
+.xp-item {
+  display:flex; flex-direction:column; align-items:center; gap:5px;
+  cursor:pointer; user-select:none;
+}
+.xp-circle {
+  width:64px; height:64px; border-radius:50%;
+  border:2px solid var(--gold);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  background:transparent; transition:all 0.2s;
+}
+.xp-circle .xp-icon { font-size:1.4rem; line-height:1; }
+.xp-circle .xp-plus { font-size:0.58rem; font-family:'Cinzel',serif; color:var(--gold); }
+.xp-lbl { font-family:'Cinzel',serif; font-size:0.58rem; color:var(--ink-light); text-align:center; max-width:64px; letter-spacing:0.04em; }
+.xp-item.sel .xp-circle { background:var(--gold); box-shadow:0 0 14px var(--gold-glow); }
+.xp-item.sel .xp-circle .xp-plus { color:var(--bg-deep); }
+.xp-item.sel .xp-lbl { color:var(--gold); }
+
+.xp-desc { font-size:0.78rem; color:var(--ink-light); font-style:italic; text-align:center; margin-top:4px; }
+
+/* ─── OVERVIEW ─── */
+.stat-row { display:flex; align-items:center; gap:10px; margin-bottom:9px; }
+.stat-name { font-family:'Cinzel',serif; font-size:0.67rem; color:var(--gold); width:110px; flex-shrink:0; }
+.stat-bar-bg { flex:1; height:8px; background:rgba(139,105,20,0.18); border-radius:4px; overflow:hidden; }
+.stat-bar-fill { height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-light)); border-radius:4px; transition:width 0.6s ease; }
+.stat-val { font-family:'Cinzel',serif; font-size:0.78rem; color:var(--gold-light); width:22px; text-align:right; }
+
+.ch-map { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; margin:12px 0; }
+@media(max-width:480px) { .ch-map { grid-template-columns:repeat(3,1fr); } }
+.map-ch {
+  background:rgba(139,105,20,0.08);
+  border:1px solid rgba(139,105,20,0.25);
+  border-radius:8px; padding:7px 5px;
+  text-align:center; font-family:'Cinzel',serif; font-size:0.5rem;
+  color:var(--ink-light); line-height:1.4;
+}
+.map-ch .mch-n { display:block; font-size:0.65rem; margin-bottom:2px; }
+.map-ch.done { border-color:#3a7c3a; background:rgba(58,124,58,0.1); color:#3a7c3a; }
+.map-ch.current { border-color:var(--gold); background:rgba(201,152,31,0.13); color:var(--gold); box-shadow:0 0 8px var(--gold-glow); }
+
+.act-divider {
+  text-align:center; font-family:'Cinzel',serif;
+  color:var(--gold); font-size:0.65rem;
+  letter-spacing:0.15em; margin:10px 0 6px;
+  border-bottom:1px solid rgba(201,152,31,0.3);
+  padding-bottom:5px;
+}
+
+.streak-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  background:linear-gradient(135deg,#8b1a1a,#c9981f);
+  color:white; font-family:'Cinzel',serif; font-size:0.68rem;
+  padding:4px 14px; border-radius:20px; letter-spacing:0.04em;
+}
+
+/* ─── LOG ─── */
+.log-entry {
+  background:rgba(232,213,168,0.7);
+  border-radius:8px; padding:11px 15px;
+  margin-bottom:9px; border:1px solid rgba(139,105,20,0.3);
+  cursor:pointer; transition:all 0.18s;
+}
+.log-entry:hover { border-color:var(--gold); box-shadow:0 2px 10px var(--gold-glow); }
+.log-date { font-family:'Cinzel',serif; font-size:0.67rem; color:var(--gold); margin-bottom:3px; }
+.log-preview { color:var(--ink-light); font-size:0.9rem; font-style:italic; }
+
+/* ─── CHAPTER NOTICE ─── */
+.ch-notice {
+  background:linear-gradient(135deg,#2d1a0a,#1a0f0a);
+  border:1px solid var(--gold); border-radius:var(--radius);
+  color:var(--gold-light); text-align:center; padding:22px 20px;
+  margin-bottom:20px;
+}
+.ch-notice .cn-title { font-family:'Cinzel Decorative',serif; font-size:1.05rem; color:var(--gold-light); margin-bottom:8px; }
+
+/* ─── ANIMATIONS ─── */
+@keyframes pulse-gold {
+  0%   { box-shadow: 0 0 0 0 var(--gold-glow); }
+  70%  { box-shadow: 0 0 0 18px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.pulse-save { animation: pulse-gold 0.7s ease-out; }
+
+/* ─── TOAST ─── */
+#toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  background:linear-gradient(135deg,#c9981f,#8b6914);
+  color:#0d0a07; font-family:'Cinzel',serif; font-size:0.75rem;
+  padding:9px 22px; border-radius:20px;
+  box-shadow:0 4px 20px rgba(201,152,31,0.5);
+  z-index:9999; letter-spacing:0.05em;
+  opacity:0; transition:opacity 0.25s; pointer-events:none;
+  white-space:nowrap;
+}
+
+/* ─── PROGRESS RING ─── */
+.prog-ring { display:flex; align-items:center; gap:12px; padding:10px 0; }
+.prog-ring-lbl { font-family:'Cinzel',serif; font-size:0.68rem; color:var(--gold); width:110px; }
+.prog-ring-val { font-family:'Cinzel',serif; font-size:0.8rem; color:var(--gold-light); }
+
+/* ─── SCROLL ─── */
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:var(--bg-deep); }
+::-webkit-scrollbar-thumb { background:var(--gold); border-radius:3px; }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+<div id="toast"></div>
+
+<div id="app">
+
+<!-- ══════════ HEADER ══════════ -->
+<header id="app-header">
+  <h1>⚔️ Hero's Journal</h1>
+  <nav id="nav-tabs">
+    <button class="nav-btn" id="nav-daily"    onclick="showScreen('daily')">📖 Today</button>
+    <button class="nav-btn" id="nav-chapter"  onclick="showScreen('chapter')">📜 Chapter</button>
+    <button class="nav-btn" id="nav-overview" onclick="showScreen('overview')">⚔️ Character</button>
+    <button class="nav-btn" id="nav-log"      onclick="showScreen('log')">📚 Log</button>
+  </nav>
+</header>
+
+
+<!-- ══════════ ONBOARDING ══════════ -->
+<div id="screen-onboarding" class="screen active">
+<div class="page-wrap" style="max-width:580px">
+
+  <!-- Step 1: Welcome + Name -->
+  <div class="ob-step active" id="ob1">
+    <div class="ob-welcome">
+      <div class="big-title">The Hero's Journal</div>
+      <div class="sub-title">LEGEND OF ISTORIA</div>
+      <p class="ob-quote">"Congratulations, you've taken the first step toward becoming the hero of your story."</p>
+    </div>
+    <div class="parchment">
+      <div class="section-title">Your Name, Hero</div>
+      <input type="text" id="ob-name" placeholder="Enter your name..." maxlength="60" autocomplete="off">
+      <p style="margin-top:12px;color:var(--ink-light);font-style:italic;font-size:0.93rem">Every great adventure begins with a name. What shall the bards call you?</p>
+      <div class="btn-row"><button class="btn btn-primary" onclick="obNext(1)">Begin My Quest →</button></div>
+    </div>
+  </div>
+
+  <!-- Step 2: North Star -->
+  <div class="ob-step" id="ob2">
+    <div class="parchment">
+      <div class="fantasy-h" style="font-size:1.25rem;text-align:center;margin-bottom:14px">Finding Your North Star ✦</div>
+      <p style="color:var(--ink-light);font-style:italic;margin-bottom:16px;font-size:0.97rem;line-height:1.7">"High above, in the Istoria night sky, your North Star is a representation of something unique to <em>you</em> — the thing that fills your mind with wanderlust, pulls at your heartstrings, and guides you toward the most honest and freeing expression of yourself."</p>
+      <div class="section-title">I want a better story about:</div>
+      <input type="text" id="ob-north-star" placeholder="e.g. my health, my creativity, my relationships..." maxlength="140" autocomplete="off">
+      <p style="margin-top:10px;color:var(--ink-light);font-size:0.85rem;font-style:italic">Some questions to help: What's something I've wanted to do for a long time? What habit have I always wanted to build? What bothers me most about my current life?</p>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="obBack(2)">← Back</button>
+        <button class="btn btn-primary" onclick="obNext(2)">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Quest -->
+  <div class="ob-step" id="ob3">
+    <div class="parchment">
+      <div class="fantasy-h" style="font-size:1.25rem;text-align:center;margin-bottom:14px">⚔️ Define Your Quest</div>
+      <p style="color:var(--ink-light);font-style:italic;margin-bottom:16px;font-size:0.97rem;line-height:1.7">"A Quest is a goal you are able to make meaningful progress on in the near future. Today your quest may feel large and unwieldy — that's ok. The most important thing is to begin."</p>
+      <div class="section-title">My Quest:</div>
+      <textarea id="ob-quest" placeholder="Write your quest. It can be specific or vague as long as it's important to you..." rows="3"></textarea>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="obBack(3)">← Back</button>
+        <button class="btn btn-primary" onclick="obNext(3)">Accept the Quest →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: Sign -->
+  <div class="ob-step" id="ob4">
+    <div class="parchment">
+      <div class="fantasy-h" style="font-size:1.25rem;text-align:center;margin-bottom:16px">Accepting the Quest ⚔️</div>
+      <div class="acceptance-box" id="ob-acceptance"></div>
+      <div class="section-title">Sign Your Name to Begin</div>
+      <input type="text" id="ob-sig" placeholder="X ___________________" maxlength="80">
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="obBack(4)">← Back</button>
+        <button class="btn btn-primary" onclick="obComplete()">⚔️ I Accept This Quest</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+
+<!-- ══════════ DAILY ══════════ -->
+<div id="screen-daily" class="screen">
+<div class="page-wrap">
+
+  <div class="quest-banner" id="quest-banner" onclick="editQuest()" title="Click to update your quest">
+    <strong>⚔ MY QUEST</strong>
+    <span id="daily-quest-text">Loading...</span>
+  </div>
+
+  <div class="parchment" id="daily-parchment">
+
+    <!-- Date row -->
+    <div class="date-row">
+      <input type="date" id="daily-date" onchange="onDateChange()">
+      <div class="day-pills" id="day-pills"></div>
+    </div>
+
+    <!-- Gratitudes -->
+    <div class="section-title">✦ Today I Am Grateful For</div>
+    <div class="grat-list">
+      <div class="grat-row"><span class="grat-num">1</span><input type="text" id="g1" placeholder="Something that inspires you or makes you happy..."></div>
+      <div class="grat-row"><span class="grat-num">2</span><input type="text" id="g2" placeholder="A person, moment, or simple blessing..."></div>
+      <div class="grat-row"><span class="grat-num">3</span><input type="text" id="g3" placeholder="Something that reminds you that you're a hero..."></div>
+    </div>
+
+    <!-- Quote -->
+    <div class="quote-box" id="daily-quote"></div>
+
+    <!-- Tasks -->
+    <div class="section-title">🐸 To Seize the Day</div>
+    <p style="font-size:0.85rem;color:var(--ink-light);font-style:italic;margin-bottom:9px">Your top 3 tasks — 🐸 eat the frog (most important task) first!</p>
+    <div class="task-list" id="task-list"></div>
+
+    <!-- Schedule / Chronicle -->
+    <div class="section-title">📅 Schedule / Chronicle</div>
+    <textarea id="daily-sched" placeholder="Chronicle, visualize, and prioritize your journey with a schedule or list..."></textarea>
+
+    <!-- Notes -->
+    <div class="section-title">📜 Notes</div>
+    <textarea id="daily-notes" placeholder="Release your thoughts, track discoveries, or catalog the new critters and creatures you encounter..."></textarea>
+
+    <!-- Allies & Threats -->
+    <div class="section-title">⚔️ Today's Forces</div>
+    <div class="force-grid">
+      <div class="force-card allies">
+        <div class="force-lbl">🌿 Today's Allies</div>
+        <textarea id="daily-allies" placeholder="Positive forces that bring you closer to your goals (coffee, friends, routines...)"></textarea>
+      </div>
+      <div class="force-card threats">
+        <div class="force-lbl">🐉 Today's Threats</div>
+        <textarea id="daily-threats" placeholder="Obstacles that distract you (social media, junk food, negative voices...)"></textarea>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="shiftDay(-1)">← Prev Day</button>
+      <button class="btn btn-primary" onclick="saveEntry()">✦ Save Entry</button>
+      <button class="btn btn-secondary" onclick="shiftDay(1)">Next Day →</button>
+    </div>
+
+  </div>
+
+  <!-- Chapter ready notice -->
+  <div class="ch-notice" id="ch-notice" style="display:none">
+    <div class="cn-title">📜 Chapter Complete!</div>
+    <p style="font-style:italic;margin-bottom:14px;font-size:0.97rem">You've completed 7 days of your quest. It's time for your Chapter Review!</p>
+    <button class="btn btn-primary" onclick="showScreen('chapter')">Open Chapter Review →</button>
+  </div>
+
+</div>
+</div>
+
+
+<!-- ══════════ CHAPTER REVIEW ══════════ -->
+<div id="screen-chapter" class="screen">
+<div class="page-wrap">
+<div class="parchment" id="chapter-parchment">
+
+  <div class="ch-header">
+    <div class="ch-num-label" id="ch-num-lbl">Chapter 1</div>
+    <div class="ch-name" id="ch-name">Humble Hills</div>
+    <div class="ch-act" id="ch-act">Act I · The Beginning</div>
+  </div>
+  <p class="ch-intro" id="ch-intro"></p>
+
+  <div class="section-title">📖 Reflection I</div>
+  <p style="color:var(--ink-light);font-style:italic;font-size:0.92rem;margin-bottom:8px" id="ch-q1"></p>
+  <textarea id="ch-r1" placeholder="Take your time — this is your story..." rows="4"></textarea>
+
+  <div class="section-title">🌟 Reflection II</div>
+  <p style="color:var(--ink-light);font-style:italic;font-size:0.92rem;margin-bottom:8px" id="ch-q2"></p>
+  <textarea id="ch-r2" placeholder="Be honest with yourself..." rows="4"></textarea>
+
+  <div class="section-title">⚔️ Level Up — Circle Your Experience Points</div>
+  <p style="font-size:0.85rem;color:var(--ink-light);font-style:italic;margin-bottom:12px">Tap each stat you earned this chapter:</p>
+  <div class="xp-grid" id="xp-grid"></div>
+  <div id="xp-desc-area" style="min-height:36px;margin-top:6px"></div>
+
+  <div class="section-title">📚 Chapter Summary (optional)</div>
+  <input type="text" id="ch-summary" placeholder="Give this chapter of your story a title...">
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="saveChapter()">✦ Complete Chapter</button>
+  </div>
+
+</div>
+</div>
+</div>
+
+
+<!-- ══════════ CHARACTER / OVERVIEW ══════════ -->
+<div id="screen-overview" class="screen">
+<div class="page-wrap">
+
+  <div class="parchment">
+    <div style="text-align:center;margin-bottom:6px">
+      <div class="fantasy-h" style="font-size:1.6rem" id="ov-name">Hero</div>
+      <div style="margin-top:8px" id="ov-streak"></div>
+    </div>
+
+    <div class="section-title">⚔️ Character Stats</div>
+    <div id="ov-stats"></div>
+
+    <div class="section-title">✦ North Star</div>
+    <p style="font-style:italic;color:var(--ink-light);font-size:1rem" id="ov-north-star"></p>
+
+    <div class="section-title">📖 Current Quest</div>
+    <p style="font-style:italic;color:var(--ink);font-size:1rem" id="ov-quest"></p>
+    <div style="margin-top:10px">
+      <button class="btn btn-secondary" onclick="editQuest()" style="font-size:0.65rem;padding:6px 14px">✏️ Update Quest</button>
+    </div>
+  </div>
+
+  <div class="parchment">
+    <div class="section-title">🗺️ Journey Map</div>
+    <div class="act-divider">⚔ Act I — The Beginning (Ch. 1–4)</div>
+    <div class="ch-map" id="ch-map-1"></div>
+    <div class="act-divider">⚔ Act II — The Middle (Ch. 5–9)</div>
+    <div class="ch-map" id="ch-map-2"></div>
+    <div class="act-divider">⚔ Act III — The End (Ch. 10–12)</div>
+    <div class="ch-map" id="ch-map-3"></div>
+  </div>
+
+  <div class="parchment">
+    <div class="section-title">📊 Quest Progress</div>
+    <div id="ov-progress"></div>
+  </div>
+
+</div>
+</div>
+
+
+<!-- ══════════ ADVENTURE LOG ══════════ -->
+<div id="screen-log" class="screen">
+<div class="page-wrap">
+  <div class="parchment">
+    <div class="section-title">📚 Adventure Log</div>
+    <div id="log-list"></div>
+  </div>
+  <div id="log-detail" style="display:none">
+    <div class="parchment" id="log-detail-inner"></div>
+  </div>
+</div>
+</div>
+
+
+</div><!-- #app -->
+
+<script>
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+const SK = 'heros_journal_v3';
+const getData  = () => { try { return JSON.parse(localStorage.getItem(SK)) || null; } catch(e){ return null; } };
+const saveData = d  => localStorage.setItem(SK, JSON.stringify(d));
+
+function newData(name, quest, northStar) {
+  return {
+    hero: { name, quest, northStar, startDate: todayStr(),
+            stats: {strength:0,dexterity:0,constitution:0,wisdom:0,charisma:0} },
+    entries: {}, chapters: {}
+  };
+}
+
+// ══════════════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════════════
+const DAYS_SHORT = ['S','M','T','W','T','F','S'];
+const DAYS_LONG  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+const CHAPTERS = [
+  {n:1,  name:'Humble Hills',           act:'I',   actName:'The Beginning'},
+  {n:2,  name:'Wildwood Ruins',          act:'I',   actName:'The Beginning'},
+  {n:3,  name:'Murkmire Swamp',          act:'I',   actName:'The Beginning'},
+  {n:4,  name:'Sword & Circle Tavern',   act:'I',   actName:'The Beginning'},
+  {n:5,  name:'Dauntless Dunes',         act:'II',  actName:'The Middle'},
+  {n:6,  name:'Tortoi Temple',           act:'II',  actName:'The Middle'},
+  {n:7,  name:'Perilous Penglins',       act:'II',  actName:'The Middle'},
+  {n:8,  name:'Goll Camp',               act:'II',  actName:'The Middle'},
+  {n:9,  name:'Cave of Contemplation',   act:'II',  actName:'The Middle'},
+  {n:10, name:"Volgrimm's Vault",        act:'III', actName:'The End'},
+  {n:11, name:'Stepperburg',             act:'III', actName:'The End'},
+  {n:12, name:'Castle Anima',            act:'III', actName:'The End'},
+];
+
+const CH_QS = [
+  { intro:"You've done it! You've stepped out your door and onto the road, where heroes are made!",
+    q1:"Flip back through the last seven pages — what did you realize or find out about your quest that you didn't expect?",
+    q2:"As you leave the Humble Hills, the Wildwood lies ahead. How would you describe yourself at the start of this journey? How do you envision yourself if you accomplish everything you want?" },
+  { intro:"The path grows wilder, but so does your resolve. The Wildwood tests all who enter.",
+    q1:"What obstacles have you encountered so far on your quest, and how have you dealt with them?",
+    q2:"In the ancient ruins, heroes discover forgotten strengths. What strength or habit have you built over the last week that you want to carry forward?" },
+  { intro:"Not all who wander into the Murkmire find their way out. But heroes do — because they reflect.",
+    q1:"The Murkmire is murky and uncertain. What feels unclear or uncertain right now on your journey?",
+    q2:"Even in the swamp, there are signs pointing the way. What have you learned about yourself in the last week that surprised you?" },
+  { intro:"Rest, hero. You've earned it. The first act of your story is written. What does Act II hold?",
+    q1:"You've reached the Sword & Circle Tavern — a resting place. What is the biggest lesson from the first act of your quest?",
+    q2:"Heroes plan their next move at the tavern. Looking ahead, what will you do differently? What will you commit to?" },
+  { intro:"The dunes are vast and unforgiving — but so is your determination.",
+    q1:"The Dauntless Dunes stretch endlessly. What keeps you going when progress feels invisible?",
+    q2:"In the dunes, mirages test your resolve. What is one thing you want to stop doing and one thing you want to start doing?" },
+  { intro:"Ancient stones, ancient truths. The Tortoi Temple reveals what you already know deep inside.",
+    q1:"Tortoi Temple holds ancient wisdom. What is the wisest thing you've learned about yourself or your quest in recent weeks?",
+    q2:"The temple asks heroes to leave an offering. What are you willing to sacrifice to achieve your quest?" },
+  { intro:"Bravery looks different every day. Even the most feared creatures in Istoria have their clumsy side.",
+    q1:"The Perilous Penglins are clumsy but brave. What has felt most awkward or uncomfortable about your quest, and how did you push through?",
+    q2:"Bravery isn't the absence of fear. What's one fear you faced this chapter, and what happened when you faced it?" },
+  { intro:"Every hero needs allies. The strongest quests are never completed alone.",
+    q1:"Goll Camp is a place of camaraderie. Who in your life has supported you on your quest? How can you acknowledge or thank them?",
+    q2:"Around the campfire, stories are shared. If someone asked you about your quest today, what would you tell them?" },
+  { intro:"Some caves must be entered alone. What you find inside is yours and yours alone.",
+    q1:"The Cave of Contemplation demands honesty. What truth about your quest are you avoiding or haven't fully admitted to yourself?",
+    q2:"In the cave's reflection, you see your future self. What does the version of you who completed this quest look like? How do they feel?" },
+  { intro:"You are so close now. The vault's treasure awaits — but it asks one final question.",
+    q1:"Volgrimm's Vault is guarded. What is the last major obstacle standing between you and completing your quest?",
+    q2:"The vault requires a key forged from experience. What key lessons from this entire journey will you carry with you forever?" },
+  { intro:"The final steps of any journey are the most powerful. You are not the same hero who started.",
+    q1:"Stepperburg is the last town before Castle Anima. Looking back, what changed about you that you didn't expect?",
+    q2:"In Stepperburg, heroes write their final chapter. What does completing this quest mean for who you are becoming?" },
+  { intro:"You have arrived. Castle Anima stands before you. Whatever the outcome, you are forever changed.",
+    q1:"Castle Anima — the end of the quest. Did you accomplish what you set out to do? What does it mean to you?",
+    q2:"Every hero's story inspires others. If you could tell someone just beginning their Hero's Journal what you know now, what would you say?" },
+];
+
+const QUOTES = [
+  {t:"I'm going on an adventure!",                                                              a:"Bilbo Baggins"},
+  {t:"Our deepest fears are like dragons guarding our greatest treasures.",                     a:"Rainer Maria Rilke"},
+  {t:"To live will be an awfully big adventure.",                                               a:"Peter Pan"},
+  {t:"Every adventure requires a first step.",                                                  a:"The Cheshire Cat"},
+  {t:"We've all got both light and dark inside us. What matters is the part we choose to act on.", a:"Sirius Black"},
+  {t:"We must let go of the life we have planned, so as to accept the one that is waiting for us.", a:"Joseph Campbell"},
+  {t:"When you want something, all the universe conspires in helping you achieve it.",           a:"Paulo Coelho, The Alchemist"},
+  {t:"Fairy tales are more than true — not because they tell us dragons exist, but because they tell us dragons can be beaten.", a:"G.K. Chesterton"},
+  {t:"Peter did not feel very brave; indeed, he felt he was going to be sick. But that made no difference to what he had to do.", a:"C.S. Lewis"},
+  {t:"All we have to decide is what to do with the time that is given us.",                      a:"Gandalf"},
+  {t:"He was going to live forever, or die in the attempt.",                                    a:"Joseph Heller"},
+  {t:"Great heroes need great sorrows and burdens, or half their greatness goes unnoticed.",    a:"Peter Beagle"},
+  {t:"The cave you fear to enter holds the treasure you seek.",                                 a:"Joseph Campbell"},
+  {t:"You are braver than you believe, stronger than you seem, and smarter than you think.",    a:"A.A. Milne"},
+  {t:"Not all those who wander are lost.",                                                      a:"J.R.R. Tolkien"},
+  {t:"It does not do to dwell on dreams and forget to live.",                                   a:"Albus Dumbledore"},
+  {t:"The secret of getting ahead is getting started.",                                         a:"Mark Twain"},
+  {t:"It always seems impossible until it's done.",                                             a:"Nelson Mandela"},
+  {t:"Do one thing every day that scares you.",                                                 a:"Eleanor Roosevelt"},
+  {t:"A reader lives a thousand lives before he dies. The man who never reads lives only one.", a:"George R.R. Martin"},
+  {t:"Hardships often prepare ordinary people for an extraordinary destiny.",                   a:"C.S. Lewis"},
+  {t:"You have power over your mind — not outside events. Realize this, and you will find strength.", a:"Marcus Aurelius"},
+];
+
+const XP = [
+  {k:'strength',     icon:'💪', lbl:'Strength',    desc:'Progressed your quest, seized the days, or ate the frogs'},
+  {k:'dexterity',    icon:'⚡', lbl:'Dexterity',   desc:'Felt lighter or more energized'},
+  {k:'constitution', icon:'🛡️', lbl:'Constitution',desc:'Felt healthier or improved your fitness'},
+  {k:'wisdom',       icon:'📚', lbl:'Wisdom',      desc:'Felt more creative or learned new things'},
+  {k:'charisma',     icon:'✨', lbl:'Charisma',    desc:'Improved relationships or increased confidence'},
+];
+
+// ══════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function fmtDate(s) {
+  const d = new Date(s+'T12:00:00');
+  return d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}
+function dayOfWeek(s) { return new Date(s+'T12:00:00').getDay(); }
+function addDays(s, n) {
+  const d = new Date(s+'T12:00:00'); d.setDate(d.getDate()+n);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function quoteForDate(s) {
+  const d = new Date(s+'T12:00:00');
+  return QUOTES[(d.getFullYear()*366+d.getMonth()*31+d.getDate()) % QUOTES.length];
+}
+function completedCount(entries) { return Object.values(entries).filter(e=>e.completed).length; }
+function currentChapterNum(entries) { return Math.min(12, Math.floor(completedCount(entries)/7)+1); }
+function streak(entries) {
+  let s=0, d=todayStr();
+  for(let i=0;i<365;i++){
+    if(entries[d]&&entries[d].completed){ s++; d=addDays(d,-1); }
+    else if(i===0){ d=addDays(d,-1); if(entries[d]&&entries[d].completed){s++;d=addDays(d,-1);}else break; }
+    else break;
+  }
+  return s;
+}
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ══════════════════════════════════════════════
+// STARS
+// ══════════════════════════════════════════════
+(function(){
+  const c = document.getElementById('stars');
+  for(let i=0;i<80;i++){
+    const el=document.createElement('div'); el.className='star';
+    const sz=Math.random()*2.2+0.4;
+    el.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${(Math.random()*3+2).toFixed(1)}s;--delay:${(Math.random()*5).toFixed(1)}s;opacity:${(Math.random()*0.3+0.05).toFixed(2)}`;
+    c.appendChild(el);
+  }
+})();
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+function toast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.opacity='1';
+  clearTimeout(t._t); t._t=setTimeout(()=>t.style.opacity='0',2600);
+}
+
+// ══════════════════════════════════════════════
+// SCREEN NAV
+// ══════════════════════════════════════════════
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  const nb=document.getElementById('nav-'+name); if(nb) nb.classList.add('active');
+  if(name==='daily')    renderDaily();
+  if(name==='chapter')  renderChapter();
+  if(name==='overview') renderOverview();
+  if(name==='log')      renderLog();
+}
+
+// ══════════════════════════════════════════════
+// ONBOARDING
+// ══════════════════════════════════════════════
+function obNext(step) {
+  if(step===1){ const v=document.getElementById('ob-name').value.trim(); if(!v){toast('Please enter your name!');return;} }
+  if(step===2){ const v=document.getElementById('ob-north-star').value.trim(); if(!v){toast('What does your North Star point toward?');return;} }
+  if(step===3){
+    const q=document.getElementById('ob-quest').value.trim();
+    if(!q){toast('Define your quest before accepting it!');return;}
+    const nm=document.getElementById('ob-name').value.trim();
+    const today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+    document.getElementById('ob-acceptance').innerHTML=`
+      <strong>I, ${esc(nm)},</strong> am the only hero who can complete this quest.<br><br>
+      On this day, <em>${today}</em>, my quest has called me out of my comfort zone to pursue feats of legend worthy of the mightiest of heroes.<br><br>
+      I acknowledge my time, focus, and self are worthy of this quest. I commit to being a true hero — I will not make excuses or blame others. My destiny is my own.<br><br>
+      I will embrace progress over perfectionism, make failure a friend, and fall in love with the journey, not the destination.<br><br>
+      <em>My Quest: <strong>${esc(q)}</strong></em>`;
+    document.getElementById('ob-sig').value=nm;
+  }
+  document.getElementById('ob'+step).classList.remove('active');
+  document.getElementById('ob'+(step+1)).classList.add('active');
+}
+function obBack(step) {
+  document.getElementById('ob'+step).classList.remove('active');
+  document.getElementById('ob'+(step-1)).classList.add('active');
+}
+function obComplete() {
+  const name=document.getElementById('ob-name').value.trim();
+  const ns=document.getElementById('ob-north-star').value.trim();
+  const q=document.getElementById('ob-quest').value.trim();
+  if(!document.getElementById('ob-sig').value.trim()){toast('Sign your name to begin!');return;}
+  saveData(newData(name,q,ns));
+  document.getElementById('app-header').style.display='flex';
+  showScreen('daily');
+}
+
+// ══════════════════════════════════════════════
+// DAILY
+// ══════════════════════════════════════════════
+let curDate = todayStr();
+
+function renderDaily() {
+  const data=getData(); if(!data) return;
+  document.getElementById('daily-quest-text').textContent=data.hero.quest;
+  document.getElementById('daily-date').value=curDate;
+  renderDayPills();
+  const q=quoteForDate(curDate);
+  document.getElementById('daily-quote').innerHTML=`"${esc(q.t)}"<cite>— ${esc(q.a)}</cite>`;
+  const e=data.entries[curDate]||{};
+  document.getElementById('g1').value=e.g1||'';
+  document.getElementById('g2').value=e.g2||'';
+  document.getElementById('g3').value=e.g3||'';
+  document.getElementById('daily-notes').value=e.notes||'';
+  document.getElementById('daily-allies').value=e.allies||'';
+  document.getElementById('daily-threats').value=e.threats||'';
+  document.getElementById('daily-sched').value=e.sched||'';
+  renderTasks(e.tasks||[{text:'',done:false},{text:'',done:false},{text:'',done:false}]);
+  const done=completedCount(data.entries);
+  const chN=currentChapterNum(data.entries);
+  const showNotice=done>0 && done%7===0 && !data.chapters[chN-1];
+  document.getElementById('ch-notice').style.display=showNotice?'block':'none';
+}
+
+function renderDayPills() {
+  const dow=dayOfWeek(curDate);
+  document.getElementById('day-pills').innerHTML=DAYS_SHORT.map((d,i)=>
+    `<div class="dpill${i===dow?' active':''}" title="${DAYS_LONG[i]}">${d}</div>`
+  ).join('');
+}
+
+function renderTasks(tasks) {
+  document.getElementById('task-list').innerHTML=tasks.slice(0,3).map((t,i)=>`
+    <div class="task-row${t.done?' done':''}" id="tr${i}">
+      <input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${i})">
+      ${i===0?'<span class="frog" title="Eat the frog first — most important task!">🐸</span>':'<span style="width:1.1rem"></span>'}
+      <input type="text" id="task${i}" value="${esc(t.text)}" placeholder="${i===0?'🐸 Most important task...':'Task '+(i+1)+'...'}">
+    </div>`).join('');
+}
+
+function toggleTask(i) {
+  document.getElementById('tr'+i).classList.toggle('done');
+}
+
+function saveEntry() {
+  const data=getData();
+  const tasks=[0,1,2].map(i=>({
+    text:document.getElementById('task'+i)?.value||'',
+    done:document.getElementById('tr'+i)?.classList.contains('done')||false
+  }));
+  data.entries[curDate]={
+    date:curDate, completed:true, savedAt:new Date().toISOString(),
+    g1:document.getElementById('g1').value,
+    g2:document.getElementById('g2').value,
+    g3:document.getElementById('g3').value,
+    notes:document.getElementById('daily-notes').value,
+    allies:document.getElementById('daily-allies').value,
+    threats:document.getElementById('daily-threats').value,
+    sched:document.getElementById('daily-sched').value,
+    tasks
+  };
+  saveData(data);
+  const p=document.getElementById('daily-parchment');
+  p.classList.add('pulse-save'); setTimeout(()=>p.classList.remove('pulse-save'),700);
+  toast('✦ Entry saved!');
+  const done=completedCount(data.entries);
+  if(done>0&&done%7===0){
+    const chN=currentChapterNum(data.entries);
+    if(!data.chapters[chN-1]) document.getElementById('ch-notice').style.display='block';
+  }
+}
+
+function shiftDay(n) {
+  curDate=addDays(curDate,n);
+  renderDaily();
+}
+function onDateChange() {
+  curDate=document.getElementById('daily-date').value;
+  renderDayPills();
+  renderDaily();
+}
+function editQuest() {
+  const data=getData();
+  const nq=prompt('Update your quest:',data.hero.quest);
+  if(nq&&nq.trim()){data.hero.quest=nq.trim();saveData(data);renderDaily();toast('Quest updated!');}
+}
+
+// ══════════════════════════════════════════════
+// CHAPTER REVIEW
+// ══════════════════════════════════════════════
+function renderChapter() {
+  const data=getData(); if(!data) return;
+  const done=completedCount(data.entries);
+  const chIdx=Math.min(11, Math.max(0, Math.floor(done/7)-1 + (done%7===0?0:0)));
+  const ch=CHAPTERS[chIdx];
+  const qs=CH_QS[chIdx];
+  document.getElementById('ch-num-lbl').textContent='Chapter '+ch.n;
+  document.getElementById('ch-name').textContent=ch.name;
+  document.getElementById('ch-act').textContent='Act '+ch.act+' · '+ch.actName;
+  document.getElementById('ch-intro').textContent=qs.intro;
+  document.getElementById('ch-q1').textContent=qs.q1;
+  document.getElementById('ch-q2').textContent=qs.q2;
+  const saved=data.chapters[ch.n]||{};
+  document.getElementById('ch-r1').value=saved.r1||'';
+  document.getElementById('ch-r2').value=saved.r2||'';
+  document.getElementById('ch-summary').value=saved.summary||'';
+  renderXpGrid(saved.xp||{});
+}
+
+function renderXpGrid(sel) {
+  document.getElementById('xp-grid').innerHTML=XP.map(x=>`
+    <div class="xp-item${sel[x.k]?' sel':''}" id="xp-${x.k}" onclick="toggleXp('${x.k}')">
+      <div class="xp-circle">
+        <div class="xp-icon">${x.icon}</div>
+        <div class="xp-plus">+1</div>
+      </div>
+      <div class="xp-lbl">${x.lbl}</div>
+    </div>`).join('');
+}
+
+function toggleXp(k) {
+  const el=document.getElementById('xp-'+k);
+  el.classList.toggle('sel');
+  const xp=XP.find(x=>x.k===k);
+  const isOn=el.classList.contains('sel');
+  document.getElementById('xp-desc-area').innerHTML=isOn
+    ?`<p class="xp-desc">+1 ${xp.lbl}: ${xp.desc}</p>`:'';
+}
+
+function saveChapter() {
+  const data=getData();
+  const done=completedCount(data.entries);
+  const chIdx=Math.min(11,Math.max(0,Math.floor(done/7)-1));
+  const ch=CHAPTERS[chIdx];
+  const xp={};
+  XP.forEach(x=>{ xp[x.k]=document.getElementById('xp-'+x.k)?.classList.contains('sel')||false; });
+  XP.forEach(x=>{ if(xp[x.k]) data.hero.stats[x.k]=(data.hero.stats[x.k]||0)+1; });
+  data.chapters[ch.n]={n:ch.n,name:ch.name,r1:document.getElementById('ch-r1').value,r2:document.getElementById('ch-r2').value,summary:document.getElementById('ch-summary').value,xp,completedDate:todayStr()};
+  saveData(data);
+  toast('⚔️ Chapter '+ch.n+' complete! Stats updated!');
+  setTimeout(()=>showScreen('overview'),1200);
+}
+
+// ══════════════════════════════════════════════
+// OVERVIEW
+// ══════════════════════════════════════════════
+function renderOverview() {
+  const data=getData(); if(!data) return;
+  document.getElementById('ov-name').textContent='⚔️ '+data.hero.name;
+  const s=streak(data.entries);
+  document.getElementById('ov-streak').innerHTML=s>0
+    ?`<span class="streak-badge">🔥 ${s}-day streak</span>`
+    :`<span style="color:var(--ink-light);font-style:italic;font-size:0.9rem">Complete today's entry to start your streak!</span>`;
+  const MAX=12;
+  document.getElementById('ov-stats').innerHTML=XP.map(x=>`
+    <div class="stat-row">
+      <span class="stat-name">${x.icon} ${x.lbl}</span>
+      <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${Math.min(100,(data.hero.stats[x.k]||0)/MAX*100)}%"></div></div>
+      <span class="stat-val">${data.hero.stats[x.k]||0}</span>
+    </div>`).join('');
+  document.getElementById('ov-north-star').textContent=data.hero.northStar;
+  document.getElementById('ov-quest').textContent=data.hero.quest;
+  const done=completedCount(data.entries);
+  const curCh=currentChapterNum(data.entries);
+  function mapHTML(chs) {
+    return chs.map(ch=>{
+      const isDone=!!data.chapters[ch.n];
+      const isCur=ch.n===curCh;
+      return `<div class="map-ch ${isDone?'done':isCur?'current':''}"><span class="mch-n">${isDone?'✓':isCur?'►':ch.n}</span>${ch.name}</div>`;
+    }).join('');
+  }
+  document.getElementById('ch-map-1').innerHTML=mapHTML(CHAPTERS.slice(0,4));
+  document.getElementById('ch-map-2').innerHTML=mapHTML(CHAPTERS.slice(4,9));
+  document.getElementById('ch-map-3').innerHTML=mapHTML(CHAPTERS.slice(9,12));
+  const totalXp=Object.values(data.hero.stats).reduce((a,b)=>a+b,0);
+  document.getElementById('ov-progress').innerHTML=`
+    <div class="prog-ring"><span class="prog-ring-lbl">📅 Days Journaled</span><span class="prog-ring-val">${done}</span></div>
+    <div class="prog-ring"><span class="prog-ring-lbl">📖 Chapters Done</span><span class="prog-ring-val">${Object.keys(data.chapters).length} / 12</span></div>
+    <div class="prog-ring"><span class="prog-ring-lbl">⚡ Total XP</span><span class="prog-ring-val">${totalXp}</span></div>
+    <div class="prog-ring"><span class="prog-ring-lbl">🗓️ Quest Started</span><span class="prog-ring-val">${fmtDate(data.hero.startDate)}</span></div>`;
+}
+
+// ══════════════════════════════════════════════
+// LOG
+// ══════════════════════════════════════════════
+function renderLog() {
+  const data=getData(); if(!data) return;
+  document.getElementById('log-detail').style.display='none';
+  const entries=Object.values(data.entries).filter(e=>e.completed).sort((a,b)=>b.date.localeCompare(a.date));
+  if(!entries.length){
+    document.getElementById('log-list').innerHTML='<p style="text-align:center;color:var(--ink-light);font-style:italic;padding:24px">No entries yet. Begin your adventure today!</p>';
+    return;
+  }
+  document.getElementById('log-list').innerHTML=entries.map(e=>`
+    <div class="log-entry" onclick="showLogEntry('${e.date}')">
+      <div class="log-date">${fmtDate(e.date)}</div>
+      <div class="log-preview">${e.g1?'✦ '+esc(e.g1):''}${e.tasks?.[0]?.text?' · 🐸 '+esc(e.tasks[0].text):''}</div>
+    </div>`).join('');
+}
+
+function showLogEntry(date) {
+  const data=getData();
+  const e=data.entries[date]; if(!e) return;
+  const tasks=(e.tasks||[]).map((t,i)=>`<li style="${t.done?'text-decoration:line-through;opacity:0.55':''}">${i===0?'🐸 ':''}<strong>${esc(t.text)||'(empty)'}</strong></li>`).join('');
+  document.getElementById('log-detail-inner').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+      <div class="fantasy-h" style="font-size:1.1rem">${fmtDate(date)}</div>
+      <button class="btn btn-secondary" onclick="document.getElementById('log-detail').style.display='none'" style="font-size:0.62rem;padding:5px 12px">← Back</button>
+    </div>
+    ${e.g1||e.g2||e.g3?`<div class="section-title">✦ Gratitudes</div><ol style="padding-left:18px;color:var(--ink-light);font-style:italic">${[e.g1,e.g2,e.g3].filter(Boolean).map(g=>`<li>${esc(g)}</li>`).join('')}</ol>`:''}
+    ${tasks?`<div class="section-title">🐸 Tasks</div><ol style="padding-left:18px">${tasks}</ol>`:''}
+    ${e.sched?`<div class="section-title">📅 Schedule</div><p style="white-space:pre-wrap;color:var(--ink-light)">${esc(e.sched)}</p>`:''}
+    ${e.notes?`<div class="section-title">📜 Notes</div><p style="white-space:pre-wrap;color:var(--ink-light)">${esc(e.notes)}</p>`:''}
+    ${e.allies?`<div class="section-title">🌿 Allies</div><p style="white-space:pre-wrap;color:var(--ink-light)">${esc(e.allies)}</p>`:''}
+    ${e.threats?`<div class="section-title">🐉 Threats</div><p style="white-space:pre-wrap;color:var(--ink-light)">${esc(e.threats)}</p>`:''}
+    <div class="btn-row"><button class="btn btn-secondary" onclick="jumpToEntry('${date}')">✏️ Edit This Entry</button></div>`;
+  document.getElementById('log-detail').style.display='block';
+  document.getElementById('log-detail').scrollIntoView({behavior:'smooth'});
+}
+
+function jumpToEntry(date) { curDate=date; showScreen('daily'); }
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+const existing=getData();
+if(existing){
+  document.getElementById('app-header').style.display='flex';
+  showScreen('daily');
+}
+// else onboarding is already the active screen
+</script>
+</body>
+</html>
