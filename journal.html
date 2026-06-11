@@ -489,8 +489,11 @@ textarea { min-height: 76px; }
   cursor: text;
 }
 .pov input[type="date"] {
-  font-size: clamp(5px, 0.9vw, 11px);
-  opacity: 0; /* hidden — date managed by nav buttons */
+  font-size: clamp(5px, 0.85vw, 10px);
+  opacity: 1;
+  cursor: pointer;
+  background: rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(80,40,10,0.25) !important;
 }
 /* Day pills on spread */
 #day-pills-spread { display:flex; gap:1px; align-items:center; height:100%; }
@@ -678,12 +681,12 @@ textarea { min-height: 76px; }
 
     <!-- ── LEFT PAGE ── -->
 
-    <!-- Date input (invisible, covers date area; open picker on click) -->
-    <div class="pov" style="left:2%;top:0.5%;width:26%;height:4%">
+    <!-- Date input — on the first ruled line, top-left area -->
+    <div class="pov" style="left:1%;top:2%;width:22%;height:5%">
       <input type="date" id="daily-date" onchange="onDateChange()" title="Change date">
     </div>
-    <!-- Day-of-week pills -->
-    <div class="pov" style="left:29%;top:0.5%;width:17.5%;height:4%">
+    <!-- Day-of-week pills — over the printed S M T W T F S at center-top -->
+    <div class="pov" style="left:28%;top:0.5%;width:19%;height:4%">
       <div id="day-pills-spread"></div>
     </div>
 
@@ -700,13 +703,14 @@ textarea { min-height: 76px; }
       <input type="text" id="g3" placeholder="…">
     </div>
 
-    <!-- Schedule / Chronicle — upper ruled-lines area above gratitude section -->
-    <div class="pov" style="left:1%;top:9%;width:46%;height:9%">
+    <!-- Schedule / Chronicle — center-right column of left page, below the
+         "Chronicle, visualize..." instruction bubble (~13%) to illustration (~32%) -->
+    <div class="pov" style="left:22%;top:14%;width:25%;height:18%">
       <textarea id="daily-sched" placeholder=""></textarea>
     </div>
 
-    <!-- Today's Allies -->
-    <div class="pov" style="left:1%;top:76%;width:40%;height:10%">
+    <!-- Today's Allies — writing lines below "Today's Allies:" header (~86%) -->
+    <div class="pov" style="left:1%;top:88%;width:40%;height:6%">
       <textarea id="daily-allies" placeholder=""></textarea>
     </div>
 
@@ -751,8 +755,8 @@ textarea { min-height: 76px; }
       <textarea id="daily-notes" placeholder=""></textarea>
     </div>
 
-    <!-- Today's Threats -->
-    <div class="pov" style="left:51%;top:76%;width:46%;height:10%">
+    <!-- Today's Threats — writing lines below "Today's Threats:" header (~86%) -->
+    <div class="pov" style="left:51%;top:88%;width:46%;height:6%">
       <textarea id="daily-threats" placeholder=""></textarea>
     </div>
 
