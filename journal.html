@@ -417,17 +417,56 @@ textarea { min-height: 76px; }
 .prog-ring-lbl { font-family:'Cinzel',serif; font-size:0.68rem; color:var(--gold); width:110px; }
 .prog-ring-val { font-family:'Cinzel',serif; font-size:0.8rem; color:var(--gold-light); }
 
-/* ─── PDF SPREAD ─── */
+/* ─── PDF SPREAD — full viewport ─── */
+
+/* Daily screen = full height below header */
+#screen-daily { padding:0; display:none; align-items:center; justify-content:center; height:calc(100vh - 49px); overflow:hidden; background:#0d0a07; }
+#screen-daily.active { display:flex; }
+
+/* Spread fills viewport, maintains 856:612 aspect ratio */
 .pdf-spread {
+  /* Width = min(viewport width, height-derived width) */
+  width: min(100vw, calc((100vh - 49px) * 856 / 612));
+  aspect-ratio: 856 / 612;
   position: relative;
-  width: 100%;
-  padding-bottom: 71.5%;   /* 612/856 aspect ratio */
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  background-position: center;
-  border-radius: 8px;
-  box-shadow: 0 4px 32px rgba(0,0,0,0.6);
   overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Floating nav buttons ON the spread */
+.spd-nav {
+  position:absolute; top:50%; transform:translateY(-50%);
+  background:rgba(201,152,31,0.18); border:1px solid rgba(201,152,31,0.35);
+  color:rgba(201,152,31,0.85); font-size:clamp(14px,2vw,22px);
+  width:3.5%; min-width:28px; aspect-ratio:1;
+  border-radius:50%; cursor:pointer; z-index:20;
+  display:flex; align-items:center; justify-content:center;
+  transition:background 0.15s;
+}
+.spd-nav:hover { background:rgba(201,152,31,0.35); }
+.spd-prev { left:0.4%; }
+.spd-next { right:0.4%; }
+
+/* Save button floating on spread */
+.spd-save {
+  position:absolute; bottom:1.5%; left:50%; transform:translateX(-50%);
+  background:linear-gradient(135deg,#c9981f,#8b6914);
+  color:#0d0a07; border:none;
+  padding:0.5% 4%; border-radius:20px;
+  font-family:'Cinzel',serif; font-size:clamp(8px,1.1vw,13px);
+  letter-spacing:0.05em; cursor:pointer; z-index:20;
+  white-space:nowrap;
+}
+.spd-save:hover { background:linear-gradient(135deg,#f0c040,#c9981f); }
+
+/* Chapter/date info overlay */
+.spd-info {
+  position:absolute; top:0; left:50%; transform:translateX(-50%);
+  font-family:'Cinzel',serif; font-size:clamp(4px,0.65vw,9px);
+  color:rgba(80,40,10,0.45); letter-spacing:0.12em;
+  pointer-events:none; z-index:5; white-space:nowrap;
 }
 /* Invisible overlay containers */
 .pov {
@@ -618,116 +657,114 @@ textarea { min-height: 76px; }
 
 <!-- ══════════ DAILY ══════════ -->
 <div id="screen-daily" class="screen">
-<div class="page-wrap">
 
-  <div class="quest-banner" id="quest-banner" onclick="editQuest()" title="Click to update your quest">
-    <strong>⚔ MY QUEST</strong>
-    <span id="daily-quest-text">Loading...</span>
-  </div>
+  <!-- Hidden elements for JS compatibility -->
+  <span id="daily-quest-text" style="display:none"></span>
+  <div id="quest-banner" style="display:none"></div>
 
-  <!-- Date navigation bar (above the spread) -->
-  <div class="spread-date-bar" id="spread-date-bar">
-    <button class="btn btn-secondary" onclick="shiftDay(-1)" style="padding:5px 14px;font-size:0.65rem">← Prev</button>
-    <span id="spread-date-label" style="font-size:0.72rem"></span>
-    <button class="btn btn-secondary" onclick="shiftDay(1)" style="padding:5px 14px;font-size:0.65rem">Next →</button>
-  </div>
-
-  <!-- PDF spread with overlaid inputs -->
+  <!-- PDF spread — fills viewport, all controls float on top -->
   <div id="daily-parchment">
   <div class="pdf-spread" id="pdf-spread">
 
-    <!-- LEFT PAGE: Date (hidden native input drives value) -->
-    <div class="pov" style="left:10%;top:0.5%;width:18%;height:5%">
-      <input type="date" id="daily-date" onchange="onDateChange()">
+    <!-- Chapter / day info (top center) -->
+    <div class="spd-info" id="spread-date-label"></div>
+
+    <!-- Navigation arrows (float on left/right of spread) -->
+    <button class="spd-nav spd-prev" onclick="shiftDay(-1)" title="Previous day">‹</button>
+    <button class="spd-nav spd-next" onclick="shiftDay(1)"  title="Next day">›</button>
+
+    <!-- Save button (floats bottom center) -->
+    <button class="spd-save" onclick="saveEntry()">✦ Save Entry</button>
+
+    <!-- ── LEFT PAGE ── -->
+
+    <!-- Date input (invisible, covers date area; open picker on click) -->
+    <div class="pov" style="left:2%;top:0.5%;width:26%;height:4%">
+      <input type="date" id="daily-date" onchange="onDateChange()" title="Change date">
     </div>
-    <!-- Day pills -->
-    <div class="pov" style="left:29%;top:0.5%;width:18%;height:5%">
+    <!-- Day-of-week pills -->
+    <div class="pov" style="left:29%;top:0.5%;width:17.5%;height:4%">
       <div id="day-pills-spread"></div>
     </div>
 
-    <!-- Gratitude 1 -->
-    <div class="pov" style="left:2%;top:19%;width:44%;height:3.5%">
-      <input type="text" id="g1" placeholder="Something that inspires you...">
+    <!-- Gratitude 1 — on the "1." line -->
+    <div class="pov" style="left:3.5%;top:24.5%;width:43%;height:3.5%">
+      <input type="text" id="g1" placeholder="…">
     </div>
-    <!-- Gratitude 2 -->
-    <div class="pov" style="left:2%;top:23%;width:44%;height:3.5%">
-      <input type="text" id="g2" placeholder="A person or moment...">
+    <!-- Gratitude 2 — on the "2." line -->
+    <div class="pov" style="left:3.5%;top:28.5%;width:43%;height:3.5%">
+      <input type="text" id="g2" placeholder="…">
     </div>
-    <!-- Gratitude 3 -->
-    <div class="pov" style="left:2%;top:27%;width:44%;height:3.5%">
-      <input type="text" id="g3" placeholder="A reminder you are a hero...">
-    </div>
-
-    <!-- Schedule / Chronicle (big left-center area) -->
-    <div class="pov" style="left:1%;top:34%;width:47%;height:49%">
-      <textarea id="daily-sched" placeholder="Chronicle, visualize, and prioritize your journey with a schedule or list..."></textarea>
+    <!-- Gratitude 3 — on the "3." line -->
+    <div class="pov" style="left:3.5%;top:32.5%;width:43%;height:3.5%">
+      <input type="text" id="g3" placeholder="…">
     </div>
 
-    <!-- Allies (bottom left) -->
-    <div class="pov" style="left:1%;top:86%;width:46%;height:12%">
-      <textarea id="daily-allies" placeholder="Positive forces bringing you closer to your goals..."></textarea>
+    <!-- Schedule / Chronicle — upper ruled-lines area above gratitude section -->
+    <div class="pov" style="left:1%;top:9%;width:46%;height:9%">
+      <textarea id="daily-sched" placeholder=""></textarea>
     </div>
 
-    <!-- RIGHT PAGE: Quest (top right scroll) -->
-    <div class="pov" style="left:51%;top:1%;width:47%;height:15%">
-      <textarea id="daily-quest-input" placeholder="Write your quest every day to keep it fresh..."></textarea>
+    <!-- Today's Allies -->
+    <div class="pov" style="left:1%;top:76%;width:40%;height:10%">
+      <textarea id="daily-allies" placeholder=""></textarea>
     </div>
 
-    <!-- Task 1 (🐸 most important) -->
-    <div class="pov" style="left:52%;top:19%;width:38%;height:3.5%">
-      <input type="text" id="task0" placeholder="🐸 Most important task...">
+    <!-- ── RIGHT PAGE ── -->
+
+    <!-- My Quest — inside the scroll banner writing lines (~8-14%) -->
+    <div class="pov" style="left:51%;top:8%;width:46%;height:6%">
+      <textarea id="daily-quest-input" placeholder=""></textarea>
     </div>
-    <div class="pov" style="left:90%;top:19.5%;width:6%;height:2.5%">
+
+    <!-- Task 1 (🐸 frog = most important) — "1." line ~19-20% -->
+    <div class="pov" style="left:53%;top:20%;width:35%;height:3.5%">
+      <input type="text" id="task0" placeholder="🐸 …">
+    </div>
+    <div class="pov" style="left:89%;top:20%;width:7%;height:3.5%">
       <div class="task-done-marker" id="tc0" onclick="toggleTaskDone(0)"></div>
     </div>
 
-    <!-- Task 2 -->
-    <div class="pov" style="left:52%;top:23.5%;width:38%;height:3.5%">
-      <input type="text" id="task1" placeholder="Task 2...">
+    <!-- Task 2 — "2." line ~23-24% -->
+    <div class="pov" style="left:53%;top:23.5%;width:35%;height:3.5%">
+      <input type="text" id="task1" placeholder="…">
     </div>
-    <div class="pov" style="left:90%;top:24%;width:6%;height:2.5%">
+    <div class="pov" style="left:89%;top:23.5%;width:7%;height:3.5%">
       <div class="task-done-marker" id="tc1" onclick="toggleTaskDone(1)"></div>
     </div>
 
-    <!-- Task 3 -->
-    <div class="pov" style="left:52%;top:28%;width:38%;height:3.5%">
-      <input type="text" id="task2" placeholder="Task 3...">
+    <!-- Task 3 — "3." line ~27-28% -->
+    <div class="pov" style="left:53%;top:27.5%;width:35%;height:3.5%">
+      <input type="text" id="task2" placeholder="…">
     </div>
-    <div class="pov" style="left:90%;top:28.5%;width:6%;height:2.5%">
+    <div class="pov" style="left:89%;top:27.5%;width:7%;height:3.5%">
       <div class="task-done-marker" id="tc2" onclick="toggleTaskDone(2)"></div>
     </div>
 
-    <!-- Quote area -->
-    <div class="pov" style="left:52%;top:34%;width:46%;height:7%">
+    <!-- Daily inspiration quote — ~30-38% -->
+    <div class="pov" style="left:52%;top:30%;width:44%;height:8%">
       <div id="daily-quote" class="pdf-quote"></div>
     </div>
 
-    <!-- Notes (large right area) -->
-    <div class="pov" style="left:51%;top:43%;width:47%;height:41%">
-      <textarea id="daily-notes" placeholder="Release your thoughts, track discoveries, catalog creatures..."></textarea>
+    <!-- Notes — writing area below the printed "NOTES" header ~41-70% -->
+    <div class="pov" style="left:51%;top:41%;width:47%;height:29%">
+      <textarea id="daily-notes" placeholder=""></textarea>
     </div>
 
-    <!-- Threats (bottom right) -->
-    <div class="pov" style="left:52%;top:86%;width:46%;height:12%">
-      <textarea id="daily-threats" placeholder="Obstacles that distract you..."></textarea>
+    <!-- Today's Threats -->
+    <div class="pov" style="left:51%;top:76%;width:46%;height:10%">
+      <textarea id="daily-threats" placeholder=""></textarea>
     </div>
 
   </div><!-- /pdf-spread -->
-
-  <!-- Save button -->
-  <div class="pdf-btn-row">
-    <button class="btn btn-primary" onclick="saveEntry()" style="min-width:160px">✦ Save Entry</button>
-  </div>
   </div><!-- /daily-parchment -->
 
-  <!-- Chapter ready notice -->
-  <div class="ch-notice-pdf" id="ch-notice" style="display:none">
-    <div class="cn-title">📜 Chapter Complete!</div>
-    <p style="font-style:italic;margin-bottom:14px;font-size:0.97rem">You've completed 7 days of your quest. It's time for your Chapter Review!</p>
-    <button class="btn btn-primary" onclick="showScreen('chapter')">Open Chapter Review →</button>
+  <!-- Chapter complete notice (appears below spread) -->
+  <div class="ch-notice-pdf" id="ch-notice" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;text-align:center;padding:12px;background:rgba(10,5,2,0.92);border-top:1px solid rgba(201,152,31,0.4)">
+    <span style="font-family:'Cinzel',serif;font-size:0.8rem;color:#f0c040">📜 Chapter Complete! </span>
+    <button class="btn btn-primary" onclick="showScreen('chapter')" style="margin-left:12px;padding:5px 16px;font-size:0.65rem">Open Chapter Review →</button>
   </div>
 
-</div>
 </div>
 
 
@@ -1055,7 +1092,7 @@ function renderDaily() {
   document.getElementById('pdf-spread').style.backgroundImage = `url('${imgPath}')`;
   // Date label above spread
   const ch = CHAPTERS[Math.min(chNum,12)-1];
-  document.getElementById('spread-date-label').textContent =
+  const lbl=document.getElementById('spread-date-label'); if(lbl) lbl.textContent =
     `${ch.name.toUpperCase()} · DAY ${dayInCh+1} OF 7 · ACT ${ch.act}`;
   // Populate fields
   document.getElementById('daily-quest-text').textContent=data.hero.quest;
