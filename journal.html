@@ -417,6 +417,30 @@ textarea { min-height: 76px; }
 .prog-ring-lbl { font-family:'Cinzel',serif; font-size:0.68rem; color:var(--gold); width:110px; }
 .prog-ring-val { font-family:'Cinzel',serif; font-size:0.8rem; color:var(--gold-light); }
 
+/* ─── CHAPTER ILLUSTRATION ─── */
+.ch-illu-wrap {
+  margin: -28px -28px 20px -28px;
+  width: calc(100% + 56px);
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+  position: relative;
+}
+@media(max-width:520px) {
+  .ch-illu-wrap { margin: -16px -14px 16px -14px; width: calc(100% + 28px); }
+}
+.ch-illu-wrap svg { display:block; width:100%; height:auto; }
+.ch-illu-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(10,5,2,0.75) 0%, transparent 100%);
+  color: rgba(240,192,64,0.92);
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  padding: 18px 14px 6px;
+  text-align: center;
+}
+
 /* ─── SCROLL ─── */
 ::-webkit-scrollbar { width:6px; }
 ::-webkit-scrollbar-track { background:var(--bg-deep); }
@@ -519,6 +543,12 @@ textarea { min-height: 76px; }
   </div>
 
   <div class="parchment" id="daily-parchment">
+
+    <!-- Chapter Illustration -->
+    <div class="ch-illu-wrap" id="ch-illu-wrap">
+      <div id="ch-illu-svg"></div>
+      <div class="ch-illu-caption" id="ch-illu-cap">HUMBLE HILLS · DAY 1 OF 7</div>
+    </div>
 
     <!-- Date row -->
     <div class="date-row">
@@ -898,6 +928,7 @@ let curDate = todayStr();
 
 function renderDaily() {
   const data=getData(); if(!data) return;
+  updateIllustration();
   document.getElementById('daily-quest-text').textContent=data.hero.quest;
   document.getElementById('daily-date').value=curDate;
   renderDayPills();
@@ -1115,6 +1146,587 @@ function showLogEntry(date) {
 }
 
 function jumpToEntry(date) { curDate=date; showScreen('daily'); }
+
+// ══════════════════════════════════════════════
+// CHAPTER ILLUSTRATIONS — 12 SVG SCENE FUNCTIONS
+// Each takes d=0..6 (day within chapter)
+// Story: hero leaves home → forest → swamp → tavern →
+//        desert → temple → mountains → camp →
+//        cave → vault → city → castle
+// ══════════════════════════════════════════════
+
+function heroFig(x, y, flip, hatColor) {
+  const hc = hatColor||'#7a3010';
+  const f  = flip ? 'scale(-1,1)' : '';
+  return `<g transform="translate(${x},${y}) ${f}">
+    <ellipse cx="0" cy="-13" rx="7" ry="9" fill="#4a6fa5" stroke="#1a2a50" stroke-width="1.2"/>
+    <circle cx="0" cy="-27" r="7" fill="#f0c898" stroke="#8b5020" stroke-width="1.2"/>
+    <ellipse cx="0" cy="-34" rx="8.5" ry="3" fill="${hc}" stroke="#3a1008" stroke-width="1"/>
+    <rect x="-5" y="-43" width="10" height="10" fill="${hc}" stroke="#3a1008" stroke-width="1"/>
+    <rect x="5" y="-22" width="8" height="11" fill="#8b6020" stroke="#4a2808" stroke-width="1" rx="2"/>
+    <line x1="-3" y1="-4" x2="-5" y2="9" stroke="#1a2a50" stroke-width="2.5"/>
+    <line x1="3" y1="-4" x2="5" y2="9" stroke="#1a2a50" stroke-width="2.5"/>
+    <line x1="7" y1="-19" x2="14" y2="-4" stroke="${hc}" stroke-width="2"/>
+    <line x1="14" y1="-4" x2="15" y2="9" stroke="${hc}" stroke-width="1.5"/>
+  </g>`;
+}
+
+function tree(x, y, h, w, col) {
+  const tc = col||'#2d5c1a';
+  return `<polygon points="${x},${y} ${x+w/2},${y-h} ${x+w},${y}" fill="${tc}" stroke="#1a3a0a" stroke-width="1.3"/>
+    <rect x="${x+w/2-4}" y="${y}" width="8" height="${h*0.35}" fill="#7a4818" stroke="#4a2808" stroke-width="1"/>`;
+}
+
+// Story caption for each day of each chapter
+const STORY_CAPTIONS = {
+  1: ["The call arrives — hero reads the letter at the door","Hardy Gardens gives the hero a gift for the road","A small companion joins the journey","Side by side down the winding path","At the village gate — the last familiar sight","One last look back at home from the hilltop","Into the unknown — Humble Hills fade behind"],
+  2: ["The Wildwood closes in. Ancient ruins ahead.","Crawler webs appear in the shadows...","The Crawlers ambush from all sides!","Climbers drop from the canopy to help!","Together they drive the Crawlers back","The Crawlers retreat — Silk Rope as prize!","Hero and Climbers at the river. Friends."],
+  3: ["The Murkmire Swamp. One pair of eyes in the dark.","Fog rolls in. Two pairs of eyes now.","Stepping stones appear. Three pairs watching.","A massive shape surfaces in the murk...","It's friendly! A swamp serpent nuzzles the hero.","The serpent guides the way through the fog.","Safe on the far bank. The serpent waves goodbye."],
+  4: ["Soaked from the swamp — the Sword & Circle Tavern!","Hot food, warm fire. First rest in days.","A mysterious stranger slides into the booth.","Maps spread across the table. A new plan forms.","The whole table planning the road ahead.","The innkeeper shares a secret and a gift.","Rested. Resupplied. The pack sits at the door."],
+  5: ["The Dauntless Dunes begin. Endless sand ahead.","Tiny against the massive dunes. Keep moving.","High noon — the sun is merciless today.","A sandstorm rises from the south...","The storm passes. Something in the distance...","That silhouette — it's the temple! Press on!","Standing at the base of the buried temple."],
+  6: ["The Tortoi Temple. Every rune is dark and cold.","A touch — the first rune blazes to life!","More runes wake. The door mechanism hums.","The door cracks open. Ancient light spills out.","Inside. Giant tortoise heads watch from the walls.","A hidden chamber below — and a glowing pool.","The temple's secret revealed. An artifact claimed."],
+  7: ["Alone in the icy peaks. Wind howls.","A tiny Penglin peers from behind a boulder.","Two Penglins. They inch closer, curious.","A whole group! The lead Penglin salutes.","The Penglin captain points to the secret pass.","Threading through the pass together.","Summit! Hero and Penglins raise a flag to the sky."],
+  8: ["A campfire flickers through the trees ahead.","Goll — a great, gentle giant — tends the fire.","Goll offers a steaming bowl. Sit. Eat.","Stars overhead. Stories flow like the river.","More travelers arrive. The camp grows warm.","Songs fill the clearing. Mugs raised high.","Morning. Goll's farewell gift. Eyes glisten."],
+  9: ["The Cave of Contemplation. Dark and waiting.","Inside. Crystals wake at the hero's footsteps.","An underground lake. Still as glass.","The hero kneels and looks into the pool...","The reflection shows who they WERE.","The reflection shows who they've BECOME.","Emerging from the cave. Changed forever."],
+  10:["Volgrimm's Vault. The great door. Sealed tight.","First gear engaged. The mechanism stirs.","Second gear. The vault groans and shifts.","A crack of golden light. It's opening!","Inside — towers of treasure in every direction.","Among it all, one object calls out.","The true treasure claimed. The vault seals behind."],
+  11:["The gates of Stepperburg. A city of legends.","Through the market — the whole city buzzing.","A child tugs the hero's sleeve. You're famous here!","The city elder emerges with a rolled parchment.","The castle hill. It's enormous up close.","A guard hands over the invitation.","The path to Castle Anima. Just ahead."],
+  12:["Castle Anima on the horizon. The quest's end.","The road climbs. The castle grows larger.","The drawbridge is up. Guards on the towers.","The drawbridge slowly lowers. They know.","Walking across. Every step an echo.","The great gates swing open. Light floods out.","Inside. The quest fulfilled. The story told."]
+};
+
+const SCENES = {
+  // ─── CH 1: HUMBLE HILLS ─── warm morning, cottage→path→horizon
+  1:(d)=>{
+    const HX=[70,72,74,150,210,280,358][d], HY=[170,170,170,170,170,148,168][d];
+    return `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="sk1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e8903a"/><stop offset="100%" stop-color="#f8d878"/></linearGradient></defs>
+<rect width="400" height="200" fill="url(#sk1)"/>
+<circle cx="340" cy="36" r="22" fill="#ffd060" opacity="0.9"/>
+<ellipse cx="200" cy="198" rx="290" ry="90" fill="#78b84a"/>
+<ellipse cx="380" cy="202" rx="150" ry="65" fill="#6aaa3c"/>
+<ellipse cx="40" cy="202" rx="140" ry="60" fill="#5a9a30"/>
+<rect x="0" y="178" width="400" height="25" fill="#5a9a30"/>
+<path d="M70,196 Q220,186 390,196" stroke="#c4902a" stroke-width="14" fill="none" opacity="0.4"/>
+<rect x="12" y="136" width="58" height="52" fill="#d4a068" stroke="#5a2808" stroke-width="1.5"/>
+<polygon points="10,136 72,136 41,104" fill="#8a2018" stroke="#5a1008" stroke-width="1.5"/>
+<rect x="26" y="155" width="18" height="33" fill="#7a4018" stroke="#5a2808" stroke-width="1" rx="1"/>
+<path d="M52,106 Q55,92 49,78" stroke="#ddd" stroke-width="2" fill="none" opacity="0.4" stroke-linecap="round"/>
+${d>=0?`<rect x="27" y="153" width="16" height="11" fill="#f8f0d8" stroke="#8b6020" stroke-width="1" rx="1"/><line x1="27" y1="157" x2="43" y2="157" stroke="#c09030" stroke-width="0.8"/>`:``}
+${d>=1?`<rect x="108" y="142" width="52" height="38" fill="#c49858" stroke="#5a2808" stroke-width="1.5"/><polygon points="106,142 162,142 134,116" fill="#7a3018" stroke="#5a1008" stroke-width="1.5"/><rect x="118" y="148" width="32" height="12" fill="#e8d898" stroke="#8b6020" stroke-width="1" rx="2"/><text x="134" y="157" text-anchor="middle" font-size="5.5" fill="#5a2808" font-family="serif">Hardy Gardens</text><rect x="126" y="160" width="14" height="20" fill="#7a4018" stroke="#5a2808" stroke-width="1" rx="1"/>`:``}
+${d>=2?`<ellipse cx="${HX+20}" cy="${HY-4}" rx="9" ry="6" fill="#d06030" stroke="#8a3010" stroke-width="1"/><circle cx="${HX+26}" cy="${HY-9}" r="5" fill="#d06030" stroke="#8a3010" stroke-width="1"/><polygon points="${HX+22},${HY-14} ${HX+26},${HY-21} ${HX+30},${HY-14}" fill="#d06030" stroke="#8a3010" stroke-width="0.8"/><path d="M${HX+11},${HY-3} Q${HX+4},${HY-10} ${HX+6},${HY-2}" stroke="#d06030" stroke-width="3" fill="none" stroke-linecap="round"/>`:``}
+${heroFig(HX,HY,d>=3,'#7a3010')}
+${d>=4?`<rect x="264" y="150" width="11" height="34" fill="#9a8060" stroke="#5a3818" stroke-width="1.5"/><rect x="308" y="150" width="11" height="34" fill="#9a8060" stroke="#5a3818" stroke-width="1.5"/><path d="M264,150 Q286,132 319,150" fill="#9a8060" stroke="#5a3818" stroke-width="1.5"/>`:``}
+${d>=5?`<rect x="16" y="163" width="9" height="8" fill="#c49060" opacity="0.4"/><polygon points="14,163 27,163 20,156" fill="#8a2018" opacity="0.4"/><text x="205" y="122" text-anchor="middle" font-size="7" fill="#7a3818" font-family="serif" opacity="0.65">← Home</text>`:``}
+${d>=6?`<ellipse cx="358" cy="174" rx="18" ry="7" fill="#f8f0e0" opacity="0.3"/><text x="358" y="167" text-anchor="middle" font-size="10" fill="#c9981f" font-family="serif">✦</text>`:``}
+</svg>`;
+  },
+
+  // ─── CH 2: WILDWOOD RUINS ─── dark forest, webs, Crawlers, Climbers
+  2:(d)=>{
+    const HX=[60,60,60,180,240,310,355][d], HY=[175,175,175,170,165,168,172][d];
+    return `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="sk2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a2a10"/><stop offset="100%" stop-color="#3a5820"/></linearGradient></defs>
+<rect width="400" height="200" fill="url(#sk2)"/>
+<circle cx="340" cy="32" r="14" fill="#d0e8f8" opacity="0.55"/>
+<rect x="0" y="172" width="400" height="30" fill="#2a4018"/>
+<path d="M0,178 Q100,170 200,176 Q300,182 400,174" fill="#3a5820" stroke="none"/>
+${[0,50,90,150,200,260,310,360].map((x,i)=>`<polygon points="${x},${200} ${x+22},${110+((i*17)%50)} ${x+44},${200}" fill="${i%2?'#1a3510':'#223c14'}" stroke="#111" stroke-width="0.8"/><rect x="${x+19}" y="${200}" width="6" height="${(i*13)%20+10}" fill="#5a3010" stroke="#3a1808" stroke-width="0.8"/>`).join('')}
+<path d="M0,188 Q60,176 120,185 Q200,195 300,183 Q360,176 400,184" fill="#4a7030" stroke="none"/>
+${d>=1?`<path d="M80,120 Q110,105 130,125" stroke="#c8c8c8" stroke-width="1.2" fill="none" opacity="0.7"/><path d="M88,115 Q118,100 140,118" stroke="#c8c8c8" stroke-width="1" fill="none" opacity="0.6"/><path d="M75,130 Q105,115 125,132" stroke="#c8c8c8" stroke-width="1" fill="none" opacity="0.55"/><circle cx="80" cy="120" r="4" fill="#444" stroke="#222" stroke-width="0.8"/><circle cx="130" cy="125" r="3" fill="#444" stroke="#222" stroke-width="0.8"/>`:``}
+${d>=2?`<circle cx="64" cy="${HY-14}" r="5" fill="#f8c840" opacity="0.95"/><circle cx="64" cy="${HY-14}" r="9" fill="#f8c840" opacity="0.25"/>`:``}
+${d>=3?`<polygon points="40,150 60,200 80,150 60,160" fill="#2a3c20" stroke="#8a6040" stroke-width="1.5"/><rect x="54" y="145" width="12" height="6" fill="#7a9060" stroke="#5a6840" stroke-width="1"/>
+<polygon points="290,140 310,200 330,140 310,155" fill="#2a3c20" stroke="#8a6040" stroke-width="1.5"/>`:``}
+${heroFig(HX,HY,d>=4,'#2a4a20')}
+${d>=5?`<circle cx="300" cy="148" r="8" fill="#c8f040" opacity="0.8"/><circle cx="300" cy="148" r="14" fill="#a8d820" opacity="0.3"/><text x="300" y="136" text-anchor="middle" font-size="7" fill="#e8f890" font-family="serif" opacity="0.8">✦</text>`:``}
+${d>=6?`<ellipse cx="360" cy="160" rx="30" ry="20" fill="#88c850" opacity="0.35"/><circle cx="380" cy="38" r="8" fill="#f8f8e0" opacity="0.4"/>`:``}
+</svg>`;
+  },
+
+  // ─── CH 3: MURKMIRE SWAMP ─── murky water, fog, serpent
+  3:(d)=>{
+    const HX=[58,60,62,62,160,240,330][d], HY=[175,175,175,175,170,168,172][d];
+    return `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="sk3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2a3a28"/><stop offset="100%" stop-color="#4a6040"/></linearGradient>
+<radialGradient id="fog3" cx="50%" cy="60%" r="60%"><stop offset="0%" stop-color="#c8dcc0" stop-opacity="0.35"/><stop offset="100%" stop-color="#c8dcc0" stop-opacity="0"/></radialGradient></defs>
+<rect width="400" height="200" fill="url(#sk3)"/>
+<ellipse cx="200" cy="155" rx="240" ry="55" fill="#3a6858" opacity="0.7"/>
+<ellipse cx="200" cy="160" rx="220" ry="40" fill="#2a5040" opacity="0.9"/>
+<rect x="0" y="178" width="400" height="25" fill="#3a5830"/>
+<path d="M0,155 Q60,145 120,152 Q200,160 280,150 Q350,142 400,148" fill="#486848" stroke="none"/>
+${[0,80,160,240,310,370].map((x,i)=>`<ellipse cx="${x+20}" cy="${170+(i%3)*3}" rx="${12+i*3}" ry="6" fill="${i%2?'#2a4828':'#3a5838'}" stroke="#1a3020" stroke-width="0.8"/>`).join('')}
+${d>=1?`<ellipse cx="200" cy="152" rx="180" ry="18" fill="url(#fog3)"/><ellipse cx="100" cy="158" rx="100" ry="14" fill="#c8dcc0" opacity="0.18"/>
+<circle cx="280" cy="156" r="5" fill="#f8a820" opacity="0.9"/><circle cx="280" cy="156" r="8" fill="#f8a820" opacity="0.25"/>`:``}
+${d>=2?`<path d="M50,178 L54,160 L70,155 L86,160 L90,178" fill="#7a6040" stroke="#5a4020" stroke-width="1.2"/><path d="M120,178 L124,160 L140,155 L156,160 L160,178" fill="#7a6040" stroke="#5a4020" stroke-width="1.2"/>
+<circle cx="320" cy="150" r="4" fill="#f8a820" opacity="0.85"/><circle cx="340" cy="154" r="4" fill="#f8a820" opacity="0.85"/>`:``}
+${d>=3?`<path d="M250,145 Q260,130 280,140 Q295,128 310,138 Q320,125 335,136" stroke="#4a8050" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.9"/>`:``}
+${heroFig(HX,HY,d>=5,'#3a5830')}
+${d>=4?`<ellipse cx="160" cy="158" rx="28" ry="12" fill="#3a8060" opacity="0.8"/><path d="M138,152 Q160,138 182,148 Q170,162 148,160 Z" fill="#4a9870" opacity="0.7"/><circle cx="172" cy="145" r="4" fill="#90e8a0" opacity="0.9"/>`:``}
+${d>=6?`<ellipse cx="340" cy="170" rx="28" ry="10" fill="#78c870" opacity="0.35"/><circle cx="200" cy="32" r="12" fill="#f8f0c8" opacity="0.55"/>`:``}
+</svg>`;
+  },
+
+  // ─── CH 4: SWORD & CIRCLE TAVERN ─── night, warm tavern, rest & planning
+  4:(d)=>{
+    const HX=[62,100,160,190,190,190,62][d], HY=[175,172,168,168,168,168,175][d];
+    const isNight=d<=1||d===6;
+    return `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="sk4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${isNight?'#0a0a1e':'#1e3a5a'}"/><stop offset="100%" stop-color="${isNight?'#1a1a3a':'#2a4a6a'}"/></linearGradient>
+<radialGradient id="glow4" cx="50%" cy="70%" r="50%"><stop offset="0%" stop-color="#f8c040" stop-opacity="0.45"/><stop offset="100%" stop-color="#f8c040" stop-opacity="0"/></radialGradient></defs>
+<rect width="400" height="200" fill="url(#sk4)"/>
+${isNight?`<circle cx="360" cy="30" r="10" fill="#f8f8e0" opacity="0.7"/>${[0,1,2,3,4,5,6,7].map(i=>`<circle cx="${30+i*50}" cy="${15+i%3*12}" r="${0.8+i%2*0.6}" fill="white" opacity="${0.4+i%3*0.2}"/>`).join('')}`:``}
+<rect x="0" y="175" width="400" height="28" fill="#3a2818"/>
+<!-- Tavern building -->
+<rect x="100" y="100" width="200" height="90" fill="#9a7048" stroke="#5a3018" stroke-width="2"/>
+<polygon points="90,100 310,100 200,58" fill="#6a3020" stroke="#4a2010" stroke-width="2"/>
+<rect x="182" y="130" width="36" height="60" fill="#7a4818" stroke="#5a2808" stroke-width="1.5" rx="2"/>
+<!-- Windows glowing -->
+<rect x="118" y="112" width="28" height="22" fill="#f8c840" stroke="#5a3018" stroke-width="1.5" rx="1"/>
+<rect x="118" y="112" width="28" height="22" fill="url(#glow4)" rx="1"/>
+<rect x="254" y="112" width="28" height="22" fill="#f8c840" stroke="#5a3018" stroke-width="1.5" rx="1"/>
+<rect x="254" y="112" width="28" height="22" fill="url(#glow4)" rx="1"/>
+<line x1="132" y1="112" x2="132" y2="134" stroke="#8a5028" stroke-width="1"/>
+<line x1="118" y1="123" x2="146" y2="123" stroke="#8a5028" stroke-width="1"/>
+<line x1="268" y1="112" x2="268" y2="134" stroke="#8a5028" stroke-width="1"/>
+<line x1="254" y1="123" x2="282" y2="123" stroke="#8a5028" stroke-width="1"/>
+<!-- Sign -->
+<rect x="168" y="86" width="64" height="18" fill="#7a4010" stroke="#4a2008" stroke-width="1.5" rx="3"/>
+<text x="200" y="98" text-anchor="middle" font-size="6.5" fill="#f8d898" font-family="serif">Sword &amp; Circle</text>
+${heroFig(HX,HY,d>=1,'#2a3a5a')}
+${d>=2?`<!-- Stranger inside hint: silhouette at window -->
+<ellipse cx="132" cy="118" rx="6" ry="8" fill="#3a2010" opacity="0.85"/>
+<rect x="127" y="108" width="10" height="8" fill="#3a2010" opacity="0.85" rx="2"/>`:``}
+${d>=3?`<!-- Map on table visible through window -->
+<rect x="254" y="118" width="22" height="14" fill="#e8d888" stroke="#8a6020" stroke-width="0.8" opacity="0.8" rx="1"/>
+<line x1="256" y1="122" x2="274" y2="122" stroke="#8a6020" stroke-width="0.6" opacity="0.7"/>
+<line x1="256" y1="126" x2="270" y2="126" stroke="#8a6020" stroke-width="0.6" opacity="0.7"/>`:``}
+${d>=4?`<!-- Firelight glow from chimney -->
+<rect x="192" y="60" width="16" height="20" fill="#9a7048" stroke="#5a3018" stroke-width="1"/>
+<path d="M200,62 Q204,50 198,40 Q202,30 196,22" stroke="#f8a820" stroke-width="2.5" fill="none" opacity="0.7" stroke-linecap="round"/>
+<ellipse cx="200" cy="190" rx="120" ry="18" fill="#f8a830" opacity="0.12"/>`:``}
+${d>=5?`<!-- Supply pack at door -->
+<ellipse cx="185" cy="180" rx="12" ry="9" fill="#8a6040" stroke="#5a3018" stroke-width="1.5"/>
+<line x1="185" y1="171" x2="185" y2="162" stroke="#8a6040" stroke-width="2"/>
+<ellipse cx="185" cy="161" rx="8" ry="4" fill="#a87848" stroke="#5a3018" stroke-width="1"/>`:``}
+${d>=6?`<!-- Morning sky tinge -->
+<rect x="0" y="0" width="400" height="40" fill="#f08030" opacity="0.25"/>
+<circle cx="380" cy="20" r="18" fill="#f8c040" opacity="0.4"/>`:``}
+</svg>`;
+  },
+
+  // ─── CH 5: DAUNTLESS DUNES ─── golden desert, sun, ruins buried in sand
+  5:(d)=>{
+    const HX=[60,100,160,210,230,310,360][d], HY=[174,172,170,168,168,170,172][d];
+    return `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="sk5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e0780a"/><stop offset="100%" stop-color="#f8c860"/></linearGradient>
+<linearGradient id="sand5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e8b840"/><stop offset="100%" stop-color="#c89020"/></linearGradient></defs>
+<rect width="400" height="200" fill="url(#sk5)"/>
+<circle cx="200" cy="22" r="28" fill="#fff0a0" opacity="0.95"/>
+<circle cx="200" cy="22" r="42" fill="#fff0a0" opacity="0.2"/>
+<!-- Dunes -->
+<ellipse cx="100" cy="175" rx="180" ry="60" fill="url(#sand5)"/>
+<ellipse cx="320" cy="180" rx="160" ry="55" fill="#daa830"/>
+<ellipse cx="200" cy="168" rx="280" ry="45" fill="#e8b840"/>
+<rect x="0" y="178" width="400" height="25" fill="#c89020"/>
+<path d="M0,185 Q100,170 200,178 Q300,186 400,175" fill="#d8a830" stroke="none"/>
+<!-- Scorched sun rays -->
+<line x1="200" y1="0" x2="200" y2="15" stroke="#fff0a0" stroke-width="1.5" opacity="0.4"/>
+${d>=1?`<!-- Strange tracks in sand -->
+<path d="M80,188 Q130,182 180,186 Q220,190 270,184" stroke="#9a7010" stroke-width="1.5" fill="none" stroke-dasharray="4,6" opacity="0.7"/>
+<circle cx="82" cy="188" r="3" fill="#9a7010" opacity="0.6"/>
+<circle cx="135" cy="183" r="3" fill="#9a7010" opacity="0.6"/>`:``}
+${d>=2?`<!-- Heat shimmer / mirage -->
+<ellipse cx="300" cy="158" rx="40" ry="12" fill="#f8f8e0" opacity="0.2"/>
+<ellipse cx="300" cy="152" rx="30" ry="8" fill="#f8f8e0" opacity="0.15"/>
+<text x="300" y="148" text-anchor="middle" font-size="7" fill="#f8e0a0" font-family="serif" opacity="0.55">~ ~ ~</text>`:``}
+${d>=3?`<!-- Sand ruins poking up -->
+<rect x="240" y="155" width="18" height="25" fill="#c8a070" stroke="#8a6030" stroke-width="1.5" opacity="0.8"/>
+<polygon points="238,155 260,155 249,136" fill="#a87850" stroke="#8a6030" stroke-width="1.5" opacity="0.8"/>
+<rect x="270" y="162" width="10" height="18" fill="#c8a070" stroke="#8a6030" stroke-width="1" opacity="0.7"/>`:``}
+${heroFig(HX,HY,d>=2,'#c89020')}
+${d>=4?`<!-- Torch inside ruins -->
+<circle cx="249" cy="142" r="5" fill="#f8a820" opacity="0.85"/>
+<circle cx="249" cy="142" r="10" fill="#f8a820" opacity="0.25"/>
+<path d="M249,142 Q252,132 248,124" stroke="#f8a820" stroke-width="2" fill="none" opacity="0.6" stroke-linecap="round"/>`:``}
+${d>=5?`<!-- Sandstorm on south horizon -->
+<rect x="0" y="165" width="400" height="20" fill="#c89020" opacity="0.4"/>
+<path d="M0,168 Q80,160 160,168 Q240,176 320,166 Q370,160 400,166" stroke="#c89020" stroke-width="8" fill="none" opacity="0.35"/>
+<text x="200" y="180" text-anchor="middle" font-size="7" fill="#f8e090" font-family="serif" opacity="0.55">Storm!</text>`:``}
+${d>=6?`<!-- Shelter found, ancient arch -->
+<path d="M228,142 Q249,118 270,142" fill="#b89060" stroke="#8a6030" stroke-width="2" opacity="0.9"/>
+<rect x="228" y="142" width="10" height="30" fill="#b89060" stroke="#8a6030" stroke-width="1.5" opacity="0.9"/>
+<rect x="262" y="142" width="10" height="30" fill="#b89060" stroke="#8a6030" stroke-width="1.5" opacity="0.9"/>`:``}
+</svg>`;
+  },
+
+  // ─── CH 6: TORTOI TEMPLE ─── stone temple, runes waking, glowing pool
+  6:(d)=>{
+    const HX=[55,90,140,178,180,180,182][d], HY=[175,172,170,168,168,168,168][d];
+    return `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="sk6" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3a2828"/><stop offset="100%" stop-color="#6a4838"/></linearGradient>
+<radialGradient id="runeGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#40c8f0" stop-opacity="0.7"/><stop offset="100%" stop-color="#40c8f0" stop-opacity="0"/></radialGradient></defs>
+<rect width="400" height="200" fill="url(#sk6)"/>
+<circle cx="200" cy="28" r="16" fill="#f0e8c0" opacity="0.6"/>
+<!-- Temple structure -->
+<rect x="140" y="90" width="120" height="100" fill="#8a7060" stroke="#5a4030" stroke-width="2"/>
+<rect x="128" y="82" width="144" height="18" fill="#9a8070" stroke="#5a4030" stroke-width="1.5"/>
+<polygon points="125,82 275,82 200,42" fill="#7a5040" stroke="#4a3020" stroke-width="2"/>
+<!-- Temple pillars -->
+<rect x="152" y="90" width="12" height="100" fill="#7a6858" stroke="#5a4838" stroke-width="1"/>
+<rect x="184" y="90" width="12" height="100" fill="#7a6858" stroke="#5a4838" stroke-width="1"/>
+<rect x="216" y="90" width="12" height="100" fill="#7a6858" stroke="#5a4838" stroke-width="1"/>
+<rect x="248" y="90" width="12" height="100" fill="#7a6858" stroke="#5a4838" stroke-width="1"/>
+<!-- Temple door -->
+<rect x="188" y="140" width="24" height="50" fill="#3a2818" stroke="#4a3020" stroke-width="1.5" rx="2"/>
+<path d="M188,140 Q200,128 212,140" fill="#3a2818" stroke="#4a3020" stroke-width="1.5"/>
+<!-- Path to temple -->
+<path d="M0,195 Q100,186 200,190 Q280,194 380,190" stroke="#9a8068" stroke-width="18" fill="none" opacity="0.4"/>
+<!-- Rune symbols on wall, d>=1 they glow -->
+${[0,1,2,3].map(i=>`<text x="${158+i*26}" y="106" text-anchor="middle" font-size="10" fill="${d>=1?'#40c8f0':'#5a5050'}" font-family="serif" opacity="${d>=1?0.85:0.4}">✦</text>`).join('')}
+${d>=1?`<rect x="128" y="90" width="144" height="18" fill="url(#runeGlow)" opacity="0.4"/>`:``}
+${d>=2?`<rect x="0" y="0" width="400" height="200" fill="#40c8f0" opacity="0.04"/>`:``}
+${heroFig(HX,HY,d>=3,'#5a4030')}
+${d>=3?`<!-- Door opening light -->
+<rect x="189" y="141" width="22" height="48" fill="#f8c840" opacity="${0.1+d*0.07}"/><ellipse cx="200" cy="141" rx="11" ry="4" fill="#f8c840" opacity="0.3"/>`:``}
+${d>=4?`<!-- Tortoise head decorations visible -->
+<ellipse cx="150" cy="110" rx="16" ry="12" fill="#6a8040" stroke="#3a5020" stroke-width="1.5"/>
+<circle cx="146" cy="107" r="2.5" fill="#1a2010"/>
+<circle cx="154" cy="107" r="2.5" fill="#1a2010"/>
+<ellipse cx="250" cy="110" rx="16" ry="12" fill="#6a8040" stroke="#3a5020" stroke-width="1.5"/>
+<circle cx="246" cy="107" r="2.5" fill="#1a2010"/>
+<circle cx="254" cy="107" r="2.5" fill="#1a2010"/>`:``}
+${d>=5?`<!-- Glowing pool below -->
+<ellipse cx="200" cy="185" rx="50" ry="10" fill="#40c8f0" opacity="0.4"/>
+<ellipse cx="200" cy="185" rx="35" ry="7" fill="#80e8f8" opacity="0.5"/>`:``}
+${d>=6?`<!-- Artifact gleam -->
+<circle cx="200" cy="165" r="8" fill="#f8f040" opacity="0.9"/>
+<circle cx="200" cy="165" r="16" fill="#f8f040" opacity="0.3"/>
+<text x="200" y="155" text-anchor="middle" font-size="9" fill="#f0e040" font-family="serif">★</text>`:``}
+</svg>`;
+  },
+
+  // ─── CH 7: PERILOUS PENGLINS ─── icy peaks, Penglins gathering
+  7:(d)=>{
+    const HX=[60,60,62,140,180,210,200][d], HY=[175,175,175,172,170,168,168][d];
+    return `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="sk7" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c0d8f0"/><stop offset="100%" stop-color="#90b8e0"/></linearGradient></defs>
+<rect width="400" height="200" fill="url(#sk7)"/>
+<circle cx="60" cy="28" r="18" fill="#fff8e0" opacity="0.8"/>
+<!-- Icy mountains -->
+<polygon points="0,200 80,100 160,200" fill="#d8eaf8" stroke="#a8c8e8" stroke-width="1.5"/>
+<polygon points="60,200 160,80 260,200" fill="#e0eef8" stroke="#a8c8e8" stroke-width="1.5"/>
+<polygon points="160,200 280,90 400,200" fill="#d0e4f8" stroke="#a8c8e8" stroke-width="1.5"/>
+<polygon points="260,200 350,110 440,200" fill="#c8dce8" stroke="#a8c8e8" stroke-width="1.5"/>
+<!-- Snow caps -->
+<polygon points="80,100 93,115 67,115" fill="white" opacity="0.85"/>
+<polygon points="160,80 175,98 145,98" fill="white" opacity="0.85"/>
+<polygon points="280,90 294,108 266,108" fill="white" opacity="0.85"/>
+<!-- Ground ice -->
+<rect x="0" y="178" width="400" height="25" fill="#b8d8f0"/>
+<path d="M0,178 Q100,172 200,178 Q300,184 400,176" fill="#c8e4f8" stroke="none"/>
+<!-- Snowflakes -->
+${d>=0?[0,1,2,3,4].map(i=>`<text x="${50+i*80}" y="${20+i%3*18}" text-anchor="middle" font-size="8" fill="white" opacity="0.5">❄</text>`).join(''):``}
+${heroFig(HX,HY,d>=3,'#2a4a7a')}
+<!-- Penglins appear cumulatively -->
+${d>=1?`<!-- One penglin peeking from boulder d1 -->
+<ellipse cx="330" cy="170" rx="10" ry="13" fill="#2a2a2a" stroke="#111" stroke-width="1"/>
+<ellipse cx="330" cy="163" rx="7" ry="8" fill="#2a2a2a" stroke="#111" stroke-width="1"/>
+<ellipse cx="330" cy="162" rx="5" ry="5" fill="white"/>
+<circle cx="329" cy="161" r="2" fill="#1a1a1a"/>
+<ellipse cx="330" cy="168" rx="4" ry="5" fill="#f8a820"/>`:``}
+${d>=2?`<!-- Two penglins d2 -->
+<ellipse cx="310" cy="172" rx="9" ry="12" fill="#2a2a2a" stroke="#111" stroke-width="1"/>
+<ellipse cx="310" cy="165" rx="6" ry="7" fill="#2a2a2a" stroke="#111" stroke-width="1"/>
+<ellipse cx="310" cy="164" rx="4" ry="4" fill="white"/>
+<circle cx="309" cy="163" r="1.8" fill="#1a1a1a"/>
+<ellipse cx="310" cy="170" rx="3.5" ry="4" fill="#f8a820"/>`:``}
+${d>=3?`<!-- Many penglins group d3 -->
+${[0,1,2,3].map(i=>`<ellipse cx="${280-i*18}" cy="${174+i%2*2}" rx="8" ry="10" fill="#2a2a2a" stroke="#111" stroke-width="0.8"/><ellipse cx="${280-i*18}" cy="${167+i%2*2}" rx="5.5" ry="6" fill="#2a2a2a"/><ellipse cx="${280-i*18}" cy="${166+i%2*2}" rx="3.5" ry="3.5" fill="white"/><ellipse cx="${280-i*18}" cy="${170+i%2*2}" rx="3" ry="3.5" fill="#f8a820"/>`).join('')}`:``}
+${d>=4?`<!-- Penglin captain with crown d4 -->
+<ellipse cx="230" cy="168" rx="11" ry="14" fill="#2a2a2a" stroke="#111" stroke-width="1.5"/>
+<ellipse cx="230" cy="160" rx="8" ry="9" fill="#2a2a2a" stroke="#111" stroke-width="1.5"/>
+<ellipse cx="230" cy="159" rx="6" ry="6" fill="white"/>
+<circle cx="229" cy="158" r="2.5" fill="#1a1a1a"/>
+<polygon points="222,155 230,148 238,155" fill="#f8c040" stroke="#c8a010" stroke-width="1"/>
+<ellipse cx="230" cy="165" rx="5" ry="6" fill="#f8a820"/>`:``}
+${d>=5?`<!-- Mountain pass marker d5 -->
+<path d="M200,140 Q240,120 280,130" stroke="#9a8878" stroke-width="2" fill="none" stroke-dasharray="5,4" opacity="0.7"/>
+<text x="240" y="118" text-anchor="middle" font-size="7" fill="#5a4838" font-family="serif" opacity="0.8">Secret Pass →</text>`:``}
+${d>=6?`<!-- Summit flag d6 -->
+<line x1="200" y1="170" x2="200" y2="110" stroke="#6a4818" stroke-width="2.5"/>
+<polygon points="200,110 228,120 200,130" fill="#c82020" stroke="#8a1010" stroke-width="1"/>
+<text x="220" y="108" text-anchor="middle" font-size="8" fill="#f8f0d8" font-family="serif" opacity="0.8">✦</text>`:``}
+</svg>`;
+  },
+
+  // ─── CH 8: GOLL CAMP ─── forest clearing, campfire, Goll the great bear
+  8:(d)=>{
+    const HX=[55,80,140,168,168,168,200][d], HY=[175,175,170,168,168,168,170][d];
+    return `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="sk8" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0e1a0a"/><stop offset="100%" stop-color="#1e3a18"/></linearGradient>
+<radialGradient id="fireGlow8" cx="50%" cy="70%" r="55%"><stop offset="0%" stop-color="#f8a820" stop-opacity="0.5"/><stop offset="100%" stop-color="#f8a820" stop-opacity="0"/></radialGradient></defs>
+<rect width="400" height="200" fill="url(#sk8)"/>
+<circle cx="340" cy="25" r="12" fill="#f8f8e0" opacity="0.7"/>
+${[0,1,2,3,4,5].map(i=>`<circle cx="${20+i*70}" cy="${8+i%3*14}" r="${0.8+i%2*0.7}" fill="white" opacity="${0.3+i%3*0.18}"/>`).join('')}
+<!-- Forest trees -->
+${[0,30,290,330,360,380].map((x,i)=>`<polygon points="${x},${200} ${x+22},${100+i*8} ${x+44},${200}" fill="${i%2?'#1a3510':'#223c14'}" stroke="#0a1a08" stroke-width="0.8"/>`).join('')}
+<!-- Ground -->
+<rect x="0" y="178" width="400" height="25" fill="#2a3818"/>
+<ellipse cx="200" cy="195" rx="180" ry="18" fill="#3a4820"/>
+<!-- Campfire -->
+<ellipse cx="200" cy="185" rx="22" ry="8" fill="#5a3010" stroke="#3a1808" stroke-width="1"/>
+${[0,1,2].map(i=>`<polygon points="${192+i*6},${185} ${195+i*4},${160+i*4} ${198+i*6},${185}" fill="${['#f8a820','#f86020','#f8c030'][i]}" stroke="none" opacity="0.9"/>`).join('')}
+<rect x="0" y="0" width="400" height="200" fill="url(#fireGlow8)" opacity="${0.3+d*0.05}"/>
+<!-- Smoke -->
+<path d="M200,160 Q205,148 198,136 Q203,122 197,110" stroke="#8a8a8a" stroke-width="2.5" fill="none" opacity="${0.3+d*0.04}" stroke-linecap="round"/>
+${heroFig(HX,HY,d>=3,'#1a3a18')}
+<!-- Goll the great bear - appears d>=1, grows more prominent -->
+${d>=1?`<!-- Goll tending fire d1 -->
+<ellipse cx="270" cy="165" rx="22" ry="28" fill="#8a6030" stroke="#5a3010" stroke-width="2"/>
+<circle cx="270" cy="145" r="18" fill="#9a7040" stroke="#5a3010" stroke-width="2"/>
+<circle cx="263" cy="140" r="5" fill="#8a6030" stroke="#5a3010" stroke-width="1"/>
+<circle cx="277" cy="140" r="5" fill="#8a6030" stroke="#5a3010" stroke-width="1"/>
+<circle cx="263" cy="141" r="2" fill="#1a0a00"/>
+<circle cx="277" cy="141" r="2" fill="#1a0a00"/>
+<ellipse cx="270" cy="147" rx="5" ry="3" fill="#7a5020"/>
+<!-- Goll's arms -->
+<path d="M248,158 Q235,168 230,180" stroke="#8a6030" stroke-width="8" fill="none" stroke-linecap="round"/>
+<path d="M292,158 Q305,168 308,180" stroke="#8a6030" stroke-width="8" fill="none" stroke-linecap="round"/>`:``}
+${d>=2?`<!-- Bowl of food d2 -->
+<ellipse cx="200" cy="178" rx="14" ry="7" fill="#9a7048" stroke="#5a3018" stroke-width="1.5"/>
+<ellipse cx="200" cy="175" rx="11" ry="5" fill="#c8982a" opacity="0.9"/>`:``}
+${d>=3?`<!-- Stars text (story around fire) d3 -->
+${[0,1,2].map(i=>`<circle cx="${150+i*50}" cy="${30+i*14}" r="${0.9+i*0.4}" fill="white" opacity="${0.5+i*0.15}"/>`).join('')}
+<text x="200" y="50" text-anchor="middle" font-size="6.5" fill="#f8f8d8" font-family="serif" opacity="0.5">Stories under the stars...</text>`:``}
+${d>=4?`<!-- More travelers arriving d4 -->
+${heroFig(300,175,false,'#3a4828')}
+${heroFig(330,175,true,'#4a3828')}`:``}
+${d>=5?`<!-- Musical notes d5 -->
+<text x="145" y="140" font-size="14" fill="#f8c840" opacity="0.55" font-family="serif">♪</text>
+<text x="248" y="132" font-size="12" fill="#f8c840" opacity="0.5" font-family="serif">♫</text>`:``}
+${d>=6?`<!-- Morning gift bag d6 -->
+<ellipse cx="190" cy="180" rx="10" ry="8" fill="#9a6040" stroke="#6a3818" stroke-width="1.5"/>
+<line x1="190" y1="172" x2="190" y2="165" stroke="#9a6040" stroke-width="2"/>
+<path d="M184,165 Q190,159 196,165" stroke="#9a6040" stroke-width="1.5" fill="none"/>
+<circle cx="188" cy="166" r="1.5" fill="#f8c040"/>`:``}
+</svg>`;
+  },
+
+  // ─── CH 9: CAVE OF CONTEMPLATION ─── crystals, underground lake, reflection
+  9:(d)=>{
+    const HX=[50,90,120,160,162,164,250][d], HY=[175,172,168,168,168,168,172][d];
+    return `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="sk9" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0a0a18"/><stop offset="100%" stop-color="#1a1a30"/></linearGradient>
+<radialGradient id="crystalGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#80c0f8" stop-opacity="0.6"/><stop offset="100%" stop-color="#80c0f8" stop-opacity="0"/></radialGradient>
+<radialGradient id="lakeGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#4080c0" stop-opacity="0.5"/><stop offset="100%" stop-color="#4080c0" stop-opacity="0"/></radialGradient></defs>
+<rect width="400" height="200" fill="url(#sk9)"/>
+<!-- Cave mouth (outside visible at left) -->
+<ellipse cx="50" cy="145" rx="55" ry="70" fill="#3a5030" opacity="0.6"/>
+<ellipse cx="52" cy="148" rx="40" ry="58" fill="#1a0a08"/>
+<!-- Cave walls/stalactites -->
+${[0,1,2,3,4,5,6].map(i=>`<polygon points="${30+i*55},0 ${45+i*55},${25+i%3*15} ${60+i*55},0" fill="#1a1828" stroke="#0a0a18" stroke-width="0.8"/>`).join('')}
+<!-- Cave floor -->
+<rect x="0" y="180" width="400" height="25" fill="#1a1828"/>
+<path d="M0,180 Q100,174 200,180 Q300,186 400,178" fill="#221e30" stroke="none"/>
+${heroFig(HX,HY,d>=4,'#1a1830')}
+${d>=1?`<!-- Crystals waking d1 -->
+${[0,1,2,3,4].map(i=>`<polygon points="${120+i*50},${170-i%2*20} ${127+i*50},${145-i%2*20} ${134+i*50},${170-i%2*20}" fill="#80c0f8" stroke="#4090e0" stroke-width="1" opacity="${0.6+i*0.07}"/>
+<polygon points="${120+i*50},${170-i%2*20} ${127+i*50},${145-i%2*20} ${134+i*50},${170-i%2*20}" fill="url(#crystalGlow)" opacity="0.5"/>`).join('')}`:``}
+${d>=2?`<!-- Underground lake d2 -->
+<ellipse cx="200" cy="188" rx="160" ry="16" fill="#2050a0" opacity="0.7"/>
+<ellipse cx="200" cy="188" rx="140" ry="12" fill="url(#lakeGlow)" opacity="0.8"/>
+<path d="M60,184 Q130,180 200,184 Q270,188 340,184" stroke="#6090e0" stroke-width="1" fill="none" opacity="0.5"/>`:``}
+${d>=3?`<!-- Hero kneels (slightly lower) d3 -->
+<ellipse cx="162" cy="182" rx="10" ry="4" fill="#2050a0" opacity="0.5"/>`:``}
+${d>=4?`<!-- Old reflection (ghost) d4 -->
+<g transform="translate(162,186) scale(0.7)" opacity="0.5">
+  <ellipse cx="0" cy="-13" rx="7" ry="9" fill="#6090c0" stroke="#4070a0" stroke-width="1"/>
+  <circle cx="0" cy="-27" r="7" fill="#8090a0"/>
+  <rect x="-5" y="-43" width="10" height="10" fill="#5070a0"/>
+</g>`:``}
+${d>=5?`<!-- New reflection (bright) d5 -->
+<g transform="translate(162,186) scale(0.7)" opacity="0.75">
+  <ellipse cx="0" cy="-13" rx="7" ry="9" fill="#f8c840" stroke="#f0a010" stroke-width="1"/>
+  <circle cx="0" cy="-27" r="7" fill="#f8d898"/>
+  <rect x="-5" y="-43" width="10" height="10" fill="#f8c040"/>
+  <circle cx="0" cy="-27" r="10" fill="#f8c840" opacity="0.3"/>
+</g>
+<ellipse cx="162" cy="186" rx="18" ry="6" fill="#f8c840" opacity="0.2"/>`:``}
+${d>=6?`<!-- Cave exit light d6 -->
+<ellipse cx="52" cy="148" rx="40" ry="58" fill="#78b848" opacity="0.2"/>
+<ellipse cx="52" cy="158" rx="28" ry="34" fill="#c8e890" opacity="0.15"/>
+<circle cx="256" cy="172" r="12" fill="#f8f040" opacity="0.35"/>`:``}
+</svg>`;
+  },
+
+  // ─── CH 10: VOLGRIMM'S VAULT ─── great mechanical door, gears, treasure
+  10:(d)=>{
+    const HX=[55,56,58,60,62,190,190][d], HY=[176,176,176,176,176,172,172][d];
+    return `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="sk10" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a1210"/><stop offset="100%" stop-color="#3a2820"/></linearGradient>
+<radialGradient id="doorGlow10" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#f8c040" stop-opacity="${0.1+d*0.1}"/><stop offset="100%" stop-color="#f8c040" stop-opacity="0"/></radialGradient></defs>
+<rect width="400" height="200" fill="url(#sk10)"/>
+<rect x="0" y="178" width="400" height="25" fill="#2a1e18"/>
+<!-- Vault wall -->
+<rect x="80" y="20" width="240" height="175" fill="#5a4838" stroke="#3a2818" stroke-width="3"/>
+<!-- Vault door frame -->
+<rect x="130" y="40" width="140" height="150" fill="#7a6048" stroke="#4a3020" stroke-width="3"/>
+<rect x="148" y="55" width="104" height="130" fill="#6a5038" stroke="#3a2010" stroke-width="2"/>
+<!-- Door center circle/mechanism -->
+<circle cx="200" cy="120" r="42" fill="#4a3828" stroke="#8a6030" stroke-width="3"/>
+<circle cx="200" cy="120" r="34" fill="#3a2818" stroke="#6a4820" stroke-width="2"/>
+<!-- Gear teeth on big circle -->
+${Array.from({length:12},(_,i)=>{const a=i*30*Math.PI/180,r1=42,r2=52,cx=200,cy=120;return `<rect x="${cx+r1*Math.cos(a)-3}" y="${cy+r1*Math.sin(a)-3}" width="6" height="6" fill="#8a6030" stroke="#5a3818" stroke-width="1" transform="rotate(${i*30},${cx},${cy})"/>`}).join('')}
+<!-- Door bolts -->
+${[[148,55],[148,160],[252,55],[252,160]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6" fill="#8a6030" stroke="#5a3818" stroke-width="1.5"/>`).join('')}
+<!-- Gear 1 - lights up d>=1 -->
+${d>=1?`<circle cx="155" cy="85" r="18" fill="none" stroke="#f8a820" stroke-width="3" opacity="0.85"/>
+<circle cx="155" cy="85" r="12" fill="${d>=1?'#f8a820':'#5a4030'}" opacity="${d>=1?0.5:1}"/>
+${Array.from({length:8},(_,i)=>{const a=i*45*Math.PI/180;return `<line x1="${155+12*Math.cos(a)}" y1="${85+12*Math.sin(a)}" x2="${155+18*Math.cos(a)}" y2="${85+18*Math.sin(a)}" stroke="#f8a820" stroke-width="3" opacity="0.7"/>`}).join('')}`:
+`<circle cx="155" cy="85" r="18" fill="none" stroke="#6a5030" stroke-width="2"/>
+<circle cx="155" cy="85" r="12" fill="#4a3020"/>`}
+<!-- Gear 2 - lights up d>=2 -->
+${d>=2?`<circle cx="245" cy="85" r="18" fill="none" stroke="#f8a820" stroke-width="3" opacity="0.85"/>
+<circle cx="245" cy="85" r="12" fill="#f8a820" opacity="0.5"/>
+${Array.from({length:8},(_,i)=>{const a=i*45*Math.PI/180;return `<line x1="${245+12*Math.cos(a)}" y1="${85+12*Math.sin(a)}" x2="${245+18*Math.cos(a)}" y2="${85+18*Math.sin(a)}" stroke="#f8a820" stroke-width="3" opacity="0.7"/>`}).join('')}`:
+`<circle cx="245" cy="85" r="18" fill="none" stroke="#6a5030" stroke-width="2"/>
+<circle cx="245" cy="85" r="12" fill="#4a3020"/>`}
+<!-- Door crack of light d>=3 -->
+${d>=3?`<rect x="199" y="55" width="3" height="130" fill="#f8c840" opacity="${0.2+d*0.1}"/>
+<rect x="199" y="55" width="3" height="130" fill="url(#doorGlow10)" opacity="0.6"/>`:``}
+<!-- Vault open, treasure visible d>=4 -->
+${d>=4?`<rect x="148" y="55" width="52" height="130" fill="#f8c840" opacity="0.15"/>
+<!-- Treasure coins -->
+${Array.from({length:8},(_,i)=>`<circle cx="${160+i*6}" cy="${110+i%3*12}" r="5" fill="#f8c040" stroke="#c89010" stroke-width="1" opacity="0.9"/>`).join('')}
+<ellipse cx="190" cy="140" rx="20" ry="8" fill="#f8c040" opacity="0.4"/>`:``}
+<!-- Special glowing object d>=5 -->
+${d>=5?`<circle cx="200" cy="100" r="10" fill="#80f8f0" opacity="0.9"/>
+<circle cx="200" cy="100" r="18" fill="#80f8f0" opacity="0.3"/>
+<text x="200" y="104" text-anchor="middle" font-size="10" fill="white" font-family="serif">✦</text>`:``}
+${heroFig(HX,HY,d>=5,'#4a3020')}
+${d>=6?`<!-- Vault closing light bars -->
+<rect x="252" y="55" width="3" height="130" fill="#f8c840" opacity="0.2"/>`:``}
+</svg>`;
+  },
+
+  // ─── CH 11: STEPPERBURG ─── grand city, market, castle hill
+  11:(d)=>{
+    const HX=[56,100,150,190,230,270,310][d], HY=[176,174,172,170,168,168,166][d];
+    return `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="sk11" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4a88c8"/><stop offset="100%" stop-color="#88c0e8"/></linearGradient></defs>
+<rect width="400" height="200" fill="url(#sk11)"/>
+<circle cx="60" cy="30" r="20" fill="#fff8d0" opacity="0.9"/>
+<!-- Background castle on hill -->
+<ellipse cx="320" cy="130" rx="60" ry="35" fill="#9a8870"/>
+<rect x="290" y="78" width="60" height="55" fill="#c0a880" stroke="#8a7860" stroke-width="1.5"/>
+<rect x="282" y="68" width="16" height="28" fill="#c0a880" stroke="#8a7860" stroke-width="1.5"/>
+<rect x="350" y="72" width="16" height="24" fill="#c0a880" stroke="#8a7860" stroke-width="1.5"/>
+<polygon points="282,68 290,52 298,68" fill="#9a7858" stroke="#6a5838" stroke-width="1"/>
+<polygon points="350,72 358,56 366,72" fill="#9a7858" stroke="#6a5838" stroke-width="1"/>
+<!-- City walls -->
+<rect x="60" y="108" width="220" height="82" fill="#c8b898" stroke="#8a7858" stroke-width="2"/>
+<rect x="50" y="98" width="230" height="18" fill="#d8c8a8" stroke="#8a7858" stroke-width="1.5"/>
+<!-- Battlements -->
+${[0,1,2,3,4,5,6,7,8,9].map(i=>`<rect x="${54+i*26}" y="${88}" width="16" height="14" fill="#d8c8a8" stroke="#8a7858" stroke-width="1"/>`).join('')}
+<!-- City gate -->
+<rect x="168" y="120" width="44" height="70" fill="#9a8060" stroke="#6a5838" stroke-width="2"/>
+<path d="M168,120 Q190,100 212,120" fill="#9a8060" stroke="#6a5838" stroke-width="2"/>
+<!-- Ground -->
+<rect x="0" y="178" width="400" height="25" fill="#8a9860"/>
+<path d="M0,182 Q120,175 250,182 Q330,188 400,178" fill="#9aaa70" stroke="none"/>
+<!-- Road -->
+<path d="M0,196 Q200,188 400,196" stroke="#c8b888" stroke-width="16" fill="none" opacity="0.4"/>
+${heroFig(HX,HY,d>=1,'#5a4838')}
+${d>=1?`<!-- Market stalls d1 -->
+<rect x="75" y="142" width="30" height="28" fill="#e8d090" stroke="#8a6830" stroke-width="1"/>
+<path d="M70,142 Q90,132 105,142" fill="#e82020" stroke="#8a0808" stroke-width="1.5"/>
+<rect x="118" y="148" width="28" height="22" fill="#d8c880" stroke="#8a6830" stroke-width="1"/>
+<path d="M113,148 Q132,138 147,148" fill="#2080c0" stroke="#0850a0" stroke-width="1.5"/>`:``}
+${d>=2?`<!-- Child character d2 -->
+<circle cx="${HX-22}" cy="${HY-26}" r="7" fill="#f0c898" stroke="#8b5020" stroke-width="1"/>
+<ellipse cx="${HX-22}" cy="${HY-16}" rx="6" ry="8" fill="#e84020" stroke="#8a1808" stroke-width="1"/>
+<line x1="${HX-22}" y1="-4+${HY}" x2="${HX-22}" y2="${HY+8}" stroke="#c84020" stroke-width="2"/>`:``}
+${d>=3?`<!-- Elder with scroll d3 -->
+<circle cx="${HX+22}" cy="${HY-28}" r="8" fill="#f0c898" stroke="#8b5020" stroke-width="1"/>
+<ellipse cx="${HX+22}" cy="${HY-17}" rx="7" ry="9" fill="#6a6090" stroke="#3a3860" stroke-width="1"/>
+<rect x="${HX+28}" y="${HY-24}" width="14" height="10" fill="#e8d898" stroke="#8a6020" stroke-width="1" rx="1"/>
+<line x1="${HX+28}" y1="${HY-22}" x2="${HX+42}" y2="${HY-22}" stroke="#8a6020" stroke-width="0.8"/>`:``}
+${d>=4?`<!-- Castle hill prominent d4 -->
+<ellipse cx="320" cy="128" rx="60" ry="35" fill="#b89868" opacity="0.3"/>
+<text x="320" y="98" text-anchor="middle" font-size="7" fill="#5a4028" font-family="serif" opacity="0.7">Castle Anima →</text>`:``}
+${d>=5?`<!-- Invitation/parchment d5 -->
+<rect x="${HX+5}" y="${HY-38}" width="20" height="14" fill="#f8f0d8" stroke="#8b6020" stroke-width="1" rx="1"/>
+<line x1="${HX+8}" y1="${HY-35}" x2="${HX+22}" y2="${HY-35}" stroke="#c09030" stroke-width="0.8"/>
+<line x1="${HX+8}" y1="${HY-31}" x2="${HX+20}" y2="${HY-31}" stroke="#c09030" stroke-width="0.8"/>
+<text x="${HX+15}" y="${HY-45}" text-anchor="middle" font-size="6" fill="#8a6020" font-family="serif">Invited!</text>`:``}
+${d>=6?`<!-- Path clear ahead, golden light d6 -->
+<path d="M310,196 Q350,188 400,196" stroke="#f8c840" stroke-width="20" fill="none" opacity="0.25"/>
+<text x="360" y="170" text-anchor="middle" font-size="9" fill="#f8c040" font-family="serif" opacity="0.7">→ ✦</text>`:``}
+</svg>`;
+  },
+
+  // ─── CH 12: CASTLE ANIMA ─── epic finale, drawbridge, gates, quest end
+  12:(d)=>{
+    const hScale=[0.35,0.5,0.65,0.65,0.75,0.85,1.0][d];
+    const HX=[55,80,115,155,200,230,200][d], HY=[185,183,181,180,178,178,175][d];
+    return `<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="sk12" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${d>=5?'#f8c040':'#3a1828'}"/><stop offset="100%" stop-color="${d>=5?'#f8f0c0':'#6a2840'}"/></linearGradient>
+<radialGradient id="castleGlow12" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="#f8c840" stop-opacity="${d>=5?0.5:0.1}"/><stop offset="100%" stop-color="#f8c840" stop-opacity="0"/></radialGradient></defs>
+<rect width="400" height="200" fill="url(#sk12)"/>
+<rect width="400" height="200" fill="url(#castleGlow12)"/>
+${d<5?Array.from({length:10},(_,i)=>`<circle cx="${20+i*40}" cy="${8+i%3*14}" r="${0.8+i%2*0.6}" fill="white" opacity="${0.3+i%3*0.2}"/>`).join(''):''}
+<!-- Castle rock base -->
+<ellipse cx="280" cy="165" rx="90" ry="40" fill="#5a4838"/>
+<!-- Castle main structure -->
+<rect x="220" y="60" width="120" height="110" fill="#8a7060" stroke="#5a4030" stroke-width="2"/>
+<!-- Castle towers -->
+<rect x="210" y="40" width="30" height="90" fill="#9a8070" stroke="#5a4030" stroke-width="2"/>
+<rect x="300" y="44" width="30" height="86" fill="#9a8070" stroke="#5a4030" stroke-width="2"/>
+<!-- Tower tops / battlements -->
+${[210,216,222,228,234].map(x=>`<rect x="${x}" y="34" width="4" height="10" fill="#9a8070" stroke="#5a4030" stroke-width="1"/>`).join('')}
+${[300,306,312,318,324].map(x=>`<rect x="${x}" y="38" width="4" height="10" fill="#9a8070" stroke="#5a4030" stroke-width="1"/>`).join('')}
+<!-- Castle gate arch -->
+<rect x="252" y="110" width="56" height="60" fill="#3a2818" stroke="#5a3820" stroke-width="2"/>
+<path d="M252,110 Q280,90 308,110" fill="#3a2818" stroke="#5a3820" stroke-width="2"/>
+<!-- Drawbridge chain anchors -->
+<circle cx="258" cy="118" r="4" fill="#7a6040" stroke="#5a3818" stroke-width="1"/>
+<circle cx="302" cy="118" r="4" fill="#7a6040" stroke="#5a3818" stroke-width="1"/>
+<!-- Road / moat -->
+<ellipse cx="280" cy="192" rx="100" ry="14" fill="#3a2818" opacity="0.5"/>
+<rect x="0" y="182" width="400" height="20" fill="#2a4018"/>
+<path d="M0,187 Q140,180 240,186 Q320,192 400,185" fill="#3a5028" stroke="none"/>
+${heroFig(HX,HY,d>=4,'#4a3020')}
+<!-- Drawbridge - closed d<3, lowering d=3, open d>=4 -->
+${d<3?`<rect x="252" y="110" width="56" height="8" fill="#8a6040" stroke="#5a3818" stroke-width="1.5"/>
+<line x1="258" y1="118" x2="252" y2="165" stroke="#5a4030" stroke-width="2"/>
+<line x1="302" y1="118" x2="308" y2="165" stroke="#5a4030" stroke-width="2"/>`:
+d===3?`<rect x="252" y="130" width="56" height="8" fill="#8a6040" stroke="#5a3818" stroke-width="1.5" transform="rotate(-15,252,130)"/>
+<line x1="258" y1="118" x2="240" y2="172" stroke="#5a4030" stroke-width="2"/>
+<line x1="302" y1="118" x2="320" y2="172" stroke="#5a4030" stroke-width="2"/>`:
+`<rect x="252" y="170" width="56" height="8" fill="#8a6040" stroke="#5a3818" stroke-width="1.5"/>`}
+<!-- Guards on towers d>=2 -->
+${d>=2?`${heroFig(218,46,false,'#5a3020')}${heroFig(308,50,true,'#5a3020')}`:``}
+<!-- Gate light d>=5 -->
+${d>=5?`<rect x="253" y="91" width="54" height="79" fill="#f8c840" opacity="0.3"/>
+<ellipse cx="280" cy="110" rx="27" ry="10" fill="#f8c840" opacity="0.3"/>
+<text x="280" y="82" text-anchor="middle" font-size="9" fill="#f8e040" font-family="serif" opacity="0.8">✦ ✦ ✦</text>`:``}
+<!-- Quest fulfilled text d=6 -->
+${d>=6?`<text x="200" y="25" text-anchor="middle" font-size="10" fill="#f8e040" font-family="serif" opacity="0.85">✦ Quest Fulfilled ✦</text>
+<ellipse cx="200" cy="180" rx="180" ry="12" fill="#f8c840" opacity="0.12"/>`:``}
+</svg>`;
+  }
+};
+
+function updateIllustration() {
+  const data = getData();
+  if (!data) return;
+  const done     = completedCount(data.entries);
+  const chNum    = currentChapterNum(data.entries);
+  const dayInCh  = done % 7;
+  const ch       = CHAPTERS[Math.min(chNum,12)-1];
+  const sceneFn  = SCENES[Math.min(chNum,12)];
+  if (sceneFn) document.getElementById('ch-illu-svg').innerHTML = sceneFn(dayInCh);
+  document.getElementById('ch-illu-cap').textContent =
+    `${ch.name.toUpperCase()} · DAY ${dayInCh+1} OF 7 · ACT ${ch.act}`;
+}
 
 // ══════════════════════════════════════════════
 // INIT
