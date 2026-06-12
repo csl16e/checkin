@@ -601,6 +601,78 @@ textarea { min-height: 76px; }
   border-color: rgba(100,60,10,0.5);
 }
 /* (quote overlay removed — quotes are printed in PDF canvas) */
+
+/* ─── LAYOUT EDIT MODE ─── */
+.layout-edit-mode .pov {
+  outline: 2px dashed rgba(201,152,31,0.6) !important;
+  outline-offset: 0px;
+  cursor: move !important;
+}
+.layout-edit-mode .pov:hover {
+  outline-color: #f0c040 !important;
+  background: rgba(201,152,31,0.1) !important;
+}
+.layout-edit-mode .pov input,
+.layout-edit-mode .pov textarea {
+  pointer-events: none;
+  cursor: move;
+}
+.pov-edit-label {
+  position: absolute;
+  top: 1px; left: 2px;
+  font-family: 'Cinzel', serif;
+  font-size: 6.5px;
+  color: #f0c040;
+  background: rgba(10,5,2,0.78);
+  padding: 1px 3px;
+  border-radius: 2px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 30;
+  line-height: 1.2;
+}
+.pov-resize-handle {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 9px; height: 9px;
+  background: rgba(201,152,31,0.85);
+  cursor: nwse-resize;
+  border-radius: 2px 0 0 0;
+  z-index: 31;
+}
+.layout-edit-toggle {
+  background: transparent;
+  border: 1px solid rgba(201,152,31,0.35);
+  color: rgba(240,192,64,0.7);
+  font-family: 'Cinzel', serif;
+  font-size: 0.52rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  height: 22px;
+  letter-spacing: 0.04em;
+  transition: background 0.15s, color 0.15s;
+  margin-left: 10px;
+}
+.layout-edit-toggle:hover,
+.layout-edit-toggle.active { background: rgba(201,152,31,0.3); color: #f0c040; border-color: var(--gold); }
+#layout-reset-btn {
+  background: transparent;
+  border: 1px solid rgba(180,60,60,0.5);
+  color: rgba(220,100,100,0.8);
+  font-family: 'Cinzel', serif;
+  font-size: 0.48rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  height: 22px;
+  display: none;
+}
+#layout-reset-btn.visible { display: inline-flex; align-items: center; }
 /* Buttons below spread */
 .pdf-btn-row {
   display: flex;
@@ -744,6 +816,8 @@ textarea { min-height: 76px; }
     <input type="range" id="font-size-range" min="8" max="20" value="13" oninput="applyJournalFont()">
     <span class="sz-val" id="font-size-val">13px</span>
     <div class="dow-group" id="dow-group"></div>
+    <button id="layout-edit-btn" class="layout-edit-toggle" onclick="toggleLayoutEdit()" title="Drag boxes to reposition them">⚙ Edit Layout</button>
+    <button id="layout-reset-btn" onclick="resetLayoutPositions()" title="Reset all boxes to defaults">↺ Reset</button>
   </div>
 
   <!-- PDF spread — fills viewport, all controls float on top -->
@@ -1302,6 +1376,9 @@ function renderDaily() {
   const done = journalCompletedCount(data);
   const showNotice = done > 0 && done % 7 === 0 && !data.chapters[chNum-1];
   document.getElementById('ch-notice').style.display = showNotice ? 'block' : 'none';
+
+  // Apply any saved custom layout positions
+  loadLayoutPositions();
 }
 
 // curDow = 0-6 (Sun-Sat) or -1 for none; set by clicking a button or parsing date
@@ -1425,6 +1502,131 @@ function applyJournalFont() {
   const data = getData(); data.settings = data.settings || {};
   data.settings.journalFont = fam; data.settings.journalSize = sz;
   saveData(data);
+}
+
+// ══════════════════════════════════════════════
+// LAYOUT EDITOR
+// ══════════════════════════════════════════════
+const POV_LABELS = {
+  'daily-date':'📅 Date','chr-text':'📜 Chronicle',
+  'g1':'🙏 Gratitude 1','g2':'🙏 Gratitude 2','g3':'🙏 Gratitude 3',
+  'daily-allies':'🤝 Allies','daily-quest-input':'⚔️ Quest',
+  'task0':'🐸 Task 1','task1':'📌 Task 2','task2':'📌 Task 3',
+  'tc0':'✅ Chk 1','tc1':'✅ Chk 2','tc2':'✅ Chk 3',
+  'daily-notes':'📝 Notes','daily-threats':'⚠️ Threats'
+};
+
+let layoutEditMode = false;
+let _editDrag = null;
+let _editResize = null;
+
+function toggleLayoutEdit() {
+  layoutEditMode = !layoutEditMode;
+  const spread = document.getElementById('pdf-spread');
+  const btn    = document.getElementById('layout-edit-btn');
+  const reset  = document.getElementById('layout-reset-btn');
+
+  if (layoutEditMode) {
+    spread.classList.add('layout-edit-mode');
+    btn.textContent = '✓ Done';
+    btn.classList.add('active');
+    reset.classList.add('visible');
+    // Attach label + resize handle to each pov
+    document.querySelectorAll('#pdf-spread .pov').forEach(pov => {
+      const inner = pov.querySelector('input,textarea,div');
+      const id = inner?.id || '';
+      const lbl = document.createElement('div');
+      lbl.className = 'pov-edit-label';
+      lbl.textContent = POV_LABELS[id] || id;
+      pov.appendChild(lbl);
+      const handle = document.createElement('div');
+      handle.className = 'pov-resize-handle';
+      pov.appendChild(handle);
+    });
+    spread.addEventListener('mousedown', _onEditMouseDown);
+    document.addEventListener('mousemove', _onEditMouseMove);
+    document.addEventListener('mouseup',   _onEditMouseUp);
+  } else {
+    spread.classList.remove('layout-edit-mode');
+    btn.textContent = '⚙ Edit Layout';
+    btn.classList.remove('active');
+    reset.classList.remove('visible');
+    document.querySelectorAll('.pov-edit-label,.pov-resize-handle').forEach(e => e.remove());
+    spread.removeEventListener('mousedown', _onEditMouseDown);
+    document.removeEventListener('mousemove', _onEditMouseMove);
+    document.removeEventListener('mouseup',   _onEditMouseUp);
+    _saveLayoutPositions();
+  }
+}
+
+function _onEditMouseDown(e) {
+  const pov = e.target.closest('.pov');
+  if (!pov) return;
+  e.preventDefault();
+  const spread = document.getElementById('pdf-spread');
+  const sr = spread.getBoundingClientRect();
+  if (e.target.classList.contains('pov-resize-handle')) {
+    _editResize = { el:pov, sx:e.clientX, sy:e.clientY,
+      ow:pov.offsetWidth, oh:pov.offsetHeight, sw:sr.width, sh:sr.height };
+    return;
+  }
+  const pr = pov.getBoundingClientRect();
+  _editDrag = { el:pov, sx:e.clientX, sy:e.clientY,
+    ol: pr.left - sr.left, ot: pr.top - sr.top, sw:sr.width, sh:sr.height };
+  pov.style.opacity = '0.75';
+  pov.style.zIndex  = '50';
+}
+
+function _onEditMouseMove(e) {
+  if (_editDrag) {
+    const dx = e.clientX - _editDrag.sx, dy = e.clientY - _editDrag.sy;
+    const nl = Math.max(0, _editDrag.ol + dx), nt = Math.max(0, _editDrag.ot + dy);
+    _editDrag.el.style.left = (nl / _editDrag.sw * 100).toFixed(2) + '%';
+    _editDrag.el.style.top  = (nt / _editDrag.sh * 100).toFixed(2) + '%';
+  }
+  if (_editResize) {
+    const dx = e.clientX - _editResize.sx, dy = e.clientY - _editResize.sy;
+    const nw = Math.max(20, _editResize.ow + dx), nh = Math.max(10, _editResize.oh + dy);
+    _editResize.el.style.width  = (nw / _editResize.sw * 100).toFixed(2) + '%';
+    _editResize.el.style.height = (nh / _editResize.sh * 100).toFixed(2) + '%';
+  }
+}
+
+function _onEditMouseUp() {
+  if (_editDrag) { _editDrag.el.style.opacity=''; _editDrag.el.style.zIndex=''; _editDrag=null; }
+  _editResize = null;
+}
+
+function _saveLayoutPositions() {
+  const data = getData(); data.layout = {};
+  document.querySelectorAll('#pdf-spread .pov').forEach(pov => {
+    const inner = pov.querySelector('input,textarea,div');
+    const id = inner?.id; if (!id) return;
+    data.layout[id] = { left:pov.style.left, top:pov.style.top,
+                        width:pov.style.width, height:pov.style.height };
+  });
+  saveData(data);
+  toast('✦ Layout saved!');
+}
+
+function loadLayoutPositions() {
+  const layout = (getData().layout) || {};
+  document.querySelectorAll('#pdf-spread .pov').forEach(pov => {
+    const inner = pov.querySelector('input,textarea,div');
+    const id = inner?.id; if (!id) return;
+    const p = layout[id]; if (!p) return;
+    if (p.left)   pov.style.left   = p.left;
+    if (p.top)    pov.style.top    = p.top;
+    if (p.width)  pov.style.width  = p.width;
+    if (p.height) pov.style.height = p.height;
+  });
+}
+
+function resetLayoutPositions() {
+  if (!confirm('Reset all text boxes to default positions?')) return;
+  const data = getData(); delete data.layout; saveData(data);
+  // Re-apply defaults by reloading
+  location.reload();
 }
 
 function loadJournalFont() {
