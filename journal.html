@@ -764,12 +764,12 @@ textarea { min-height: 76px; }
     <button class="spd-save" onclick="saveEntry()">✦ Save Entry</button>
 
     <!-- ── DATE & DAY PILLS ── -->
-    <!-- Date label — user types whatever date they want, overlays printed date area -->
-    <div class="pov" style="left:24%;top:2%;width:16%;height:4%">
+    <!-- Date label — overlays the printed date slash area (left of sword divider) -->
+    <div class="pov" style="left:27%;top:1.5%;width:10%;height:3.5%">
       <input type="text" id="daily-date" placeholder="Date…" oninput="onDateInput()" title="Record the date">
     </div>
-    <!-- ── LEFT PAGE: CHRONICLE (below instruction bubble, ~14% down) ── -->
-    <div class="pov" style="left:30.0%;top:15%;width:19.1%;height:64%">
+    <!-- ── LEFT PAGE: CHRONICLE (starts at top of ruled lines) ── -->
+    <div class="pov" style="left:30.0%;top:7.5%;width:19.1%;height:71.5%">
       <textarea id="chr-text" class="chr-area" placeholder="Chronicle your journey…"></textarea>
     </div>
 
@@ -1388,11 +1388,25 @@ function shiftPos(n) {
 function shiftDay(n) { shiftPos(n); }
 
 function onDateInput() {
-  const val = document.getElementById('daily-date').value;
-  // Auto-detect day if input looks like a parseable date
-  const d = new Date(val + (val.includes('T') ? '' : 'T12:00:00'));
-  if (!isNaN(d) && val.length >= 8) curDow = d.getDay();
-  renderDayPills('');  // don't re-parse (curDow already set above)
+  const val = document.getElementById('daily-date').value.trim();
+  if (val.length < 5) { renderDayPills(''); return; }
+  let d;
+  // Try ISO (YYYY-MM-DD) first — safe with timezone anchor
+  if (/^\d{4}-\d{2}-\d{2}/.test(val)) {
+    d = new Date(val.substring(0, 10) + 'T12:00:00');
+  } else {
+    // Try M/D/YY or M/D/YYYY
+    const parts = val.replace(/-/g, '/').split('/');
+    if (parts.length === 3) {
+      let [m, day, y] = parts;
+      if (y.length === 2) y = '20' + y;
+      d = new Date(`${y}-${m.padStart(2,'0')}-${day.padStart(2,'0')}T12:00:00`);
+    } else {
+      d = new Date(val);
+    }
+  }
+  if (!isNaN(d)) curDow = d.getDay();
+  renderDayPills('');
 }
 function onDateChange() { onDateInput(); }
 function editQuest() {
