@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hero's Journal — Legend of Istoria</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Kalam:wght@300;400;700&family=Caveat:wght@400;600&family=Patrick+Hand&family=Indie+Flower&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -22,6 +22,8 @@
   --crimson:    #7a1515;
   --green:      #2d5c2d;
   --radius:     12px;
+  --journal-font: 'Crimson Text', Georgia, serif;
+  --journal-size: 13px;
 }
 
 body {
@@ -420,13 +422,15 @@ textarea { min-height: 76px; }
 /* ─── PDF SPREAD — full viewport ─── */
 
 /* Daily screen = full height below header */
-#screen-daily { padding:0; display:none; align-items:center; justify-content:center; height:calc(100vh - 49px); overflow:hidden; background:#0d0a07; }
+#screen-daily { padding:0; display:none; flex-direction:column; align-items:center; height:calc(100vh - 49px); overflow:hidden; background:#0d0a07; }
 #screen-daily.active { display:flex; }
+/* Font toolbar stretches full width above the spread */
+.font-toolbar { width:100%; flex-shrink:0; justify-content:center; }
 
-/* Spread fills viewport, maintains 856:612 aspect ratio */
+/* Spread fills viewport, maintains 856:612 aspect ratio (49px header + 32px font toolbar) */
 .pdf-spread {
   /* Width = min(viewport width, height-derived width) */
-  width: min(100vw, calc((100vh - 49px) * 856 / 612));
+  width: min(100vw, calc((100vh - 81px) * 856 / 612));
   aspect-ratio: 856 / 612;
   position: relative;
   background: #f2e6c8;
@@ -486,8 +490,8 @@ textarea { min-height: 76px; }
   background: transparent;
   border: none;
   outline: none;
-  font-family: 'Crimson Text', Georgia, serif;
-  font-size: clamp(6px, 1.15vw, 13px);
+  font-family: var(--journal-font);
+  font-size: var(--journal-size);
   color: #180800;
   resize: none;
   padding: 1px 3px;
@@ -513,12 +517,65 @@ textarea { min-height: 76px; }
   cursor: default;
 }
 #day-pills-spread .dpill.active {
-  background: rgba(201,152,31,0.35);
-  color: #5a2808;
+  background: rgba(201,152,31,0.5);
+  color: #3a1800;
+  font-weight: 700;
+  border-radius: 50%;
 }
-.pov input.chr-line {
-  font-size: clamp(5px, 0.75vw, 10px);
-  line-height: 1.2;
+/* Chronicle big textarea */
+.pov textarea.chr-area {
+  line-height: 1.75;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  padding: 3px 4px;
+}
+/* Font toolbar */
+.font-toolbar {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 10px;
+  padding: 3px 16px;
+  height: 32px;
+  background: linear-gradient(135deg,#1a0f0a,#2d1a08);
+  border-bottom: 1px solid rgba(201,152,31,0.3);
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  color: var(--gold-light);
+  letter-spacing: 0.05em;
+  overflow: hidden;
+}
+.font-toolbar label { color: var(--gold); white-space: nowrap; flex-shrink: 0; }
+.font-toolbar select {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(201,152,31,0.4);
+  color: var(--gold-light);
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  border-radius: 4px;
+  padding: 2px 6px;
+  cursor: pointer;
+  width: auto;
+  height: 22px;
+  flex-shrink: 0;
+}
+.font-toolbar input[type=range] {
+  width: 90px;
+  accent-color: var(--gold);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  padding: 0;
+  height: 16px;
+  border-radius: 0;
+  box-shadow: none;
+  flex-shrink: 0;
+}
+.font-toolbar span.sz-val {
+  min-width: 28px;
+  color: var(--gold-light);
+  font-size: 0.58rem;
+  flex-shrink: 0;
 }
 /* Task done state */
 .task-done-marker {
@@ -537,16 +594,7 @@ textarea { min-height: 76px; }
   color: #5a2808;
   border-color: rgba(100,60,10,0.5);
 }
-/* Quote in spread */
-.pdf-quote {
-  font-style: italic;
-  font-size: clamp(5px, 1vw, 11px);
-  color: #2a1008;
-  text-align: center;
-  padding: 2px 4px;
-  line-height: 1.4;
-}
-.pdf-quote cite { display:block; font-style:normal; font-size:0.85em; opacity:0.7; margin-top:2px; }
+/* (quote overlay removed — quotes are printed in PDF canvas) */
 /* Buttons below spread */
 .pdf-btn-row {
   display: flex;
@@ -675,6 +723,22 @@ textarea { min-height: 76px; }
   <span id="daily-quest-text" style="display:none"></span>
   <div id="quest-banner" style="display:none"></div>
 
+  <!-- Font toolbar -->
+  <div class="font-toolbar" id="font-toolbar">
+    <label>Font:</label>
+    <select id="font-family-select" onchange="applyJournalFont()">
+      <option value="'Crimson Text', Georgia, serif">Crimson Text</option>
+      <option value="'Kalam', cursive">Kalam (Handwritten)</option>
+      <option value="'Caveat', cursive">Caveat (Casual)</option>
+      <option value="'Patrick Hand', cursive">Patrick Hand</option>
+      <option value="'Indie Flower', cursive">Indie Flower</option>
+      <option value="'Cinzel', serif">Cinzel (Classic)</option>
+    </select>
+    <label>Size:</label>
+    <input type="range" id="font-size-range" min="8" max="20" value="13" oninput="applyJournalFont()">
+    <span class="sz-val" id="font-size-val">13px</span>
+  </div>
+
   <!-- PDF spread — fills viewport, all controls float on top -->
   <div id="daily-parchment">
   <div class="pdf-spread" id="pdf-spread">
@@ -698,26 +762,14 @@ textarea { min-height: 76px; }
       <input type="date" id="daily-date" onchange="onDateChange()" title="Change date">
     </div>
     <!-- Day-of-week pills — over printed S M T W T F S -->
-    <div class="pov" style="left:42%;top:0.5%;width:15%;height:4%">
+    <div class="pov" style="left:42%;top:2%;width:15%;height:4.5%">
       <div id="day-pills-spread"></div>
     </div>
 
-    <!-- ── LEFT PAGE: CHRONICLE (15 ruled lines, left:30%, width:19.1%) ── -->
-    <div class="pov" style="left:30.0%;top:7.5%;width:19.1%;height:4.7%"><input type="text" class="chr-line" id="chr0" placeholder=""></div>
-    <div class="pov" style="left:30.0%;top:12.3%;width:19.1%;height:4.7%"><input type="text" class="chr-line" id="chr1" placeholder=""></div>
-    <div class="pov" style="left:30.0%;top:17.1%;width:19.1%;height:4.7%"><input type="text" class="chr-line" id="chr2" placeholder=""></div>
-    <div class="pov" style="left:30.0%;top:21.9%;width:19.1%;height:4.7%"><input type="text" class="chr-line" id="chr3" placeholder=""></div>
-    <div class="pov" style="left:30.0%;top:26.7%;width:19.1%;height:4.7%"><input type="text" class="chr-line" id="chr4" placeholder=""></div>
-    <div class="pov" style="left:30.0%;top:31.4%;width:19.1%;height:4.7%"><input type="text" class="chr-line" id="chr5" placeholder=""></div>
-    <div class="pov" style="left:30.0%;top:36.3%;width:19.1%;height:4.7%"><input type="text" class="chr-line" id="chr6" placeholder=""></div>
-    <div class="pov" style="left:30.0%;top:41.1%;width:19.1%;height:4.7%"><input type="text" class="chr-line" id="chr7" placeholder=""></div>
-    <div class="pov" style="left:30.0%;top:45.9%;width:19.1%;height:4.7%"><input type="text" class="chr-line" id="chr8" placeholder=""></div>
-    <div class="pov" style="left:30.0%;top:50.7%;width:19.1%;height:4.7%"><input type="text" class="chr-line" id="chr9" placeholder=""></div>
-    <div class="pov" style="left:30.0%;top:55.4%;width:19.1%;height:4.7%"><input type="text" class="chr-line" id="chr10" placeholder=""></div>
-    <div class="pov" style="left:30.0%;top:60.2%;width:19.1%;height:4.7%"><input type="text" class="chr-line" id="chr11" placeholder=""></div>
-    <div class="pov" style="left:30.0%;top:65.0%;width:19.1%;height:4.7%"><input type="text" class="chr-line" id="chr12" placeholder=""></div>
-    <div class="pov" style="left:30.0%;top:69.6%;width:19.1%;height:4.7%"><input type="text" class="chr-line" id="chr13" placeholder=""></div>
-    <div class="pov" style="left:30.0%;top:74.5%;width:19.1%;height:4.7%"><input type="text" class="chr-line" id="chr14" placeholder=""></div>
+    <!-- ── LEFT PAGE: CHRONICLE (single wrapping textarea over all 15 ruled lines) ── -->
+    <div class="pov" style="left:30.0%;top:7.5%;width:19.1%;height:71.7%">
+      <textarea id="chr-text" class="chr-area" placeholder="Chronicle your journey…"></textarea>
+    </div>
 
     <!-- ── LEFT PAGE: GRATITUDE (exact PDF positions) ── -->
     <div class="pov" style="left:4.3%;top:23.7%;width:21.8%;height:3.5%">
@@ -758,11 +810,6 @@ textarea { min-height: 76px; }
     </div>
     <div class="pov" style="left:92.9%;top:30.1%;width:2.1%;height:2.9%">
       <div class="task-done-marker" id="tc2" onclick="toggleTaskDone(2)"></div>
-    </div>
-
-    <!-- ── RIGHT PAGE: QUOTE (printed area, display only) ── -->
-    <div class="pov" style="left:52%;top:30%;width:44%;height:8%">
-      <div id="daily-quote" class="pdf-quote"></div>
     </div>
 
     <!-- ── RIGHT PAGE: NOTES ── -->
@@ -1162,6 +1209,7 @@ let curDate = todayStr();
 
 function renderDaily() {
   const data=getData(); if(!data) return;
+  loadJournalFont();
   // Set PDF background image
   const done0  = completedCount(data.entries);
   const chNum  = Math.min(currentChapterNum(data.entries), 12);
@@ -1183,8 +1231,6 @@ function renderDaily() {
   document.getElementById('daily-quest-input').value=data.hero.quest;
   document.getElementById('daily-date').value=curDate;
   renderDayPills();
-  const q=quoteForDate(curDate);
-  document.getElementById('daily-quote').innerHTML=`"${esc(q.t)}"<cite>— ${esc(q.a)}</cite>`;
   const e=data.entries[curDate]||{};
   document.getElementById('g1').value=e.g1||'';
   document.getElementById('g2').value=e.g2||'';
@@ -1192,11 +1238,15 @@ function renderDaily() {
   document.getElementById('daily-notes').value=e.notes||'';
   document.getElementById('daily-allies').value=e.allies||'';
   document.getElementById('daily-threats').value=e.threats||'';
-  // Chronicle — 15 lines (backward compat: old 'sched' populates line 0)
-  const chr = e.chronicle || (e.sched ? [e.sched] : []);
-  for (let i = 0; i < 15; i++) {
-    const el = document.getElementById('chr'+i);
-    if (el) el.value = chr[i] || '';
+  // Chronicle — single textarea (backward compat with array or old sched string)
+  const chrEl = document.getElementById('chr-text');
+  if (chrEl) {
+    const chr = e.chronicle;
+    if (Array.isArray(chr)) {
+      chrEl.value = chr.filter(Boolean).join('\n');
+    } else {
+      chrEl.value = chr || e.sched || '';
+    }
   }
   // Tasks
   const tasks=e.tasks||[{text:'',done:false},{text:'',done:false},{text:'',done:false}];
@@ -1251,7 +1301,7 @@ function saveEntry() {
     notes:document.getElementById('daily-notes').value,
     allies:document.getElementById('daily-allies').value,
     threats:document.getElementById('daily-threats').value,
-    chronicle: Array.from({length:15}, (_,i) => document.getElementById('chr'+i)?.value||''),
+    chronicle: document.getElementById('chr-text')?.value||'',
     tasks
   };
   saveData(data);
@@ -1279,6 +1329,34 @@ function editQuest() {
   const data=getData();
   const nq=prompt('Update your quest:',data.hero.quest);
   if(nq&&nq.trim()){data.hero.quest=nq.trim();saveData(data);renderDaily();toast('Quest updated!');}
+}
+
+function applyJournalFont() {
+  const fam = document.getElementById('font-family-select')?.value || "'Crimson Text', Georgia, serif";
+  const sz  = document.getElementById('font-size-range')?.value  || '13';
+  document.documentElement.style.setProperty('--journal-font', fam);
+  document.documentElement.style.setProperty('--journal-size', sz + 'px');
+  const lbl = document.getElementById('font-size-val');
+  if (lbl) lbl.textContent = sz + 'px';
+  const data = getData(); data.settings = data.settings || {};
+  data.settings.journalFont = fam; data.settings.journalSize = sz;
+  saveData(data);
+}
+
+function loadJournalFont() {
+  const s = (getData().settings) || {};
+  if (s.journalFont) {
+    const sel = document.getElementById('font-family-select');
+    if (sel) sel.value = s.journalFont;
+    document.documentElement.style.setProperty('--journal-font', s.journalFont);
+  }
+  if (s.journalSize) {
+    const rng = document.getElementById('font-size-range');
+    if (rng) rng.value = s.journalSize;
+    const lbl = document.getElementById('font-size-val');
+    if (lbl) lbl.textContent = s.journalSize + 'px';
+    document.documentElement.style.setProperty('--journal-size', s.journalSize + 'px');
+  }
 }
 
 // ══════════════════════════════════════════════
