@@ -505,23 +505,29 @@ textarea { min-height: 76px; }
   background: rgba(255,255,255,0.08);
   border-bottom: 1px solid rgba(80,40,10,0.25) !important;
 }
-/* Day pills on spread */
-#day-pills-spread { display:flex; gap:1px; align-items:center; height:100%; }
-#day-pills-spread .dpill {
-  flex:1; text-align:center;
-  font-family:'Cinzel',serif;
-  font-size: clamp(5px, 0.75vw, 9px);
-  color: rgba(80,40,10,0.6);
-  border-radius: 3px;
-  padding: 1px 0;
-  cursor: default;
-}
-#day-pills-spread .dpill.active {
-  background: rgba(201,152,31,0.5);
-  color: #3a1800;
-  font-weight: 700;
+/* Day-of-week buttons in toolbar */
+.dow-btn {
+  width: 22px; height: 22px;
   border-radius: 50%;
+  border: 1px solid rgba(201,152,31,0.45);
+  background: transparent;
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  color: rgba(240,192,64,0.7);
+  cursor: pointer;
+  padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
 }
+.dow-btn:hover { background: rgba(201,152,31,0.2); color: var(--gold-light); }
+.dow-btn.active {
+  background: rgba(201,152,31,0.6);
+  color: #2a0e00;
+  font-weight: 700;
+  border-color: var(--gold);
+}
+.dow-group { display:flex; gap:3px; align-items:center; margin-left:6px; }
 /* Chronicle big textarea */
 .pov textarea.chr-area {
   line-height: 1.75;
@@ -723,7 +729,7 @@ textarea { min-height: 76px; }
   <span id="daily-quest-text" style="display:none"></span>
   <div id="quest-banner" style="display:none"></div>
 
-  <!-- Font toolbar -->
+  <!-- Font + day-of-week toolbar -->
   <div class="font-toolbar" id="font-toolbar">
     <label>Font:</label>
     <select id="font-family-select" onchange="applyJournalFont()">
@@ -737,6 +743,7 @@ textarea { min-height: 76px; }
     <label>Size:</label>
     <input type="range" id="font-size-range" min="8" max="20" value="13" oninput="applyJournalFont()">
     <span class="sz-val" id="font-size-val">13px</span>
+    <div class="dow-group" id="dow-group"></div>
   </div>
 
   <!-- PDF spread — fills viewport, all controls float on top -->
@@ -761,11 +768,6 @@ textarea { min-height: 76px; }
     <div class="pov" style="left:24%;top:2%;width:16%;height:4%">
       <input type="text" id="daily-date" placeholder="Date…" oninput="onDateInput()" title="Record the date">
     </div>
-    <!-- Day-of-week pills — over printed S M T W T F S -->
-    <div class="pov" style="left:42%;top:2%;width:15%;height:4.5%">
-      <div id="day-pills-spread"></div>
-    </div>
-
     <!-- ── LEFT PAGE: CHRONICLE (below instruction bubble, ~14% down) ── -->
     <div class="pov" style="left:30.0%;top:15%;width:19.1%;height:64%">
       <textarea id="chr-text" class="chr-area" placeholder="Chronicle your journey…"></textarea>
@@ -1271,6 +1273,8 @@ function renderDaily() {
   document.getElementById('daily-quest-input').value = data.hero.quest;
   // Date: show stored label (no auto-fill)
   document.getElementById('daily-date').value = e.date_label || '';
+  // Day of week: use stored value, or parse from date label
+  curDow = (typeof e.dow === 'number') ? e.dow : -1;
   renderDayPills(e.date_label || '');
 
   document.getElementById('g1').value = e.g1 || '';
@@ -1300,19 +1304,26 @@ function renderDaily() {
   document.getElementById('ch-notice').style.display = showNotice ? 'block' : 'none';
 }
 
+// curDow = 0-6 (Sun-Sat) or -1 for none; set by clicking a button or parsing date
+let curDow = -1;
+
 function renderDayPills(dateLabel) {
-  const el = document.getElementById('day-pills-spread');
-  if (!el) return;
-  // Try to parse the date label to highlight the correct day
-  let dow = -1;
+  // Try to auto-detect day from date label
   if (dateLabel) {
-    // Handle YYYY-MM-DD or any parseable date string
     const d = new Date(dateLabel + (dateLabel.includes('T') ? '' : 'T12:00:00'));
-    if (!isNaN(d)) dow = d.getDay();
+    if (!isNaN(d)) curDow = d.getDay();
   }
+  const el = document.getElementById('dow-group');
+  if (!el) return;
   el.innerHTML = DAYS_SHORT.map((d,i) =>
-    `<div class="dpill${i===dow?' active':''}" title="${DAYS_LONG[i]}">${d}</div>`
+    `<button class="dow-btn${i===curDow?' active':''}" title="${DAYS_LONG[i]}"
+      onclick="selectDow(${i})">${d}</button>`
   ).join('');
+}
+
+function selectDow(i) {
+  curDow = (curDow === i) ? -1 : i;  // toggle off if same day clicked again
+  renderDayPills('');
 }
 
 function toggleTask(i) { toggleTaskDone(i); }
@@ -1339,6 +1350,7 @@ function saveEntry() {
   const journal = journalEntries(data);
   journal[curPos] = {
     date_label: dateLabel,
+    dow: curDow,
     completed: true,
     savedAt: new Date().toISOString(),
     g1:      document.getElementById('g1').value,
@@ -1376,8 +1388,11 @@ function shiftPos(n) {
 function shiftDay(n) { shiftPos(n); }
 
 function onDateInput() {
-  // Refresh day-of-week pills live as user types the date
-  renderDayPills(document.getElementById('daily-date').value);
+  const val = document.getElementById('daily-date').value;
+  // Auto-detect day if input looks like a parseable date
+  const d = new Date(val + (val.includes('T') ? '' : 'T12:00:00'));
+  if (!isNaN(d) && val.length >= 8) curDow = d.getDay();
+  renderDayPills('');  // don't re-parse (curDow already set above)
 }
 function onDateChange() { onDateInput(); }
 function editQuest() {
