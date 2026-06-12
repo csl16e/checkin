@@ -642,7 +642,7 @@ textarea { min-height: 76px; }
   <a href="index.html" style="font-family:'Cinzel',serif;font-size:0.65rem;color:rgba(201,152,31,0.7);text-decoration:none;letter-spacing:0.05em;white-space:nowrap" title="Back to Dashboard">🏠 Home</a>
   <h1>⚔️ Hero's Journal</h1>
   <nav id="nav-tabs">
-    <button class="nav-btn" id="nav-daily"    onclick="showScreen('daily')">📖 Today</button>
+    <button class="nav-btn" id="nav-daily"    onclick="goToToday()">📖 Today</button>
     <button class="nav-btn" id="nav-chapter"  onclick="showScreen('chapter')">📜 Chapter</button>
     <button class="nav-btn" id="nav-overview" onclick="showScreen('overview')">⚔️ Character</button>
     <button class="nav-btn" id="nav-log"      onclick="showScreen('log')">📚 Log</button>
@@ -750,24 +750,24 @@ textarea { min-height: 76px; }
     <div class="spd-info" id="spread-date-label"></div>
 
     <!-- Navigation arrows (float on left/right of spread) -->
-    <button class="spd-nav spd-prev" onclick="shiftDay(-1)" title="Previous day">‹</button>
-    <button class="spd-nav spd-next" onclick="shiftDay(1)"  title="Next day">›</button>
+    <button class="spd-nav spd-prev" onclick="shiftPos(-1)" title="Previous entry">‹</button>
+    <button class="spd-nav spd-next" onclick="shiftPos(1)"  title="Next entry">›</button>
 
     <!-- Save button (floats bottom center) -->
     <button class="spd-save" onclick="saveEntry()">✦ Save Entry</button>
 
     <!-- ── DATE & DAY PILLS ── -->
-    <!-- Date input — spans the 3 tiny PDF date cells (left:29-38%, top:2.8%) -->
-    <div class="pov" style="left:29.4%;top:2.8%;width:8.5%;height:2.9%">
-      <input type="date" id="daily-date" onchange="onDateChange()" title="Change date">
+    <!-- Date label — user types whatever date they want, overlays printed date area -->
+    <div class="pov" style="left:24%;top:2%;width:16%;height:4%">
+      <input type="text" id="daily-date" placeholder="Date…" oninput="onDateInput()" title="Record the date">
     </div>
     <!-- Day-of-week pills — over printed S M T W T F S -->
     <div class="pov" style="left:42%;top:2%;width:15%;height:4.5%">
       <div id="day-pills-spread"></div>
     </div>
 
-    <!-- ── LEFT PAGE: CHRONICLE (single wrapping textarea over all 15 ruled lines) ── -->
-    <div class="pov" style="left:30.0%;top:7.5%;width:19.1%;height:71.7%">
+    <!-- ── LEFT PAGE: CHRONICLE (below instruction bubble, ~14% down) ── -->
+    <div class="pov" style="left:30.0%;top:15%;width:19.1%;height:64%">
       <textarea id="chr-text" class="chr-area" placeholder="Chronicle your journey…"></textarea>
     </div>
 
@@ -792,20 +792,20 @@ textarea { min-height: 76px; }
       <textarea id="daily-quest-input" placeholder=""></textarea>
     </div>
 
-    <!-- ── RIGHT PAGE: TASKS + CHECKBOXES ── -->
-    <div class="pov" style="left:56.2%;top:18.9%;width:33.3%;height:4.9%">
+    <!-- ── RIGHT PAGE: TASKS + CHECKBOXES (left shifted past printed 1/2/3 numbers) ── -->
+    <div class="pov" style="left:59.5%;top:18.9%;width:30%;height:4.9%">
       <input type="text" id="task0" placeholder="🐸 …">
     </div>
     <div class="pov" style="left:92.9%;top:20.1%;width:2.1%;height:2.9%">
       <div class="task-done-marker" id="tc0" onclick="toggleTaskDone(0)"></div>
     </div>
-    <div class="pov" style="left:56.2%;top:24.0%;width:33.3%;height:4.9%">
+    <div class="pov" style="left:59.5%;top:24.0%;width:30%;height:4.9%">
       <input type="text" id="task1" placeholder="…">
     </div>
     <div class="pov" style="left:92.9%;top:25.2%;width:2.1%;height:2.9%">
       <div class="task-done-marker" id="tc1" onclick="toggleTaskDone(1)"></div>
     </div>
-    <div class="pov" style="left:56.2%;top:29.1%;width:33.3%;height:4.9%">
+    <div class="pov" style="left:59.5%;top:29.1%;width:30%;height:4.9%">
       <input type="text" id="task2" placeholder="…">
     </div>
     <div class="pov" style="left:92.9%;top:30.1%;width:2.1%;height:2.9%">
@@ -1066,23 +1066,23 @@ async function loadPdfDoc() {
 async function renderPdfPage(pageIdx0) {
   const canvas = document.getElementById('pdf-canvas');
   if (!canvas) return;
-  if (!pdfDoc) {
-    // Fallback: JPEG background (old approach)
-    return;
-  }
+  if (!pdfDoc) return;
   if (pdfRenderTask) { try { pdfRenderTask.cancel(); } catch(e){} }
   try {
-    const page = await pdfDoc.getPage(pageIdx0 + 1); // 1-indexed
+    const page = await pdfDoc.getPage(pageIdx0 + 1);
     const spread = document.getElementById('pdf-spread');
     const w = spread.clientWidth || 900;
+    const dpr = window.devicePixelRatio || 1;
     const naturalVP = page.getViewport({ scale: 1 });
-    const scale = w / naturalVP.width;
+    const scale = (w / naturalVP.width) * dpr;
     const viewport = page.getViewport({ scale });
-    canvas.width = viewport.width;
+    // Physical pixels = CSS px * dpr for crisp HiDPI rendering
+    canvas.width  = viewport.width;
     canvas.height = viewport.height;
+    canvas.style.width  = (viewport.width  / dpr) + 'px';
+    canvas.style.height = (viewport.height / dpr) + 'px';
     pdfRenderTask = page.render({ canvasContext: canvas.getContext('2d'), viewport });
     await pdfRenderTask.promise;
-    // PDF rendered — hide the JPEG fallback so the canvas shows through
     spread.style.backgroundImage = 'none';
   } catch(e) {
     if (e.name !== 'RenderingCancelledException') console.warn('PDF render error:', e);
@@ -1155,16 +1155,21 @@ function toast(msg) {
 // ══════════════════════════════════════════════
 // SCREEN NAV
 // ══════════════════════════════════════════════
+let _curPosReady = false;
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
   const nb=document.getElementById('nav-'+name); if(nb) nb.classList.add('active');
-  if(name==='daily')    renderDaily();
+  if(name==='daily') {
+    if (!_curPosReady) { initCurPos(getData()); _curPosReady = true; }
+    renderDaily();
+  }
   if(name==='chapter')  renderChapter();
   if(name==='overview') renderOverview();
   if(name==='log')      renderLog();
 }
+function goToToday() { initCurPos(getData()); showScreen('daily'); }
 
 // ══════════════════════════════════════════════
 // ONBOARDING
@@ -1203,128 +1208,178 @@ function obComplete() {
 }
 
 // ══════════════════════════════════════════════
-// DAILY
+// DAILY — position-based navigation (0–83)
 // ══════════════════════════════════════════════
-let curDate = todayStr();
+
+function posToChDay(pos) {
+  const ch  = Math.floor(pos / 7) + 1;  // 1-indexed chapter (1-12)
+  const day = pos % 7;                   // 0-indexed day within chapter
+  return { ch: Math.min(ch, 12), day };
+}
+
+function journalEntries(data) {
+  // Migrate old date-keyed entries to data.journal on first access
+  if (!data.journal) {
+    data.journal = {};
+    const old = data.entries || {};
+    const sorted = Object.entries(old)
+      .filter(([,v]) => v && v.completed)
+      .sort(([a],[b]) => a.localeCompare(b));
+    sorted.forEach(([date, e], i) => {
+      data.journal[i] = { ...e, date_label: date };
+    });
+  }
+  return data.journal;
+}
+
+function journalCompletedCount(data) {
+  return Object.keys(journalEntries(data)).length;
+}
+
+let curPos = 0;  // 0-indexed position in 84-entry journey
+
+function initCurPos(data) {
+  const n = journalCompletedCount(data);
+  curPos = Math.min(83, n);  // open next blank entry
+}
 
 function renderDaily() {
-  const data=getData(); if(!data) return;
+  const data = getData(); if (!data) return;
   loadJournalFont();
-  // Set PDF background image
-  const done0  = completedCount(data.entries);
-  const chNum  = Math.min(currentChapterNum(data.entries), 12);
-  const dayInCh= done0 % 7;
-  const imgPath= `pages/ch${String(chNum).padStart(2,'0')}_day${dayInCh+1}.jpg`;
-  // Render PDF page (async, non-blocking)
+  if (curPos === 0 && journalCompletedCount(data) === 0) { /* fresh start, pos=0 */ }
+
+  const { ch: chNum, day: dayInCh } = posToChDay(curPos);
+
+  // Instant JPEG fallback
+  document.getElementById('pdf-spread').style.backgroundImage =
+    `url('pages/ch${String(chNum).padStart(2,'0')}_day${dayInCh+1}.jpg')`;
+  // Hi-res PDF canvas
   loadPdfDoc().then(() => {
-    const pdfPageIdx = PDF_PAGE_MAP[Math.min(chNum,12)-1][dayInCh];
-    renderPdfPage(pdfPageIdx);
+    renderPdfPage(PDF_PAGE_MAP[chNum-1][dayInCh]);
   });
-  // Keep JPEG as instant fallback while PDF loads
-  document.getElementById('pdf-spread').style.backgroundImage = `url('pages/ch${String(chNum).padStart(2,'0')}_day${dayInCh+1}.jpg')`;
-  // Date label above spread
-  const ch = CHAPTERS[Math.min(chNum,12)-1];
-  const lbl=document.getElementById('spread-date-label'); if(lbl) lbl.textContent =
-    `${ch.name.toUpperCase()} · DAY ${dayInCh+1} OF 7 · ACT ${ch.act}`;
-  // Populate fields
-  document.getElementById('daily-quest-text').textContent=data.hero.quest;
-  document.getElementById('daily-quest-input').value=data.hero.quest;
-  document.getElementById('daily-date').value=curDate;
-  renderDayPills();
-  const e=data.entries[curDate]||{};
-  document.getElementById('g1').value=e.g1||'';
-  document.getElementById('g2').value=e.g2||'';
-  document.getElementById('g3').value=e.g3||'';
-  document.getElementById('daily-notes').value=e.notes||'';
-  document.getElementById('daily-allies').value=e.allies||'';
-  document.getElementById('daily-threats').value=e.threats||'';
-  // Chronicle — single textarea (backward compat with array or old sched string)
+
+  // Chapter/day label
+  const ch = CHAPTERS[chNum-1];
+  const lbl = document.getElementById('spread-date-label');
+  if (lbl) lbl.textContent = `${ch.name.toUpperCase()} · DAY ${dayInCh+1} OF 7 · ACT ${ch.act}`;
+
+  // Populate fields from journal entry at curPos
+  const journal = journalEntries(data);
+  const e = journal[curPos] || {};
+
+  document.getElementById('daily-quest-text').textContent = data.hero.quest;
+  document.getElementById('daily-quest-input').value = data.hero.quest;
+  // Date: show stored label (no auto-fill)
+  document.getElementById('daily-date').value = e.date_label || '';
+  renderDayPills(e.date_label || '');
+
+  document.getElementById('g1').value = e.g1 || '';
+  document.getElementById('g2').value = e.g2 || '';
+  document.getElementById('g3').value = e.g3 || '';
+  document.getElementById('daily-notes').value   = e.notes   || '';
+  document.getElementById('daily-allies').value  = e.allies  || '';
+  document.getElementById('daily-threats').value = e.threats || '';
+
   const chrEl = document.getElementById('chr-text');
   if (chrEl) {
     const chr = e.chronicle;
-    if (Array.isArray(chr)) {
-      chrEl.value = chr.filter(Boolean).join('\n');
-    } else {
-      chrEl.value = chr || e.sched || '';
-    }
+    if (Array.isArray(chr)) { chrEl.value = chr.filter(Boolean).join('\n'); }
+    else                    { chrEl.value = chr || e.sched || ''; }
   }
-  // Tasks
-  const tasks=e.tasks||[{text:'',done:false},{text:'',done:false},{text:'',done:false}];
-  [0,1,2].forEach(i=>{
-    const inp=document.getElementById('task'+i);
-    if(inp) inp.value=tasks[i]?.text||'';
-    const tc=document.getElementById('tc'+i);
-    if(tc){ tc.textContent=tasks[i]?.done?'✓':''; tc.classList.toggle('done',!!tasks[i]?.done); }
+
+  const tasks = e.tasks || [{text:'',done:false},{text:'',done:false},{text:'',done:false}];
+  [0,1,2].forEach(i => {
+    const inp = document.getElementById('task'+i);
+    if (inp) inp.value = tasks[i]?.text || '';
+    const tc  = document.getElementById('tc'+i);
+    if (tc)  { tc.textContent = tasks[i]?.done ? '✓' : ''; tc.classList.toggle('done', !!tasks[i]?.done); }
   });
-  const doneN=completedCount(data.entries);
-  const chN=currentChapterNum(data.entries);
-  const showNotice=doneN>0 && doneN%7===0 && !data.chapters[chN-1];
-  document.getElementById('ch-notice').style.display=showNotice?'block':'none';
+
+  const done = journalCompletedCount(data);
+  const showNotice = done > 0 && done % 7 === 0 && !data.chapters[chNum-1];
+  document.getElementById('ch-notice').style.display = showNotice ? 'block' : 'none';
 }
 
-function renderDayPills() {
-  const dow=dayOfWeek(curDate);
-  const el=document.getElementById('day-pills-spread');
-  if(el) el.innerHTML=DAYS_SHORT.map((d,i)=>
+function renderDayPills(dateLabel) {
+  const el = document.getElementById('day-pills-spread');
+  if (!el) return;
+  // Try to parse the date label to highlight the correct day
+  let dow = -1;
+  if (dateLabel) {
+    // Handle YYYY-MM-DD or any parseable date string
+    const d = new Date(dateLabel + (dateLabel.includes('T') ? '' : 'T12:00:00'));
+    if (!isNaN(d)) dow = d.getDay();
+  }
+  el.innerHTML = DAYS_SHORT.map((d,i) =>
     `<div class="dpill${i===dow?' active':''}" title="${DAYS_LONG[i]}">${d}</div>`
   ).join('');
-}
-
-function renderTasks(tasks) {
-  // Tasks now rendered as direct overlay inputs — no-op here
 }
 
 function toggleTask(i) { toggleTaskDone(i); }
 
 function toggleTaskDone(i) {
-  const tc=document.getElementById('tc'+i);
-  if(!tc) return;
-  const isDone=!tc.classList.contains('done');
+  const tc = document.getElementById('tc'+i);
+  if (!tc) return;
+  const isDone = !tc.classList.contains('done');
   tc.classList.toggle('done', isDone);
-  tc.textContent=isDone?'✓':'';
+  tc.textContent = isDone ? '✓' : '';
 }
 
 function saveEntry() {
-  const data=getData();
-  // Save updated quest if changed
-  const qInp=document.getElementById('daily-quest-input');
-  if(qInp&&qInp.value.trim()) data.hero.quest=qInp.value.trim();
-  const tasks=[0,1,2].map(i=>({
-    text:document.getElementById('task'+i)?.value||'',
-    done:document.getElementById('tc'+i)?.classList.contains('done')||false
+  const data = getData();
+  const qInp = document.getElementById('daily-quest-input');
+  if (qInp && qInp.value.trim()) data.hero.quest = qInp.value.trim();
+
+  const tasks = [0,1,2].map(i => ({
+    text: document.getElementById('task'+i)?.value || '',
+    done: document.getElementById('tc'+i)?.classList.contains('done') || false
   }));
-  data.entries[curDate]={
-    date:curDate, completed:true, savedAt:new Date().toISOString(),
-    g1:document.getElementById('g1').value,
-    g2:document.getElementById('g2').value,
-    g3:document.getElementById('g3').value,
-    notes:document.getElementById('daily-notes').value,
-    allies:document.getElementById('daily-allies').value,
-    threats:document.getElementById('daily-threats').value,
-    chronicle: document.getElementById('chr-text')?.value||'',
+  const dateLabel = document.getElementById('daily-date').value.trim();
+
+  const journal = journalEntries(data);
+  journal[curPos] = {
+    date_label: dateLabel,
+    completed: true,
+    savedAt: new Date().toISOString(),
+    g1:      document.getElementById('g1').value,
+    g2:      document.getElementById('g2').value,
+    g3:      document.getElementById('g3').value,
+    notes:   document.getElementById('daily-notes').value,
+    allies:  document.getElementById('daily-allies').value,
+    threats: document.getElementById('daily-threats').value,
+    chronicle: document.getElementById('chr-text')?.value || '',
     tasks
   };
-  saveData(data);
-  const p=document.getElementById('pdf-spread');
-  p.style.transform='scale(1.005)'; setTimeout(()=>p.style.transform='',400);
-  toast('✦ Entry saved!');
-  document.getElementById('daily-quest-text').textContent=data.hero.quest;
-  const done=completedCount(data.entries);
-  if(done>0&&done%7===0){
-    const chN=currentChapterNum(data.entries);
-    if(!data.chapters[chN-1]) document.getElementById('ch-notice').style.display='block';
+  // Also keep backward-compat entries by date for log/streak views
+  if (dateLabel) {
+    data.entries = data.entries || {};
+    data.entries[dateLabel] = { ...journal[curPos], date: dateLabel };
   }
+  saveData(data);
+
+  const p = document.getElementById('pdf-spread');
+  p.style.transform = 'scale(1.005)'; setTimeout(() => p.style.transform = '', 400);
+  toast('✦ Entry saved!');
+  document.getElementById('daily-quest-text').textContent = data.hero.quest;
+
+  const done = journalCompletedCount(data);
+  const { ch: chN } = posToChDay(curPos);
+  if (done > 0 && done % 7 === 0 && !data.chapters[chN-1])
+    document.getElementById('ch-notice').style.display = 'block';
 }
 
-function shiftDay(n) {
-  curDate=addDays(curDate,n);
+function shiftPos(n) {
+  curPos = Math.max(0, Math.min(83, curPos + n));
   renderDaily();
 }
-function onDateChange() {
-  curDate=document.getElementById('daily-date').value;
-  renderDayPills();
-  renderDaily();
+// keep old name as alias so any stale calls don't break
+function shiftDay(n) { shiftPos(n); }
+
+function onDateInput() {
+  // Refresh day-of-week pills live as user types the date
+  renderDayPills(document.getElementById('daily-date').value);
 }
+function onDateChange() { onDateInput(); }
 function editQuest() {
   const data=getData();
   const nq=prompt('Update your quest:',data.hero.quest);
@@ -1492,7 +1547,18 @@ function showLogEntry(date) {
   document.getElementById('log-detail').scrollIntoView({behavior:'smooth'});
 }
 
-function jumpToEntry(date) { curDate=date; showScreen('daily'); }
+function jumpToEntry(posOrDate) {
+  if (typeof posOrDate === 'number') {
+    curPos = posOrDate;
+  } else {
+    // Find position with matching date_label
+    const j = journalEntries(getData());
+    const found = Object.entries(j).find(([,e]) => e.date_label === posOrDate);
+    if (found) curPos = parseInt(found[0]);
+  }
+  _curPosReady = true;
+  showScreen('daily');
+}
 
 // ══════════════════════════════════════════════
 // CHAPTER ILLUSTRATIONS — 12 SVG SCENE FUNCTIONS
