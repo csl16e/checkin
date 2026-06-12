@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hero's Journal — Legend of Istoria</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Kalam:wght@300;400;700&family=Caveat:wght@400;600&family=Patrick+Hand&family=Indie+Flower&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Metamorphous&family=UnifrakturMaguntia&family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=IM+Fell+English:ital@0;1&family=Kalam:wght@300;400;700&family=Caveat:wght@400;600&family=Patrick+Hand&family=Indie+Flower&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -61,7 +61,7 @@ body {
   gap: 8px;
 }
 #app-header h1 {
-  font-family: 'Cinzel Decorative', serif;
+  font-family: 'Metamorphous', 'Cinzel Decorative', serif;
   color: var(--gold-light);
   font-size: 0.95rem;
   text-shadow: 0 0 20px var(--gold-glow);
@@ -72,7 +72,7 @@ body {
   background: transparent;
   border: 1px solid var(--gold);
   color: var(--gold-light);
-  font-family: 'Cinzel', serif;
+  font-family: 'Metamorphous', 'Cinzel', serif;
   font-size: 0.65rem;
   padding: 5px 10px;
   cursor: pointer;
@@ -83,6 +83,8 @@ body {
 .nav-btn:hover, .nav-btn.active {
   background: var(--gold);
   color: var(--bg-deep);
+  box-shadow: 0 0 12px rgba(201,152,31,0.5);
+  transform: translateY(-1px);
 }
 
 /* ─── SCREENS ─── */
@@ -111,17 +113,17 @@ body {
 
 /* ─── TYPOGRAPHY ─── */
 .section-title {
-  font-family: 'Cinzel', serif;
+  font-family: 'Metamorphous', 'Cinzel', serif;
   color: var(--crimson);
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   border-bottom: 1px solid rgba(201,152,31,0.5);
   padding-bottom: 4px;
   margin: 18px 0 10px;
 }
 .section-title:first-child { margin-top: 0; }
-.fantasy-h { font-family:'Cinzel Decorative',serif; color:var(--gold-light); }
+.fantasy-h { font-family:'Metamorphous','Cinzel Decorative',serif; color:var(--gold-light); }
 
 /* ─── INPUTS ─── */
 input[type=text], input[type=date], textarea, select {
@@ -145,9 +147,9 @@ textarea { min-height: 76px; }
 
 /* ─── BUTTONS ─── */
 .btn {
-  font-family: 'Cinzel', serif;
+  font-family: 'Metamorphous', 'Cinzel', serif;
   font-size: 0.75rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   padding: 9px 22px;
   border: none;
   border-radius: 6px;
@@ -184,7 +186,7 @@ textarea { min-height: 76px; }
   padding: 40px 0 24px;
 }
 .ob-welcome .big-title {
-  font-family:'Cinzel Decorative',serif;
+  font-family:'Metamorphous','Cinzel Decorative',serif;
   color: var(--gold-light);
   font-size: clamp(1.4rem, 5vw, 2.2rem);
   text-shadow: 0 0 30px var(--gold-glow), 0 0 60px rgba(201,152,31,0.15);
@@ -314,8 +316,8 @@ textarea { min-height: 76px; }
 
 /* ─── CHAPTER REVIEW ─── */
 .ch-header { text-align:center; padding:10px 0 18px; }
-.ch-num-label { font-family:'Cinzel',serif; font-size:0.68rem; letter-spacing:0.2em; color:var(--gold); text-transform:uppercase; }
-.ch-name { font-family:'Cinzel Decorative',serif; font-size:clamp(1.3rem,4vw,1.9rem); color:var(--crimson); margin:4px 0; }
+.ch-num-label { font-family:'Metamorphous','Cinzel',serif; font-size:0.68rem; letter-spacing:0.15em; color:var(--gold); text-transform:uppercase; }
+.ch-name { font-family:'Metamorphous','Cinzel Decorative',serif; font-size:clamp(1.3rem,4vw,1.9rem); color:var(--crimson); margin:4px 0; }
 .ch-act { font-size:0.85rem; color:var(--ink-light); font-style:italic; }
 .ch-intro { color:var(--ink-light); font-style:italic; text-align:center; margin-bottom:4px; font-size:0.97rem; }
 
@@ -370,8 +372,14 @@ textarea { min-height: 76px; }
 .streak-badge {
   display:inline-flex; align-items:center; gap:5px;
   background:linear-gradient(135deg,#8b1a1a,#c9981f);
-  color:white; font-family:'Cinzel',serif; font-size:0.68rem;
-  padding:4px 14px; border-radius:20px; letter-spacing:0.04em;
+  color:white; font-family:'Metamorphous','Cinzel',serif; font-size:0.68rem;
+  padding:5px 16px; border-radius:20px; letter-spacing:0.04em;
+  box-shadow: 0 0 14px rgba(201,152,31,0.4);
+  animation: streak-glow 2s ease-in-out infinite;
+}
+@keyframes streak-glow {
+  0%,100% { box-shadow: 0 0 10px rgba(201,152,31,0.3); }
+  50% { box-shadow: 0 0 20px rgba(201,152,31,0.6); }
 }
 
 /* ─── LOG ─── */
@@ -464,12 +472,12 @@ textarea { min-height: 76px; }
   position:absolute; bottom:1.5%; left:50%; transform:translateX(-50%);
   background:linear-gradient(135deg,#c9981f,#8b6914);
   color:#0d0a07; border:none;
-  padding:0.5% 4%; border-radius:20px;
-  font-family:'Cinzel',serif; font-size:clamp(8px,1.1vw,13px);
-  letter-spacing:0.05em; cursor:pointer; z-index:20;
+  padding:0.6% 5%; border-radius:20px;
+  font-family:'Metamorphous','Cinzel',serif; font-size:clamp(8px,1.1vw,13px);
+  letter-spacing:0.06em; cursor:pointer; z-index:20;
   white-space:nowrap;
+  box-shadow: 0 0 12px rgba(201,152,31,0.35);
 }
-.spd-save:hover { background:linear-gradient(135deg,#f0c040,#c9981f); }
 
 /* Chapter/date info overlay */
 .spd-info {
@@ -706,6 +714,221 @@ textarea { min-height: 76px; }
 ::-webkit-scrollbar { width:6px; }
 ::-webkit-scrollbar-track { background:var(--bg-deep); }
 ::-webkit-scrollbar-thumb { background:var(--gold); border-radius:3px; }
+
+/* ─── SETTINGS GEAR (floating on spread) ─── */
+.spd-settings {
+  position: absolute;
+  top: 1.2%;
+  right: 0.5%;
+  background: linear-gradient(135deg, rgba(201,152,31,0.25), rgba(80,40,5,0.35));
+  border: 1.5px solid rgba(201,152,31,0.65);
+  color: var(--gold-light);
+  width: clamp(28px, 4%, 42px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 25;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(11px, 1.6vw, 18px);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.3s;
+  box-shadow: 0 0 10px rgba(201,152,31,0.4), 0 0 20px rgba(201,152,31,0.15);
+  animation: gear-glow 2.5s ease-in-out infinite;
+}
+.spd-settings:hover {
+  background: rgba(201,152,31,0.45);
+  box-shadow: 0 0 22px rgba(201,152,31,0.7);
+  transform: rotate(45deg);
+}
+@keyframes gear-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(201,152,31,0.4), 0 0 20px rgba(201,152,31,0.1); }
+  50%       { box-shadow: 0 0 16px rgba(201,152,31,0.7), 0 0 32px rgba(201,152,31,0.25); }
+}
+
+/* ─── SETTINGS DRAWER ─── */
+.settings-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(3px);
+  z-index: 498;
+  display: none;
+  cursor: pointer;
+}
+.settings-overlay.open { display: block; }
+
+.settings-drawer {
+  position: fixed;
+  top: 0; right: 0;
+  width: 300px;
+  max-width: 90vw;
+  height: 100vh;
+  background: linear-gradient(175deg, #1e0f07 0%, #120a04 60%, #0d0a07 100%);
+  border-left: 2px solid var(--gold);
+  z-index: 499;
+  transform: translateX(105%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0;
+  overflow-y: auto;
+  box-shadow: -10px 0 40px rgba(0,0,0,0.8), inset 1px 0 0 rgba(201,152,31,0.1);
+}
+.settings-drawer.open { transform: translateX(0); }
+.settings-drawer::-webkit-scrollbar { width: 4px; }
+.settings-drawer::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+.sd-head {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid rgba(201,152,31,0.3);
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(201,152,31,0.06);
+}
+.sd-title {
+  font-family: 'Metamorphous', 'Cinzel Decorative', serif;
+  color: var(--gold-light);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 12px rgba(201,152,31,0.4);
+}
+.sd-close {
+  background: none;
+  border: 1px solid rgba(201,152,31,0.4);
+  color: rgba(240,192,64,0.7);
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.sd-close:hover { background: rgba(201,152,31,0.15); color: var(--gold-light); }
+
+.sd-body { padding: 18px 20px 30px; }
+
+.sd-section-label {
+  font-family: 'Cinzel', serif;
+  color: var(--gold);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  margin-top: 20px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(201,152,31,0.2);
+}
+.sd-section-label:first-child { margin-top: 0; }
+
+.sd-row { margin-bottom: 12px; }
+.sd-row label {
+  display: block;
+  font-family: 'Cinzel', serif;
+  color: rgba(240,192,64,0.7);
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 5px;
+}
+.sd-row select {
+  width: 100%;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(201,152,31,0.4);
+  color: var(--gold-light);
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  border-radius: 5px;
+  padding: 7px 10px;
+  cursor: pointer;
+  height: auto;
+}
+.sd-row input[type=range] {
+  width: 100%;
+  accent-color: var(--gold);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  height: 18px;
+  border-radius: 0;
+  box-shadow: none;
+}
+.sd-range-row { display: flex; align-items: center; gap: 8px; }
+.sd-range-val {
+  min-width: 36px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  color: var(--gold-light);
+  text-align: right;
+}
+.sd-btn {
+  display: flex; align-items: center; gap: 7px;
+  width: 100%;
+  padding: 9px 14px;
+  margin-bottom: 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.07em;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+.sd-btn-gold {
+  background: transparent;
+  border: 1px solid rgba(201,152,31,0.45);
+  color: rgba(240,192,64,0.8);
+}
+.sd-btn-gold:hover { background: rgba(201,152,31,0.18); border-color: var(--gold); }
+.sd-btn-gold.active { background: rgba(201,152,31,0.25); color: #f0c040; border-color: var(--gold); }
+.sd-btn-red {
+  background: transparent;
+  border: 1px solid rgba(160,50,50,0.5);
+  color: rgba(210,90,90,0.8);
+}
+.sd-btn-red:hover { background: rgba(160,50,50,0.15); }
+.sd-divider {
+  height: 1px;
+  background: rgba(201,152,31,0.15);
+  margin: 16px 0;
+}
+
+/* ─── SPARKLE / PARTICLE EFFECT ─── */
+.sparkle-burst {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  top: 0; left: 0;
+}
+.sp-particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: sp-fly var(--d,0.9s) ease-out forwards;
+}
+@keyframes sp-fly {
+  0%   { transform: translate(0,0) scale(1); opacity:1; }
+  100% { transform: translate(var(--tx,0),var(--ty,-80px)) scale(0.2); opacity:0; }
+}
+
+/* ─── ENHANCED SAVE BUTTON ─── */
+.spd-save {
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+.spd-save:hover {
+  background: linear-gradient(135deg, #f0c040, #c9981f) !important;
+  box-shadow: 0 0 20px rgba(240,192,64,0.5) !important;
+  transform: translateX(-50%) scale(1.04) !important;
+}
+
+/* ─── SPREAD GLOW ON SAVE ─── */
+@keyframes spread-flash {
+  0%   { box-shadow: none; }
+  30%  { box-shadow: 0 0 0 4px rgba(201,152,31,0.5), 0 0 30px rgba(201,152,31,0.2); }
+  100% { box-shadow: none; }
+}
+.spread-saved { animation: spread-flash 0.8s ease-out; }
+
+/* ─── CHAPTER COMPLETE BANNER ─── */
+#ch-notice {
+  font-family: 'Metamorphous', 'Cinzel', serif !important;
+}
+
+/* ─── GRAT NUM ─── */
+.grat-num { font-family: 'Metamorphous', 'Cinzel', serif !important; }
 </style>
 </head>
 <body>
@@ -801,23 +1024,13 @@ textarea { min-height: 76px; }
   <span id="daily-quest-text" style="display:none"></span>
   <div id="quest-banner" style="display:none"></div>
 
-  <!-- Font + day-of-week toolbar -->
+  <!-- Toolbar: just day-of-week pills + compact info -->
   <div class="font-toolbar" id="font-toolbar">
-    <label>Font:</label>
-    <select id="font-family-select" onchange="applyJournalFont()">
-      <option value="'Crimson Text', Georgia, serif">Crimson Text</option>
-      <option value="'Kalam', cursive">Kalam (Handwritten)</option>
-      <option value="'Caveat', cursive">Caveat (Casual)</option>
-      <option value="'Patrick Hand', cursive">Patrick Hand</option>
-      <option value="'Indie Flower', cursive">Indie Flower</option>
-      <option value="'Cinzel', serif">Cinzel (Classic)</option>
-    </select>
-    <label>Size:</label>
-    <input type="range" id="font-size-range" min="8" max="20" value="13" oninput="applyJournalFont()">
-    <span class="sz-val" id="font-size-val">13px</span>
+    <span id="spread-pos-label" style="font-family:'Cinzel',serif;font-size:0.55rem;color:rgba(201,152,31,0.65);white-space:nowrap;flex-shrink:0;letter-spacing:0.06em"></span>
     <div class="dow-group" id="dow-group"></div>
-    <button id="layout-edit-btn" class="layout-edit-toggle" onclick="toggleLayoutEdit()" title="Drag boxes to reposition them">⚙ Edit Layout</button>
-    <button id="layout-reset-btn" onclick="resetLayoutPositions()" title="Reset all boxes to defaults">↺ Reset</button>
+    <!-- Hidden layout edit / reset kept for JS compatibility -->
+    <button id="layout-edit-btn" class="layout-edit-toggle" onclick="toggleLayoutEdit()" style="display:none">⚙ Edit Layout</button>
+    <button id="layout-reset-btn" onclick="resetLayoutPositions()" style="display:none">↺ Reset</button>
   </div>
 
   <!-- PDF spread — fills viewport, all controls float on top -->
@@ -836,6 +1049,9 @@ textarea { min-height: 76px; }
 
     <!-- Save button (floats bottom center) -->
     <button class="spd-save" onclick="saveEntry()">✦ Save Entry</button>
+
+    <!-- Settings gear (top right) -->
+    <button class="spd-settings" onclick="openSettings()" title="Journal Settings">⚙</button>
 
     <!-- ── DATE & DAY PILLS ── -->
     <!-- Date label — overlays the printed date slash area (left of sword divider) -->
@@ -1004,6 +1220,72 @@ textarea { min-height: 76px; }
 
 
 </div><!-- #app -->
+
+<!-- ══════════ SETTINGS OVERLAY + DRAWER ══════════ -->
+<div class="settings-overlay" id="settings-overlay" onclick="closeSettings()"></div>
+
+<div class="settings-drawer" id="settings-drawer">
+  <div class="sd-head">
+    <div class="sd-title">⚙ Journal Settings</div>
+    <button class="sd-close" onclick="closeSettings()">✕</button>
+  </div>
+  <div class="sd-body">
+
+    <div class="sd-section-label">✦ Handwriting Font</div>
+    <div class="sd-row">
+      <label>Font Style</label>
+      <select id="font-family-select" onchange="applyJournalFont()">
+        <option value="'Crimson Text', Georgia, serif">Crimson Text (Classic)</option>
+        <option value="'IM Fell English', Georgia, serif">IM Fell English (Olde World)</option>
+        <option value="'Kalam', cursive">Kalam (Handwritten)</option>
+        <option value="'Caveat', cursive">Caveat (Casual)</option>
+        <option value="'Patrick Hand', cursive">Patrick Hand</option>
+        <option value="'Indie Flower', cursive">Indie Flower</option>
+        <option value="'Cinzel', serif">Cinzel (Engraved)</option>
+      </select>
+    </div>
+    <div class="sd-row">
+      <label>Font Size</label>
+      <div class="sd-range-row">
+        <input type="range" id="font-size-range" min="8" max="20" value="13" oninput="applyJournalFont()">
+        <span class="sd-range-val" id="font-size-val">13px</span>
+      </div>
+    </div>
+
+    <div class="sd-divider"></div>
+    <div class="sd-section-label">⚔ Layout</div>
+    <button class="sd-btn sd-btn-gold" id="layout-edit-btn-sd" onclick="toggleLayoutEditFromSettings()">
+      <span id="layout-edit-sd-icon">✦</span>
+      <span id="layout-edit-sd-txt">Edit Text Box Positions</span>
+    </button>
+    <button class="sd-btn sd-btn-red" onclick="resetLayoutPositions()">
+      ↺ Reset to Default Layout
+    </button>
+
+    <div class="sd-divider"></div>
+    <div class="sd-section-label">📖 Navigation</div>
+    <button class="sd-btn sd-btn-gold" onclick="goToToday();closeSettings()">
+      📖 Go to Today's Entry
+    </button>
+    <button class="sd-btn sd-btn-gold" onclick="showScreen('chapter');closeSettings()">
+      📜 Chapter Review
+    </button>
+    <button class="sd-btn sd-btn-gold" onclick="showScreen('overview');closeSettings()">
+      ⚔️ Character Sheet
+    </button>
+    <button class="sd-btn sd-btn-gold" onclick="showScreen('log');closeSettings()">
+      📚 Adventure Log
+    </button>
+
+    <div class="sd-divider"></div>
+    <div style="font-family:'Cinzel',serif;font-size:0.5rem;color:rgba(201,152,31,0.35);text-align:center;letter-spacing:0.1em;padding-top:4px">
+      LEGEND OF ISTORIA · HERO'S JOURNAL
+    </div>
+  </div>
+</div>
+
+<!-- Sparkle container -->
+<div class="sparkle-burst" id="sparkle-burst"></div>
 
 <script src="pdfjs.min.js"></script>
 <script>
@@ -1284,13 +1566,14 @@ function obComplete() {
 }
 
 // ══════════════════════════════════════════════
-// DAILY — position-based navigation (0–83)
+// DAILY — position-based navigation (unlimited)
 // ══════════════════════════════════════════════
+const MAX_POS = 9999;
 
 function posToChDay(pos) {
-  const ch  = Math.floor(pos / 7) + 1;  // 1-indexed chapter (1-12)
-  const day = pos % 7;                   // 0-indexed day within chapter
-  return { ch: Math.min(ch, 12), day };
+  const ch  = (Math.floor(pos / 7) % 12) + 1;  // cycles chapters 1–12 indefinitely
+  const day = pos % 7;
+  return { ch, day };
 }
 
 function journalEntries(data) {
@@ -1316,7 +1599,7 @@ let curPos = 0;  // 0-indexed position in 84-entry journey
 
 function initCurPos(data) {
   const n = journalCompletedCount(data);
-  curPos = Math.min(83, n);  // open next blank entry
+  curPos = Math.min(MAX_POS, n);  // open next blank entry
 }
 
 function renderDaily() {
@@ -1379,6 +1662,8 @@ function renderDaily() {
 
   // Apply any saved custom layout positions
   loadLayoutPositions();
+  // Update toolbar position label
+  updateSpreadPosLabel();
 }
 
 // curDow = 0-6 (Sun-Sat) or -1 for none; set by clicking a button or parsing date
@@ -1446,8 +1731,7 @@ function saveEntry() {
   }
   saveData(data);
 
-  const p = document.getElementById('pdf-spread');
-  p.style.transform = 'scale(1.005)'; setTimeout(() => p.style.transform = '', 400);
+  sparkleSave();
   toast('✦ Entry saved!');
   document.getElementById('daily-quest-text').textContent = data.hero.quest;
 
@@ -1458,7 +1742,7 @@ function saveEntry() {
 }
 
 function shiftPos(n) {
-  curPos = Math.max(0, Math.min(83, curPos + n));
+  curPos = Math.max(0, Math.min(MAX_POS, curPos + n));
   renderDaily();
 }
 // keep old name as alias so any stale calls don't break
@@ -1556,6 +1840,13 @@ function toggleLayoutEdit() {
     document.removeEventListener('mousemove', _onEditMouseMove);
     document.removeEventListener('mouseup',   _onEditMouseUp);
     _saveLayoutPositions();
+    // Sync settings drawer button
+    const sdBtn = document.getElementById('layout-edit-btn-sd');
+    if (sdBtn) {
+      sdBtn.classList.remove('active');
+      document.getElementById('layout-edit-sd-icon').textContent = '✦';
+      document.getElementById('layout-edit-sd-txt').textContent = 'Edit Text Box Positions';
+    }
   }
 }
 
@@ -1802,6 +2093,97 @@ function jumpToEntry(posOrDate) {
 
 function updateIllustration() {
   // PDF spread background is set in renderDaily() — no SVG needed
+}
+
+// ══════════════════════════════════════════════
+// SETTINGS DRAWER
+// ══════════════════════════════════════════════
+function openSettings() {
+  document.getElementById('settings-drawer').classList.add('open');
+  document.getElementById('settings-overlay').classList.add('open');
+  // Sync font controls with current values
+  loadJournalFont();
+}
+function closeSettings() {
+  document.getElementById('settings-drawer').classList.remove('open');
+  document.getElementById('settings-overlay').classList.remove('open');
+  // If layout edit is active, keep it but close drawer
+}
+function toggleLayoutEditFromSettings() {
+  toggleLayoutEdit();
+  const btn = document.getElementById('layout-edit-btn-sd');
+  const ico = document.getElementById('layout-edit-sd-icon');
+  const txt = document.getElementById('layout-edit-sd-txt');
+  if (layoutEditMode) {
+    btn.classList.add('active');
+    ico.textContent = '✓';
+    txt.textContent = 'Done — Save Layout';
+    closeSettings();
+  } else {
+    btn.classList.remove('active');
+    ico.textContent = '✦';
+    txt.textContent = 'Edit Text Box Positions';
+  }
+}
+
+// ══════════════════════════════════════════════
+// SPARKLE EFFECT ON SAVE
+// ══════════════════════════════════════════════
+function sparkleSave() {
+  const spread = document.getElementById('pdf-spread');
+  if (!spread) return;
+  const rect = spread.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height * 0.85;
+
+  const container = document.getElementById('sparkle-burst');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const colors = ['#f0c040','#c9981f','#fff0a0','#ffd700','#ffe066','#ff9f40','rgba(255,255,255,0.9)'];
+  const count = 22;
+
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div');
+    el.className = 'sp-particle';
+    const size = 3 + Math.random() * 6;
+    const angle = (Math.random() * 360) * Math.PI / 180;
+    const dist  = 40 + Math.random() * 80;
+    const tx = Math.cos(angle) * dist;
+    const ty = Math.sin(angle) * dist - 20;
+    const dur = 0.6 + Math.random() * 0.5;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    el.style.cssText = `
+      left:${cx}px; top:${cy}px;
+      width:${size}px; height:${size}px;
+      background:${color};
+      box-shadow:0 0 4px ${color};
+      --tx:${tx}px; --ty:${ty}px; --d:${dur}s;
+    `;
+    container.appendChild(el);
+  }
+
+  // Flash the spread
+  spread.classList.remove('spread-saved');
+  void spread.offsetWidth; // reflow
+  spread.classList.add('spread-saved');
+  setTimeout(() => spread.classList.remove('spread-saved'), 900);
+
+  // Clean up particles
+  setTimeout(() => { container.innerHTML = ''; }, 1400);
+}
+
+// ══════════════════════════════════════════════
+// UPDATE SPREAD POS LABEL IN TOOLBAR
+// ══════════════════════════════════════════════
+function updateSpreadPosLabel() {
+  const lbl = document.getElementById('spread-pos-label');
+  if (!lbl) return;
+  try {
+    const { ch, day } = posToChDay(curPos);
+    const chInfo = CHAPTERS[ch - 1];
+    lbl.textContent = `${chInfo ? chInfo.name.toUpperCase() : 'CH.' + ch} · DAY ${day + 1}/7`;
+  } catch(e) {}
 }
 
 // ══════════════════════════════════════════════
