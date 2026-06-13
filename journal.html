@@ -315,31 +315,82 @@ textarea { min-height: 76px; }
 .force-card textarea { min-height:64px; font-size:0.95rem; }
 
 /* ─── CHAPTER REVIEW ─── */
-.ch-header { text-align:center; padding:10px 0 18px; }
-.ch-num-label { font-family:'Metamorphous','Cinzel',serif; font-size:0.68rem; letter-spacing:0.15em; color:var(--gold); text-transform:uppercase; }
-.ch-name { font-family:'Metamorphous','Cinzel Decorative',serif; font-size:clamp(1.3rem,4vw,1.9rem); color:var(--crimson); margin:4px 0; }
-.ch-act { font-size:0.85rem; color:var(--ink-light); font-style:italic; }
-.ch-intro { color:var(--ink-light); font-style:italic; text-align:center; margin-bottom:4px; font-size:0.97rem; }
-
-.xp-grid { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:14px 0; }
-.xp-item {
-  display:flex; flex-direction:column; align-items:center; gap:5px;
-  cursor:pointer; user-select:none;
+.ch-hero { position:relative; width:100%; min-height:240px; overflow:hidden; background:#100806; flex-shrink:0; }
+#ch-art-canvas { width:100%; display:block; opacity:0.9; }
+#cum-canvas { width:100%; display:block; }
+.ch-hero-overlay {
+  position:absolute; bottom:0; left:0; right:0;
+  background:linear-gradient(transparent 0%, rgba(8,4,2,0.75) 45%, rgba(8,4,2,0.97) 100%);
+  padding:70px 20px 22px; text-align:center;
 }
+.ch-complete-badge {
+  font-family:'Metamorphous','Cinzel',serif; font-size:0.6rem;
+  letter-spacing:0.3em; color:var(--gold); text-transform:uppercase;
+  margin-bottom:6px; text-shadow:0 0 12px var(--gold-glow);
+}
+.ch-num-label { font-family:'Metamorphous','Cinzel',serif; font-size:0.68rem; letter-spacing:0.15em; color:rgba(201,152,31,0.7); text-transform:uppercase; }
+.ch-name { font-family:'Metamorphous','Cinzel Decorative',serif; font-size:clamp(1.5rem,5vw,2.1rem); color:#fff; margin:4px 0; text-shadow:0 2px 14px rgba(0,0,0,0.9); }
+.ch-act { font-size:0.85rem; color:rgba(255,255,255,0.55); font-style:italic; }
+.ch-intro { color:var(--ink-light); font-style:italic; text-align:center; margin-bottom:16px; font-size:0.97rem; padding:14px 16px; background:rgba(201,152,31,0.07); border-left:3px solid var(--gold); border-radius:0 8px 8px 0; }
+
+.xp-grid { display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin:14px 0; }
+.xp-item { display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; user-select:none; transition:transform 0.15s; }
+.xp-item:active { transform:scale(0.92); }
 .xp-circle {
-  width:64px; height:64px; border-radius:50%;
+  width:70px; height:70px; border-radius:50%;
   border:2px solid var(--gold);
   display:flex; flex-direction:column; align-items:center; justify-content:center;
-  background:transparent; transition:all 0.2s;
+  background:rgba(201,152,31,0.07); transition:all 0.25s; position:relative;
 }
-.xp-circle .xp-icon { font-size:1.4rem; line-height:1; }
-.xp-circle .xp-plus { font-size:0.58rem; font-family:'Cinzel',serif; color:var(--gold); }
-.xp-lbl { font-family:'Cinzel',serif; font-size:0.58rem; color:var(--ink-light); text-align:center; max-width:64px; letter-spacing:0.04em; }
-.xp-item.sel .xp-circle { background:var(--gold); box-shadow:0 0 14px var(--gold-glow); }
+.xp-circle::before { content:''; position:absolute; inset:5px; border-radius:50%; border:1px solid rgba(201,152,31,0.2); }
+.xp-circle .xp-icon { font-size:1.55rem; line-height:1; }
+.xp-circle .xp-plus { font-size:0.55rem; font-family:'Cinzel',serif; color:var(--gold); margin-top:1px; }
+.xp-lbl { font-family:'Metamorphous','Cinzel',serif; font-size:0.57rem; color:var(--ink-light); text-align:center; max-width:72px; letter-spacing:0.03em; }
+.xp-item.sel .xp-circle { background:var(--gold); box-shadow:0 0 22px var(--gold-glow), 0 0 42px rgba(201,152,31,0.25); border-color:#f0c040; }
+.xp-item.sel .xp-circle::before { border-color:rgba(255,255,255,0.25); }
 .xp-item.sel .xp-circle .xp-plus { color:var(--bg-deep); }
 .xp-item.sel .xp-lbl { color:var(--gold); }
-
 .xp-desc { font-size:0.78rem; color:var(--ink-light); font-style:italic; text-align:center; margin-top:4px; }
+
+/* ─── CHAPTER UNLOCK MODAL ─── */
+#ch-unlock-modal {
+  position:fixed; inset:0; z-index:950;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  background:rgba(4,2,1,0); pointer-events:none;
+  transition:background 0.5s;
+}
+#ch-unlock-modal.visible { background:rgba(4,2,1,0.93); pointer-events:all; }
+.cum-inner {
+  display:flex; flex-direction:column; align-items:center;
+  max-width:380px; width:88%; text-align:center;
+  transform:translateY(20px) scale(0.9); opacity:0;
+  transition:transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s;
+}
+#ch-unlock-modal.visible .cum-inner { transform:translateY(0) scale(1); opacity:1; }
+.cum-art { width:100%; border-radius:12px; overflow:hidden; border:2px solid rgba(201,152,31,0.45); box-shadow:0 0 50px rgba(201,152,31,0.25), 0 8px 30px rgba(0,0,0,0.7); margin-bottom:20px; background:#100806; }
+#cum-canvas { width:100%; display:block; }
+.cum-eyebrow { font-family:'Metamorphous',serif; font-size:0.6rem; letter-spacing:0.3em; color:var(--gold); text-transform:uppercase; margin-bottom:5px; text-shadow:0 0 15px var(--gold-glow); }
+.cum-chapter-name { font-family:'Metamorphous',serif; font-size:clamp(1.6rem,6vw,2.3rem); color:#fff; margin-bottom:5px; text-shadow:0 2px 22px rgba(0,0,0,0.9); }
+.cum-subtitle { color:rgba(232,213,168,0.65); font-style:italic; font-size:0.9rem; margin-bottom:22px; }
+.cum-btn {
+  font-family:'Metamorphous',serif; font-size:0.88rem; letter-spacing:0.07em;
+  background:linear-gradient(135deg,#7a1515,#c9981f,#7a1515);
+  color:#fff; border:1px solid var(--gold); border-radius:28px;
+  padding:13px 34px; cursor:pointer; width:100%;
+  box-shadow:0 0 22px var(--gold-glow), 0 4px 20px rgba(0,0,0,0.6);
+  transition:all 0.2s; animation:pulse-gold 2.2s ease-in-out infinite;
+  margin-bottom:12px;
+}
+.cum-btn:hover { transform:scale(1.03); box-shadow:0 0 35px var(--gold-glow); }
+.cum-dismiss { font-size:0.77rem; color:rgba(232,213,168,0.35); background:none; border:none; cursor:pointer; font-style:italic; transition:color 0.2s; }
+.cum-dismiss:hover { color:rgba(232,213,168,0.6); }
+/* Nav badge for pending chapter review */
+.nav-btn .ch-pending-dot {
+  position:absolute; top:-2px; right:-2px;
+  width:9px; height:9px; border-radius:50%;
+  background:var(--gold); box-shadow:0 0 6px var(--gold-glow);
+  animation:pulse-gold 1.5s ease-in-out infinite;
+}
 
 /* ─── OVERVIEW ─── */
 .stat-row { display:flex; align-items:center; gap:10px; margin-bottom:9px; }
@@ -929,6 +980,182 @@ textarea { min-height: 76px; }
 
 /* ─── GRAT NUM ─── */
 .grat-num { font-family: 'Metamorphous', 'Cinzel', serif !important; }
+
+/* ══════════════════════════════════════════════
+   HABITS SCREEN
+══════════════════════════════════════════════ */
+.habit-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; margin: 8px 0;
+  background: rgba(201,152,31,0.06);
+  border: 1px solid rgba(201,152,31,0.18);
+  border-radius: 10px; transition: all 0.2s;
+}
+.habit-item.done-today {
+  background: rgba(201,152,31,0.15);
+  border-color: rgba(201,152,31,0.45);
+}
+.habit-check {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 2px solid var(--gold); background: transparent;
+  font-size: 1.2rem; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; color: var(--gold);
+}
+.done-today .habit-check {
+  background: var(--gold); color: var(--bg-deep);
+}
+.habit-info { flex: 1; min-width: 0; }
+.habit-name { font-family: 'Metamorphous',serif; font-size: 0.95rem; color: var(--ink); }
+.habit-meta { font-size: 0.75rem; color: var(--ink-light); margin-top: 2px; }
+.habit-streak { font-family: 'Metamorphous',serif; font-size: 0.85rem; color: var(--gold); white-space: nowrap; }
+.habit-actions { display: flex; gap: 6px; }
+.habit-act-btn { background: none; border: none; cursor: pointer; font-size: 0.9rem; opacity: 0.5; padding: 4px; transition: opacity 0.2s; }
+.habit-act-btn:hover { opacity: 1; }
+
+/* 30-day grid */
+.habit-grid-wrap { margin-top: 16px; }
+.habit-grid-label { font-size: 0.7rem; color: var(--ink-light); margin-bottom: 6px; font-style: italic; }
+.hg-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: nowrap; overflow: hidden; }
+.hg-name { font-size: 0.7rem; color: var(--ink-light); width: 80px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hg-cells { display: flex; gap: 3px; }
+.hg-cell { width: 14px; height: 14px; border-radius: 3px; background: rgba(201,152,31,0.12); flex-shrink: 0; }
+.hg-cell.done { background: var(--gold); }
+.hg-cell.today-cell { outline: 2px solid var(--gold); outline-offset: 1px; }
+
+/* add-habit form */
+.habit-form { background: rgba(201,152,31,0.06); border: 1px dashed rgba(201,152,31,0.3); border-radius: 10px; padding: 14px; margin-top: 10px; display: none; }
+.habit-form.open { display: block; }
+.habit-form input, .habit-form select { width: 100%; box-sizing: border-box; margin-bottom: 8px; }
+.habit-emoji-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.habit-emoji-opt { font-size: 1.3rem; cursor: pointer; padding: 4px 6px; border-radius: 6px; border: 2px solid transparent; transition: border-color 0.15s; }
+.habit-emoji-opt.selected { border-color: var(--gold); }
+
+/* ══════════════════════════════════════════════
+   FOCUS SCREEN
+══════════════════════════════════════════════ */
+.focus-timer-wrap {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 28px 20px 20px; background: rgba(8,4,2,0.6);
+  border-bottom: 1px solid rgba(201,152,31,0.2);
+}
+.focus-mode-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+.focus-mode-tab {
+  font-family: 'Metamorphous',serif; font-size: 0.6rem; letter-spacing: 0.08em;
+  padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(201,152,31,0.3);
+  background: transparent; color: var(--ink-light); cursor: pointer; transition: all 0.2s;
+}
+.focus-mode-tab.active { background: var(--gold); color: var(--bg-deep); border-color: var(--gold); }
+.focus-ring-wrap { position: relative; margin-bottom: 16px; }
+.focus-ring {
+  width: 160px; height: 160px; border-radius: 50%;
+  border: 4px solid rgba(201,152,31,0.15);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.focus-ring svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+.focus-ring-circle { transition: stroke-dashoffset 1s linear; }
+.focus-time {
+  font-family: 'Metamorphous',serif; font-size: 2.4rem; color: #fff;
+  text-shadow: 0 0 20px rgba(201,152,31,0.5); position: relative; z-index: 1;
+}
+.focus-phase { font-size: 0.7rem; color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; }
+.focus-btns { display: flex; gap: 10px; }
+.focus-btn {
+  font-family: 'Metamorphous',serif; padding: 8px 18px; border-radius: 6px;
+  border: 1px solid var(--gold); background: transparent; color: var(--gold);
+  cursor: pointer; font-size: 0.7rem; letter-spacing: 0.05em; transition: all 0.2s;
+}
+.focus-btn.primary { background: var(--gold); color: var(--bg-deep); }
+.focus-btn:hover { transform: scale(1.04); }
+.focus-session-info { margin-top: 12px; font-size: 0.75rem; color: var(--ink-light); }
+@keyframes focus-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(201,152,31,0.3); }
+  50% { box-shadow: 0 0 0 12px rgba(201,152,31,0); }
+}
+.focus-running .focus-ring { animation: focus-pulse 2s ease-in-out infinite; }
+
+/* brain dump */
+.brain-dump-textarea {
+  width: 100%; box-sizing: border-box; min-height: 120px; resize: vertical;
+  font-size: 0.95rem; line-height: 1.7;
+}
+.brain-items { margin-top: 10px; }
+.brain-item {
+  display: flex; align-items: flex-start; gap: 8px; padding: 7px 10px;
+  background: rgba(201,152,31,0.05); border-radius: 6px; margin-bottom: 6px;
+}
+.brain-item-text { flex: 1; font-size: 0.9rem; color: var(--ink); }
+.brain-to-task { font-size: 0.75rem; color: var(--gold); cursor: pointer; border: none; background: none; text-decoration: underline; white-space: nowrap; }
+
+/* dopamine menu */
+.dop-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: 8px; cursor: pointer;
+  border: 1px solid rgba(201,152,31,0.15); margin-bottom: 6px;
+  background: rgba(201,152,31,0.04); transition: background 0.15s;
+}
+.dop-item:hover { background: rgba(201,152,31,0.12); }
+.dop-item-text { font-size: 0.9rem; color: var(--ink); }
+.dop-add-row { display: flex; gap: 8px; margin-top: 8px; }
+.dop-add-row input { flex: 1; }
+
+/* ══════════════════════════════════════════════
+   PLAN SCREEN
+══════════════════════════════════════════════ */
+.energy-track { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 6px; }
+.energy-slot { flex: 1; min-width: 80px; }
+.energy-slot-label { font-size: 0.7rem; color: var(--ink-light); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.08em; }
+.energy-dots { display: flex; gap: 5px; }
+.energy-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: rgba(201,152,31,0.15); border: 1px solid rgba(201,152,31,0.3);
+  cursor: pointer; transition: all 0.15s;
+}
+.energy-dot.filled { background: var(--gold); border-color: var(--gold); }
+.energy-dot:hover { transform: scale(1.2); }
+
+/* Big 3 */
+.big3-item {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+}
+.big3-num {
+  font-family: 'Metamorphous',serif; font-size: 1.1rem; color: var(--gold);
+  width: 24px; flex-shrink: 0; text-align: center;
+}
+.big3-input { flex: 1; }
+.big3-check {
+  width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--gold);
+  background: transparent; cursor: pointer; font-size: 0.85rem; flex-shrink: 0;
+  transition: all 0.2s; color: var(--gold); display: flex; align-items: center; justify-content: center;
+}
+.big3-check.done { background: var(--gold); color: var(--bg-deep); }
+
+/* time blocks */
+.time-block-grid { position: relative; }
+.tb-hour {
+  display: flex; gap: 0; border-bottom: 1px solid rgba(201,152,31,0.08);
+}
+.tb-hour:first-child { border-top: 1px solid rgba(201,152,31,0.08); }
+.tb-label {
+  width: 44px; flex-shrink: 0; font-size: 0.65rem; color: var(--ink-light);
+  padding: 4px 4px 4px 0; text-align: right; line-height: 24px;
+}
+.tb-input {
+  flex: 1; border: none; background: transparent; color: var(--ink);
+  font-family: 'Crimson Text',Georgia,serif; font-size: 0.88rem;
+  padding: 3px 8px; min-height: 28px; resize: none; line-height: 1.5;
+  border-left: 2px solid rgba(201,152,31,0.12);
+}
+.tb-input:focus { outline: none; background: rgba(201,152,31,0.05); }
+.tb-input::placeholder { color: rgba(180,160,120,0.35); font-style: italic; }
+.tb-hour.has-content .tb-label { color: var(--gold); }
+.tb-hour.has-content .tb-input { border-left-color: rgba(201,152,31,0.4); }
+
+/* plan day nav */
+.plan-day-nav { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 14px; }
+.plan-day-btn { background: none; border: none; color: var(--gold); cursor: pointer; font-size: 1.2rem; padding: 4px 8px; }
+.plan-day-label { font-family: 'Metamorphous',serif; font-size: 0.85rem; color: var(--ink); text-align: center; min-width: 120px; }
 </style>
 </head>
 <body>
@@ -944,6 +1171,9 @@ textarea { min-height: 76px; }
   <h1>⚔️ Hero's Journal</h1>
   <nav id="nav-tabs">
     <button class="nav-btn" id="nav-daily"    onclick="goToToday()">📖 Today</button>
+    <button class="nav-btn" id="nav-habits"   onclick="showScreen('habits')">⚡ Habits</button>
+    <button class="nav-btn" id="nav-focus"    onclick="showScreen('focus')">⏱️ Focus</button>
+    <button class="nav-btn" id="nav-plan"     onclick="showScreen('plan')">📅 Plan</button>
     <button class="nav-btn" id="nav-chapter"  onclick="showScreen('chapter')">📜 Chapter</button>
     <button class="nav-btn" id="nav-overview" onclick="showScreen('overview')">⚔️ Character</button>
     <button class="nav-btn" id="nav-log"      onclick="showScreen('log')">📚 Log</button>
@@ -1117,49 +1347,62 @@ textarea { min-height: 76px; }
   </div><!-- /pdf-spread -->
   </div><!-- /daily-parchment -->
 
-  <!-- Chapter complete notice (appears below spread) -->
-  <div class="ch-notice-pdf" id="ch-notice" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;text-align:center;padding:12px;background:rgba(10,5,2,0.92);border-top:1px solid rgba(201,152,31,0.4)">
-    <span style="font-family:'Cinzel',serif;font-size:0.8rem;color:#f0c040">📜 Chapter Complete! </span>
-    <button class="btn btn-primary" onclick="showScreen('chapter')" style="margin-left:12px;padding:5px 16px;font-size:0.65rem">Open Chapter Review →</button>
+  <!-- Chapter unlock modal (shown after completing 7 days) -->
+  <div id="ch-unlock-modal">
+    <div class="cum-inner">
+      <div class="cum-art"><canvas id="cum-canvas"></canvas></div>
+      <div class="cum-eyebrow">⚔ Quest Milestone ⚔</div>
+      <div class="cum-chapter-name" id="cum-chapter-name">Chapter Complete</div>
+      <div class="cum-subtitle" id="cum-subtitle">You have journaled for seven days</div>
+      <button class="cum-btn" onclick="dismissChapterModal(true)">📖 Begin Chapter Review →</button>
+      <button class="cum-dismiss" onclick="dismissChapterModal(false)">Not now — I'll return to it later</button>
+    </div>
   </div>
 
 </div>
 
 
 <!-- ══════════ CHAPTER REVIEW ══════════ -->
-<div id="screen-chapter" class="screen">
-<div class="page-wrap">
-<div class="parchment" id="chapter-parchment">
+<div id="screen-chapter" class="screen" style="padding:0;overflow-y:auto">
 
-  <div class="ch-header">
-    <div class="ch-num-label" id="ch-num-lbl">Chapter 1</div>
-    <div class="ch-name" id="ch-name">Humble Hills</div>
-    <div class="ch-act" id="ch-act">Act I · The Beginning</div>
-  </div>
-  <p class="ch-intro" id="ch-intro"></p>
-
-  <div class="section-title">📖 Reflection I</div>
-  <p style="color:var(--ink-light);font-style:italic;font-size:0.92rem;margin-bottom:8px" id="ch-q1"></p>
-  <textarea id="ch-r1" placeholder="Take your time — this is your story..." rows="4"></textarea>
-
-  <div class="section-title">🌟 Reflection II</div>
-  <p style="color:var(--ink-light);font-style:italic;font-size:0.92rem;margin-bottom:8px" id="ch-q2"></p>
-  <textarea id="ch-r2" placeholder="Be honest with yourself..." rows="4"></textarea>
-
-  <div class="section-title">⚔️ Level Up — Circle Your Experience Points</div>
-  <p style="font-size:0.85rem;color:var(--ink-light);font-style:italic;margin-bottom:12px">Tap each stat you earned this chapter:</p>
-  <div class="xp-grid" id="xp-grid"></div>
-  <div id="xp-desc-area" style="min-height:36px;margin-top:6px"></div>
-
-  <div class="section-title">📚 Chapter Summary (optional)</div>
-  <input type="text" id="ch-summary" placeholder="Give this chapter of your story a title...">
-
-  <div class="btn-row">
-    <button class="btn btn-primary" onclick="saveChapter()">✦ Complete Chapter</button>
+  <!-- Hero: chapter artwork from PDF -->
+  <div class="ch-hero">
+    <canvas id="ch-art-canvas"></canvas>
+    <div class="ch-hero-overlay">
+      <div class="ch-complete-badge">⚔ Chapter Complete ⚔</div>
+      <div class="ch-num-label" id="ch-num-lbl">Chapter 1</div>
+      <div class="ch-name" id="ch-name">Humble Hills</div>
+      <div class="ch-act" id="ch-act">Act I · The Beginning</div>
+    </div>
   </div>
 
-</div>
-</div>
+  <div class="page-wrap" style="padding-top:16px">
+  <div class="parchment" id="chapter-parchment">
+
+    <p class="ch-intro" id="ch-intro"></p>
+
+    <div class="section-title">📖 Reflection I</div>
+    <p style="color:var(--ink-light);font-style:italic;font-size:0.92rem;margin-bottom:8px" id="ch-q1"></p>
+    <textarea id="ch-r1" placeholder="Take your time — this is your story..." rows="4"></textarea>
+
+    <div class="section-title">🌟 Reflection II</div>
+    <p style="color:var(--ink-light);font-style:italic;font-size:0.92rem;margin-bottom:8px" id="ch-q2"></p>
+    <textarea id="ch-r2" placeholder="Be honest with yourself..." rows="4"></textarea>
+
+    <div class="section-title">⚔️ Circle Your Experience Points</div>
+    <p style="font-size:0.85rem;color:var(--ink-light);font-style:italic;margin-bottom:12px">Tap each stat you earned this chapter:</p>
+    <div class="xp-grid" id="xp-grid"></div>
+    <div id="xp-desc-area" style="min-height:36px;margin-top:6px"></div>
+
+    <div class="section-title">📚 Chapter Title (optional)</div>
+    <input type="text" id="ch-summary" placeholder="Give this chapter of your story a name...">
+
+    <div class="btn-row" style="margin-top:22px">
+      <button class="btn btn-primary" onclick="saveChapter()" style="width:100%;font-size:0.95rem;padding:13px;letter-spacing:0.09em">⚔ Complete Chapter &amp; Proceed ⚔</button>
+    </div>
+
+  </div>
+  </div>
 </div>
 
 
@@ -1215,6 +1458,218 @@ textarea { min-height: 76px; }
   <div id="log-detail" style="display:none">
     <div class="parchment" id="log-detail-inner"></div>
   </div>
+</div>
+</div>
+
+
+<!-- ══════════ HABITS SCREEN ══════════ -->
+<div id="screen-habits" class="screen" style="overflow-y:auto">
+<div class="page-wrap">
+
+  <div class="parchment">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div class="section-title" style="margin:0">⚡ Daily Quests</div>
+      <button class="btn btn-secondary" style="font-size:0.6rem;padding:5px 12px" onclick="openAddHabit()">+ New Quest</button>
+    </div>
+    <p style="font-size:0.82rem;color:var(--ink-light);font-style:italic;margin-bottom:14px">Your recurring quests build the hero within. Check off each one daily to earn XP and forge powerful streaks.</p>
+
+    <!-- Add habit form -->
+    <div class="habit-form" id="habit-form">
+      <div style="font-family:'Metamorphous',serif;font-size:0.8rem;color:var(--gold);margin-bottom:10px">⚔ New Daily Quest</div>
+      <input type="text" id="hf-name" placeholder="Quest name (e.g. Exercise, Read, Meditate)..." maxlength="50">
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <select id="hf-xp" style="flex:1">
+          <option value="5">5 XP — Quick (5 min)</option>
+          <option value="10" selected>10 XP — Short (15 min)</option>
+          <option value="20">20 XP — Medium (30 min)</option>
+          <option value="30">30 XP — Long (60 min)</option>
+          <option value="50">50 XP — Epic (2+ hours)</option>
+        </select>
+        <select id="hf-color" style="width:90px">
+          <option value="#c99820">Gold</option>
+          <option value="#4a9970">Emerald</option>
+          <option value="#5080c0">Sapphire</option>
+          <option value="#a050a0">Amethyst</option>
+          <option value="#c06040">Crimson</option>
+        </select>
+      </div>
+      <div class="habit-emoji-row" id="hf-emoji-row">
+        <span class="habit-emoji-opt selected" onclick="selectHabitEmoji(this)" data-e="⚔️">⚔️</span>
+        <span class="habit-emoji-opt" onclick="selectHabitEmoji(this)" data-e="🏃">🏃</span>
+        <span class="habit-emoji-opt" onclick="selectHabitEmoji(this)" data-e="📚">📚</span>
+        <span class="habit-emoji-opt" onclick="selectHabitEmoji(this)" data-e="🧘">🧘</span>
+        <span class="habit-emoji-opt" onclick="selectHabitEmoji(this)" data-e="💧">💧</span>
+        <span class="habit-emoji-opt" onclick="selectHabitEmoji(this)" data-e="🍎">🍎</span>
+        <span class="habit-emoji-opt" onclick="selectHabitEmoji(this)" data-e="😴">😴</span>
+        <span class="habit-emoji-opt" onclick="selectHabitEmoji(this)" data-e="✍️">✍️</span>
+        <span class="habit-emoji-opt" onclick="selectHabitEmoji(this)" data-e="🎯">🎯</span>
+        <span class="habit-emoji-opt" onclick="selectHabitEmoji(this)" data-e="💊">💊</span>
+        <span class="habit-emoji-opt" onclick="selectHabitEmoji(this)" data-e="🧠">🧠</span>
+        <span class="habit-emoji-opt" onclick="selectHabitEmoji(this)" data-e="🎸">🎸</span>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary" style="flex:1;font-size:0.7rem;padding:8px" onclick="saveHabit()">⚔ Add Quest</button>
+        <button class="btn btn-secondary" style="font-size:0.7rem;padding:8px 14px" onclick="closeAddHabit()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Habit list -->
+    <div id="habit-list"></div>
+
+    <div id="habit-empty" style="text-align:center;padding:30px 0;display:none">
+      <div style="font-size:2rem;margin-bottom:8px">⚔️</div>
+      <div style="font-family:'Metamorphous',serif;color:var(--gold);margin-bottom:6px">No Daily Quests Yet</div>
+      <div style="font-size:0.85rem;color:var(--ink-light);font-style:italic">Add your first recurring quest to start building your streaks!</div>
+    </div>
+  </div>
+
+  <!-- 30-day grid -->
+  <div class="parchment" id="habit-grid-parchment" style="display:none">
+    <div class="section-title">📊 Quest History (30 Days)</div>
+    <div class="habit-grid-label">Each cell = 1 day · Gold = completed</div>
+    <div class="habit-grid-wrap" id="habit-grid-container"></div>
+  </div>
+
+  <!-- XP summary -->
+  <div class="parchment" id="habit-xp-summary">
+    <div class="section-title">🏆 Quest Stats</div>
+    <div id="habit-stats-content" style="font-size:0.88rem;color:var(--ink-light)">Complete habits to see your stats!</div>
+  </div>
+
+</div>
+</div>
+
+
+<!-- ══════════ FOCUS SCREEN ══════════ -->
+<div id="screen-focus" class="screen" style="overflow-y:auto;padding:0">
+
+  <!-- Timer -->
+  <div class="focus-timer-wrap" id="focus-timer-wrap">
+    <div class="focus-mode-tabs">
+      <button class="focus-mode-tab active" onclick="setFocusMode('work',25)" id="ftab-work">⚔ Focus (25m)</button>
+      <button class="focus-mode-tab" onclick="setFocusMode('short',5)" id="ftab-short">☕ Break (5m)</button>
+      <button class="focus-mode-tab" onclick="setFocusMode('long',15)" id="ftab-long">🏕 Long Break (15m)</button>
+    </div>
+
+    <div class="focus-ring-wrap" id="focus-ring-wrap">
+      <div class="focus-ring" id="focus-ring">
+        <svg width="160" height="160" id="focus-svg">
+          <circle cx="80" cy="80" r="72" fill="none" stroke="rgba(201,152,31,0.12)" stroke-width="6"/>
+          <circle class="focus-ring-circle" id="focus-ring-circle"
+            cx="80" cy="80" r="72" fill="none"
+            stroke="var(--gold)" stroke-width="6"
+            stroke-dasharray="452" stroke-dashoffset="0"
+            stroke-linecap="round"/>
+        </svg>
+        <span class="focus-time" id="focus-time">25:00</span>
+      </div>
+    </div>
+
+    <div class="focus-phase" id="focus-phase">READY TO FOCUS</div>
+
+    <div class="focus-btns">
+      <button class="focus-btn primary" id="focus-start-btn" onclick="toggleFocusTimer()">▶ Start</button>
+      <button class="focus-btn" onclick="resetFocusTimer()">↺ Reset</button>
+    </div>
+
+    <div class="focus-session-info" id="focus-session-info">0 focus sessions today · 0 XP earned</div>
+  </div>
+
+  <div class="page-wrap" style="padding-top:16px">
+
+    <!-- Current task -->
+    <div class="parchment">
+      <div class="section-title">🎯 Current Quest</div>
+      <input type="text" id="focus-current-task" placeholder="What are you working on right now?..."
+             oninput="saveFocusTask()" style="font-size:1rem;font-family:'Crimson Text',Georgia,serif">
+    </div>
+
+    <!-- Brain Dump -->
+    <div class="parchment">
+      <div class="section-title">🧠 Brain Vault</div>
+      <p style="font-size:0.82rem;color:var(--ink-light);font-style:italic;margin-bottom:10px">Dump everything cluttering your mind — tasks, worries, ideas, distractions. Get it out so you can focus.</p>
+      <textarea id="brain-dump-input" class="brain-dump-textarea"
+        placeholder="Type anything... task that popped into your head, a worry, an idea, anything. Hit Enter to capture."
+        onkeydown="brainDumpKeydown(event)"></textarea>
+      <div id="brain-dump-items"></div>
+    </div>
+
+    <!-- Dopamine Menu -->
+    <div class="parchment">
+      <div class="section-title">⚡ Dopamine Menu</div>
+      <p style="font-size:0.82rem;color:var(--ink-light);font-style:italic;margin-bottom:10px">Guilt-free rewards for when you finish a focus session. Pick one, enjoy it fully, then return.</p>
+      <div id="dopamine-menu-list"></div>
+      <div class="dop-add-row">
+        <input type="text" id="dop-new-input" placeholder="Add a reward activity..." onkeydown="if(event.key==='Enter')addDopamineItem()">
+        <button class="btn btn-secondary" style="font-size:0.65rem;padding:6px 12px;white-space:nowrap" onclick="addDopamineItem()">+ Add</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════ PLAN SCREEN ══════════ -->
+<div id="screen-plan" class="screen" style="overflow-y:auto">
+<div class="page-wrap">
+
+  <!-- Day navigator -->
+  <div class="parchment">
+    <div class="plan-day-nav">
+      <button class="plan-day-btn" onclick="shiftPlanDay(-1)">‹</button>
+      <div>
+        <div class="plan-day-label" id="plan-day-label">Today</div>
+        <div style="font-size:0.65rem;color:var(--ink-light);text-align:center" id="plan-day-date"></div>
+      </div>
+      <button class="plan-day-btn" onclick="shiftPlanDay(1)">›</button>
+    </div>
+
+    <!-- Energy Level -->
+    <div class="section-title">⚡ Energy Levels</div>
+    <div class="energy-track" id="energy-track">
+      <div class="energy-slot">
+        <div class="energy-slot-label">🌅 Morning</div>
+        <div class="energy-dots" id="energy-m"></div>
+      </div>
+      <div class="energy-slot">
+        <div class="energy-slot-label">☀️ Afternoon</div>
+        <div class="energy-dots" id="energy-a"></div>
+      </div>
+      <div class="energy-slot">
+        <div class="energy-slot-label">🌙 Evening</div>
+        <div class="energy-dots" id="energy-e"></div>
+      </div>
+    </div>
+    <div style="font-size:0.7rem;color:var(--ink-light);font-style:italic;margin-top:4px">Tap dots to set your energy level for each part of the day</div>
+  </div>
+
+  <!-- Big 3 -->
+  <div class="parchment">
+    <div class="section-title">🎯 Today's Big 3</div>
+    <p style="font-size:0.82rem;color:var(--ink-light);font-style:italic;margin-bottom:12px">The 3 things that — if you do only them — make today a win.</p>
+    <div id="big3-list"></div>
+  </div>
+
+  <!-- Time Blocks -->
+  <div class="parchment">
+    <div class="section-title">📅 Battle Schedule</div>
+    <p style="font-size:0.82rem;color:var(--ink-light);font-style:italic;margin-bottom:10px">Block your time like a warrior guards their territory.</p>
+    <div class="time-block-grid" id="time-block-grid"></div>
+    <div style="margin-top:10px;font-size:0.72rem;color:var(--ink-light)">💡 Tip: Block "deep work" hours first, then schedule everything else around them.</div>
+  </div>
+
+  <!-- Intention for the day -->
+  <div class="parchment">
+    <div class="section-title">✨ Daily Intention</div>
+    <textarea id="plan-intention" rows="3" placeholder="How do you want to show up today? What kind of hero will you be?..."
+              oninput="savePlanField('intention', this.value)"></textarea>
+    <div style="margin-top:10px">
+      <div class="section-title" style="font-size:0.75rem">📝 Evening Review</div>
+      <textarea id="plan-review" rows="3" placeholder="How did the day go? What would you do differently?..."
+                oninput="savePlanField('review', this.value)"></textarea>
+    </div>
+  </div>
+
 </div>
 </div>
 
@@ -1300,7 +1755,12 @@ function newData(name, quest, northStar) {
   return {
     hero: { name, quest, northStar, startDate: todayStr(),
             stats: {strength:0,dexterity:0,constitution:0,wisdom:0,charisma:0} },
-    entries: {}, chapters: {}
+    entries: {}, chapters: {},
+    habits: [],
+    braindump: [],
+    focus: { sessions: {}, currentTask: '' },
+    dopamine_menu: ['🚶 Go for a 10-min walk','🎮 Play a game for 15 min','📱 Scroll guilt-free for 10 min','☕ Make a nice drink','🎵 Dance to one song','🛁 Quick refresh','🌿 Sit outside for 5 min'],
+    plan: {}
   };
 }
 
@@ -1406,6 +1866,9 @@ const PDF_PAGE_MAP = [
   [93, 94, 95, 96, 97, 98, 99],   // ch11: Stepperburg
   [101,102,103,104,105,106,107],  // ch12: Castle Anima
 ];
+
+// Chapter ending pages (0-indexed) — the "chapter complete" spread pages
+const CH_END_PAGES = [18, 26, 34, 42, 51, 59, 67, 75, 83, 92, 100, 108];
 
 // PDF.js state
 let pdfDoc = null;
@@ -1526,6 +1989,9 @@ function showScreen(name) {
   if(name==='chapter')  renderChapter();
   if(name==='overview') renderOverview();
   if(name==='log')      renderLog();
+  if(name==='habits')   renderHabits();
+  if(name==='focus')    renderFocus();
+  if(name==='plan')     renderPlan();
 }
 function goToToday() { initCurPos(getData()); showScreen('daily'); }
 
@@ -1657,8 +2123,7 @@ function renderDaily() {
   });
 
   const done = journalCompletedCount(data);
-  const showNotice = done > 0 && done % 7 === 0 && !data.chapters[chNum-1];
-  document.getElementById('ch-notice').style.display = showNotice ? 'block' : 'none';
+  updateChapterNavBadge();
 
   // Apply any saved custom layout positions
   loadLayoutPositions();
@@ -1738,7 +2203,8 @@ function saveEntry() {
   const done = journalCompletedCount(data);
   const { ch: chN } = posToChDay(curPos);
   if (done > 0 && done % 7 === 0 && !data.chapters[chN-1])
-    document.getElementById('ch-notice').style.display = 'block';
+    setTimeout(() => showChapterUnlockModal(chN - 1), 800);
+  updateChapterNavBadge();
 }
 
 function shiftPos(n) {
@@ -1939,10 +2405,61 @@ function loadJournalFont() {
 // ══════════════════════════════════════════════
 // CHAPTER REVIEW
 // ══════════════════════════════════════════════
+
+// Chapter ending art rendering
+function renderChapterArt(chIdx, canvasEl) {
+  if (!canvasEl) return;
+  // Use pre-rendered JPEG thumbnails (PDF.js renders these pages mirrored due to PDF encoding)
+  const n = String(chIdx + 1).padStart(2, '0');
+  const src = `pages/ch${n}_end.jpg`;
+  const img = new Image();
+  img.onload = () => {
+    canvasEl.width = img.naturalWidth;
+    canvasEl.height = img.naturalHeight;
+    canvasEl.getContext('2d').drawImage(img, 0, 0);
+  };
+  img.src = src;
+}
+
+function showChapterUnlockModal(chIdx) {
+  const ch = CHAPTERS[Math.min(11, chIdx)];
+  document.getElementById('cum-chapter-name').textContent = ch.name;
+  document.getElementById('cum-subtitle').textContent = `Act ${ch.act}: ${ch.actName} · Chapter ${ch.n} complete!`;
+  const modal = document.getElementById('ch-unlock-modal');
+  modal.classList.add('visible');
+  requestAnimationFrame(() => renderChapterArt(chIdx, document.getElementById('cum-canvas')));
+}
+
+function dismissChapterModal(goToChapter) {
+  document.getElementById('ch-unlock-modal').classList.remove('visible');
+  if (goToChapter) setTimeout(() => showScreen('chapter'), 350);
+}
+
+// Update nav badge for pending chapter review
+function updateChapterNavBadge() {
+  const data = getData(); if (!data) return;
+  const done = journalCompletedCount(data);
+  // Use done count (not curPos) to identify which chapter review is pending.
+  // curPos may already point to the next chapter after completing ch N.
+  const chN = Math.floor(done / 7); // done=7 → chN=1, done=14 → chN=2, etc.
+  const pending = done > 0 && done % 7 === 0 && !data.chapters[chN - 1];
+  const btn = document.getElementById('nav-chapter');
+  if (!btn) return;
+  let dot = btn.querySelector('.ch-pending-dot');
+  if (pending && !dot) {
+    btn.style.position = 'relative';
+    dot = document.createElement('span');
+    dot.className = 'ch-pending-dot';
+    btn.appendChild(dot);
+  } else if (!pending && dot) {
+    dot.remove();
+  }
+}
+
 function renderChapter() {
   const data=getData(); if(!data) return;
-  const done=completedCount(data.entries);
-  const chIdx=Math.min(11, Math.max(0, Math.floor(done/7)-1 + (done%7===0?0:0)));
+  const done = journalCompletedCount(data);
+  const chIdx=Math.min(11, Math.max(0, Math.floor(done/7)-1));
   const ch=CHAPTERS[chIdx];
   const qs=CH_QS[chIdx];
   document.getElementById('ch-num-lbl').textContent='Chapter '+ch.n;
@@ -1956,6 +2473,8 @@ function renderChapter() {
   document.getElementById('ch-r2').value=saved.r2||'';
   document.getElementById('ch-summary').value=saved.summary||'';
   renderXpGrid(saved.xp||{});
+  // Render chapter artwork in the hero
+  requestAnimationFrame(() => renderChapterArt(chIdx, document.getElementById('ch-art-canvas')));
 }
 
 function renderXpGrid(sel) {
@@ -2184,6 +2703,488 @@ function updateSpreadPosLabel() {
     const chInfo = CHAPTERS[ch - 1];
     lbl.textContent = `${chInfo ? chInfo.name.toUpperCase() : 'CH.' + ch} · DAY ${day + 1}/7`;
   } catch(e) {}
+}
+
+// ══════════════════════════════════════════════
+// HABITS
+// ══════════════════════════════════════════════
+function getHabits() {
+  const d = getData(); if (!d) return [];
+  return d.habits || [];
+}
+function saveHabits(habits) {
+  const d = getData(); if (!d) return;
+  d.habits = habits; saveData(d);
+}
+function habitDateKey(offset=0) {
+  const dt = new Date(); dt.setDate(dt.getDate() + offset);
+  return dt.toISOString().slice(0,10);
+}
+function habitStreak(h) {
+  let streak = 0, day = 0;
+  while (true) {
+    const k = habitDateKey(-day);
+    if (day === 0) { if (h.completions[k]) { streak++; day++; continue; } else { day++; continue; } }
+    if (h.completions[k]) { streak++; day++; } else break;
+    if (day > 400) break;
+  }
+  return streak;
+}
+function renderHabits() {
+  const habits = getHabits();
+  const today = habitDateKey(0);
+  const listEl = document.getElementById('habit-list');
+  const emptyEl = document.getElementById('habit-empty');
+  const gridParch = document.getElementById('habit-grid-parchment');
+
+  if (!habits.length) {
+    listEl.innerHTML = '';
+    emptyEl.style.display = 'block';
+    gridParch.style.display = 'none';
+    renderHabitStats(habits);
+    return;
+  }
+  emptyEl.style.display = 'none';
+  gridParch.style.display = 'block';
+
+  listEl.innerHTML = habits.map((h, idx) => {
+    const done = !!h.completions[today];
+    const streak = habitStreak(h);
+    return `<div class="habit-item ${done?'done-today':''}" id="habit-item-${h.id}">
+      <button class="habit-check" onclick="toggleHabit('${h.id}')">${done ? '✓' : h.icon}</button>
+      <div class="habit-info">
+        <div class="habit-name">${esc(h.name)}</div>
+        <div class="habit-meta">${h.xp} XP per completion · ${done?'<span style="color:var(--gold)">✦ Done today!</span>':'Pending'}</div>
+      </div>
+      <div class="habit-streak">${streak > 0 ? '🔥 '+streak : '–'}</div>
+      <div class="habit-actions">
+        <button class="habit-act-btn" onclick="deleteHabit('${h.id}')" title="Remove">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  renderHabitGrid(habits);
+  renderHabitStats(habits);
+}
+function renderHabitGrid(habits) {
+  const container = document.getElementById('habit-grid-container');
+  if (!container) return;
+  const days = 30;
+  const today = habitDateKey(0);
+  container.innerHTML = habits.map(h => {
+    const cells = Array.from({length: days}, (_, i) => {
+      const k = habitDateKey(-(days - 1 - i));
+      const isToday = k === today;
+      const done = !!h.completions[k];
+      return `<div class="hg-cell ${done?'done':''} ${isToday?'today-cell':''}" title="${k}"></div>`;
+    }).join('');
+    const streak = habitStreak(h);
+    return `<div class="hg-row">
+      <div class="hg-name" title="${esc(h.name)}">${h.icon} ${esc(h.name)}</div>
+      <div class="hg-cells">${cells}</div>
+      <div style="font-size:0.65rem;color:var(--gold);margin-left:6px;white-space:nowrap">${streak?'🔥'+streak:''}</div>
+    </div>`;
+  }).join('');
+}
+function renderHabitStats(habits) {
+  const el = document.getElementById('habit-stats-content');
+  if (!el) return;
+  if (!habits.length) { el.textContent = 'Add quests to see your stats!'; return; }
+  const today = habitDateKey(0);
+  const doneToday = habits.filter(h => h.completions[today]).length;
+  const totalStreaks = habits.reduce((s, h) => s + habitStreak(h), 0);
+  const totalCompletions = habits.reduce((s, h) => s + Object.values(h.completions).filter(Boolean).length, 0);
+  const xpToday = habits.filter(h => h.completions[today]).reduce((s, h) => s + h.xp, 0);
+  el.innerHTML = `
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <div style="text-align:center;flex:1;min-width:60px">
+        <div style="font-family:'Metamorphous',serif;font-size:1.6rem;color:var(--gold)">${doneToday}/${habits.length}</div>
+        <div style="font-size:0.7rem;color:var(--ink-light)">Today's Quests</div>
+      </div>
+      <div style="text-align:center;flex:1;min-width:60px">
+        <div style="font-family:'Metamorphous',serif;font-size:1.6rem;color:var(--gold)">${xpToday}</div>
+        <div style="font-size:0.7rem;color:var(--ink-light)">XP Today</div>
+      </div>
+      <div style="text-align:center;flex:1;min-width:60px">
+        <div style="font-family:'Metamorphous',serif;font-size:1.6rem;color:var(--gold)">${totalCompletions}</div>
+        <div style="font-size:0.7rem;color:var(--ink-light)">Total Done</div>
+      </div>
+      <div style="text-align:center;flex:1;min-width:60px">
+        <div style="font-family:'Metamorphous',serif;font-size:1.6rem;color:var(--gold)">${totalStreaks}</div>
+        <div style="font-size:0.7rem;color:var(--ink-light)">Combined Streak</div>
+      </div>
+    </div>`;
+}
+function toggleHabit(id) {
+  const habits = getHabits();
+  const h = habits.find(x => x.id === id); if (!h) return;
+  const today = habitDateKey(0);
+  const wasDone = !!h.completions[today];
+  h.completions[today] = !wasDone;
+  saveHabits(habits);
+  if (!wasDone) {
+    toast(`✦ Quest complete! +${h.xp} XP`);
+    sparkleSave && sparkleSave();
+  }
+  renderHabits();
+}
+function deleteHabit(id) {
+  if (!confirm('Remove this daily quest?')) return;
+  saveHabits(getHabits().filter(h => h.id !== id));
+  renderHabits();
+}
+let _hfEditId = null;
+let _selectedEmoji = '⚔️';
+function openAddHabit() {
+  _hfEditId = null; _selectedEmoji = '⚔️';
+  document.getElementById('hf-name').value = '';
+  document.getElementById('hf-xp').value = '10';
+  document.getElementById('hf-color').value = '#c99820';
+  document.querySelectorAll('.habit-emoji-opt').forEach(e => e.classList.toggle('selected', e.dataset.e === '⚔️'));
+  document.getElementById('habit-form').classList.add('open');
+  setTimeout(() => document.getElementById('hf-name').focus(), 100);
+}
+function closeAddHabit() { document.getElementById('habit-form').classList.remove('open'); }
+function selectHabitEmoji(el) {
+  document.querySelectorAll('.habit-emoji-opt').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  _selectedEmoji = el.dataset.e;
+}
+function saveHabit() {
+  const name = document.getElementById('hf-name').value.trim();
+  if (!name) { toast('Give your quest a name!'); return; }
+  const habits = getHabits();
+  const newH = {
+    id: 'h_' + Date.now(),
+    name, icon: _selectedEmoji,
+    xp: parseInt(document.getElementById('hf-xp').value) || 10,
+    color: document.getElementById('hf-color').value || '#c99820',
+    createdAt: todayStr(),
+    completions: {}
+  };
+  habits.push(newH);
+  saveHabits(habits);
+  closeAddHabit();
+  toast('⚔ New quest added!');
+  renderHabits();
+}
+
+// ══════════════════════════════════════════════
+// FOCUS TIMER
+// ══════════════════════════════════════════════
+let _focusInterval = null;
+let _focusSecondsLeft = 25 * 60;
+let _focusTotalSeconds = 25 * 60;
+let _focusRunning = false;
+let _focusMode = 'work'; // 'work' | 'short' | 'long'
+const CIRCUMFERENCE = 2 * Math.PI * 72; // ≈ 452.4
+
+function setFocusMode(mode, minutes) {
+  if (_focusRunning) { resetFocusTimer(); }
+  _focusMode = mode;
+  _focusTotalSeconds = minutes * 60;
+  _focusSecondsLeft = _focusTotalSeconds;
+  ['work','short','long'].forEach(m => {
+    document.getElementById('ftab-'+m).classList.toggle('active', m === mode);
+  });
+  updateFocusDisplay();
+}
+function updateFocusDisplay() {
+  const mins = Math.floor(_focusSecondsLeft / 60);
+  const secs = _focusSecondsLeft % 60;
+  document.getElementById('focus-time').textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+  const pct = _focusSecondsLeft / _focusTotalSeconds;
+  const offset = CIRCUMFERENCE * (1 - pct);
+  document.getElementById('focus-ring-circle').style.strokeDashoffset = offset;
+  updateFocusSessionInfo();
+}
+function updateFocusSessionInfo() {
+  const d = getData(); if (!d) return;
+  const today = habitDateKey(0);
+  const sessions = (d.focus && d.focus.sessions && d.focus.sessions[today]) || 0;
+  const xp = sessions * 15;
+  document.getElementById('focus-session-info').textContent = `${sessions} focus session${sessions!==1?'s':''} today · ${xp} XP earned`;
+}
+function toggleFocusTimer() {
+  if (_focusRunning) { pauseFocusTimer(); } else { startFocusTimer(); }
+}
+function startFocusTimer() {
+  _focusRunning = true;
+  document.getElementById('focus-start-btn').textContent = '⏸ Pause';
+  document.getElementById('focus-ring-wrap').classList.add('focus-running');
+  document.getElementById('focus-phase').textContent = _focusMode === 'work' ? '⚔ FOCUSING...' : '☕ RESTING...';
+  _focusInterval = setInterval(() => {
+    _focusSecondsLeft--;
+    updateFocusDisplay();
+    if (_focusSecondsLeft <= 0) { focusComplete(); }
+  }, 1000);
+}
+function pauseFocusTimer() {
+  _focusRunning = false;
+  clearInterval(_focusInterval);
+  document.getElementById('focus-start-btn').textContent = '▶ Resume';
+  document.getElementById('focus-ring-wrap').classList.remove('focus-running');
+  document.getElementById('focus-phase').textContent = 'PAUSED';
+}
+function resetFocusTimer() {
+  _focusRunning = false;
+  clearInterval(_focusInterval);
+  _focusSecondsLeft = _focusTotalSeconds;
+  document.getElementById('focus-start-btn').textContent = '▶ Start';
+  document.getElementById('focus-ring-wrap').classList.remove('focus-running');
+  document.getElementById('focus-phase').textContent = 'READY TO FOCUS';
+  updateFocusDisplay();
+}
+function focusComplete() {
+  clearInterval(_focusInterval);
+  _focusRunning = false;
+  document.getElementById('focus-start-btn').textContent = '▶ Start';
+  document.getElementById('focus-ring-wrap').classList.remove('focus-running');
+  if (_focusMode === 'work') {
+    // Log session
+    const d = getData();
+    if (d) {
+      if (!d.focus) d.focus = { sessions: {}, currentTask: '' };
+      if (!d.focus.sessions) d.focus.sessions = {};
+      const today = habitDateKey(0);
+      d.focus.sessions[today] = (d.focus.sessions[today] || 0) + 1;
+      saveData(d);
+    }
+    document.getElementById('focus-phase').textContent = '🎉 SESSION COMPLETE!';
+    toast('⚡ Focus session complete! +15 XP · Take a break!');
+    sparkleSave && sparkleSave();
+  } else {
+    document.getElementById('focus-phase').textContent = '⚔ BREAK OVER — READY?';
+    toast('Break over! Ready to focus again?');
+  }
+  _focusSecondsLeft = _focusTotalSeconds;
+  updateFocusDisplay();
+}
+function renderFocus() {
+  const d = getData();
+  // Load current task
+  const taskEl = document.getElementById('focus-current-task');
+  if (taskEl && d && d.focus) taskEl.value = d.focus.currentTask || '';
+  // Load brain dump
+  renderBrainDump();
+  // Load dopamine menu
+  renderDopamineMenu();
+  updateFocusSessionInfo();
+  updateFocusDisplay();
+}
+function saveFocusTask() {
+  const d = getData(); if (!d) return;
+  if (!d.focus) d.focus = { sessions: {}, currentTask: '' };
+  d.focus.currentTask = document.getElementById('focus-current-task').value;
+  saveData(d);
+}
+
+// Brain dump
+function renderBrainDump() {
+  const d = getData(); if (!d) return;
+  const items = d.braindump || [];
+  document.getElementById('brain-dump-items').innerHTML = items.length
+    ? items.map((item, i) => `
+      <div class="brain-item">
+        <div class="brain-item-text">${esc(item.text)}</div>
+        <button class="brain-to-task" onclick="brainItemToTask(${i})">→ Task</button>
+        <button class="habit-act-btn" onclick="brainItemDelete(${i})" style="font-size:0.85rem">✕</button>
+      </div>`).join('')
+    : '';
+}
+function brainDumpKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    const input = document.getElementById('brain-dump-input');
+    const text = input.value.trim();
+    if (!text) return;
+    const d = getData(); if (!d) return;
+    if (!d.braindump) d.braindump = [];
+    d.braindump.unshift({ text, captured: new Date().toISOString() });
+    saveData(d);
+    input.value = '';
+    renderBrainDump();
+    toast('✦ Captured!');
+  }
+}
+function brainItemDelete(idx) {
+  const d = getData(); if (!d) return;
+  d.braindump.splice(idx, 1);
+  saveData(d);
+  renderBrainDump();
+}
+function brainItemToTask(idx) {
+  const d = getData(); if (!d) return;
+  const item = d.braindump[idx];
+  // Copy text to today's task in the plan
+  toast('✦ Added to today\'s plan!');
+  // Remove from brain dump
+  d.braindump.splice(idx, 1);
+  saveData(d);
+  renderBrainDump();
+}
+
+// Dopamine menu
+function renderDopamineMenu() {
+  const d = getData(); if (!d) return;
+  const items = d.dopamine_menu || [];
+  document.getElementById('dopamine-menu-list').innerHTML = items.map((item, i) => `
+    <div class="dop-item">
+      <div class="dop-item-text">${esc(item)}</div>
+      <button class="habit-act-btn" onclick="deleteDopamineItem(${i})">✕</button>
+    </div>`).join('');
+}
+function addDopamineItem() {
+  const inp = document.getElementById('dop-new-input');
+  const text = inp.value.trim(); if (!text) return;
+  const d = getData(); if (!d) return;
+  if (!d.dopamine_menu) d.dopamine_menu = [];
+  d.dopamine_menu.push(text);
+  saveData(d); inp.value = '';
+  renderDopamineMenu();
+}
+function deleteDopamineItem(idx) {
+  const d = getData(); if (!d) return;
+  d.dopamine_menu.splice(idx, 1);
+  saveData(d); renderDopamineMenu();
+}
+
+// ══════════════════════════════════════════════
+// PLAN
+// ══════════════════════════════════════════════
+let _planDateOffset = 0; // 0=today, -1=yesterday, +1=tomorrow
+
+function getPlanDateKey(offset) {
+  const dt = new Date(); dt.setDate(dt.getDate() + offset);
+  return dt.toISOString().slice(0,10);
+}
+function getPlanData(dateKey) {
+  const d = getData(); if (!d) return null;
+  if (!d.plan) d.plan = {};
+  if (!d.plan[dateKey]) d.plan[dateKey] = { energy: {m:0,a:0,e:0}, big3: [{text:'',done:false},{text:'',done:false},{text:'',done:false}], blocks: {}, intention: '', review: '' };
+  return d.plan[dateKey];
+}
+function savePlanData(dateKey, planObj) {
+  const d = getData(); if (!d) return;
+  if (!d.plan) d.plan = {};
+  d.plan[dateKey] = planObj;
+  saveData(d);
+}
+function savePlanField(field, value) {
+  const key = getPlanDateKey(_planDateOffset);
+  const plan = getPlanData(key) || {};
+  plan[field] = value;
+  savePlanData(key, plan);
+}
+function shiftPlanDay(dir) {
+  _planDateOffset += dir;
+  renderPlan();
+}
+function renderPlan() {
+  const key = getPlanDateKey(_planDateOffset);
+  const plan = getPlanData(key) || {};
+
+  // Day label
+  const lblEl = document.getElementById('plan-day-label');
+  const dateEl = document.getElementById('plan-day-date');
+  const dt = new Date(); dt.setDate(dt.getDate() + _planDateOffset);
+  if (lblEl) lblEl.textContent = _planDateOffset === 0 ? 'Today' : _planDateOffset === -1 ? 'Yesterday' : _planDateOffset === 1 ? 'Tomorrow' : dt.toLocaleDateString('en-US',{weekday:'long'});
+  if (dateEl) dateEl.textContent = dt.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
+  // Energy levels
+  ['m','a','e'].forEach(slot => {
+    const el = document.getElementById('energy-'+slot);
+    if (!el) return;
+    const cur = plan.energy ? (plan.energy[slot] || 0) : 0;
+    el.innerHTML = [1,2,3,4,5].map(n => `
+      <div class="energy-dot ${n <= cur ? 'filled' : ''}"
+           onclick="setEnergy('${slot}', ${n})"></div>`).join('');
+  });
+
+  // Big 3
+  const big3El = document.getElementById('big3-list');
+  if (big3El) {
+    const b3 = plan.big3 || [{text:'',done:false},{text:'',done:false},{text:'',done:false}];
+    big3El.innerHTML = [0,1,2].map(i => `
+      <div class="big3-item">
+        <div class="big3-num">${i+1}</div>
+        <input class="big3-input" type="text" placeholder="Priority ${i+1}..."
+               value="${esc(b3[i]?.text||'')}"
+               oninput="saveBig3(${i}, this.value)"
+               style="font-family:'Crimson Text',Georgia,serif;font-size:1rem">
+        <button class="big3-check ${b3[i]?.done?'done':''}" onclick="toggleBig3(${i})">${b3[i]?.done?'✓':''}</button>
+      </div>`).join('');
+  }
+
+  // Time blocks
+  renderTimeBlocks(plan, key);
+
+  // Intention / review
+  const intEl = document.getElementById('plan-intention');
+  if (intEl) intEl.value = plan.intention || '';
+  const revEl = document.getElementById('plan-review');
+  if (revEl) revEl.value = plan.review || '';
+}
+function setEnergy(slot, level) {
+  const key = getPlanDateKey(_planDateOffset);
+  const plan = getPlanData(key) || {};
+  if (!plan.energy) plan.energy = {m:0,a:0,e:0};
+  plan.energy[slot] = level;
+  savePlanData(key, plan);
+  renderPlan();
+}
+function saveBig3(idx, value) {
+  const key = getPlanDateKey(_planDateOffset);
+  const plan = getPlanData(key) || {};
+  if (!plan.big3) plan.big3 = [{text:'',done:false},{text:'',done:false},{text:'',done:false}];
+  plan.big3[idx] = plan.big3[idx] || {text:'',done:false};
+  plan.big3[idx].text = value;
+  savePlanData(key, plan);
+}
+function toggleBig3(idx) {
+  const key = getPlanDateKey(_planDateOffset);
+  const plan = getPlanData(key) || {};
+  if (!plan.big3) plan.big3 = [{text:'',done:false},{text:'',done:false},{text:'',done:false}];
+  plan.big3[idx] = plan.big3[idx] || {text:'',done:false};
+  plan.big3[idx].done = !plan.big3[idx].done;
+  savePlanData(key, plan);
+  if (plan.big3[idx].done) { toast('✦ Big 3 item complete!'); sparkleSave && sparkleSave(); }
+  renderPlan();
+}
+function renderTimeBlocks(plan, key) {
+  const el = document.getElementById('time-block-grid');
+  if (!el) return;
+  const blocks = plan.blocks || {};
+  const hours = [
+    '6 AM','7 AM','8 AM','9 AM','10 AM','11 AM',
+    '12 PM','1 PM','2 PM','3 PM','4 PM','5 PM',
+    '6 PM','7 PM','8 PM','9 PM','10 PM'
+  ];
+  el.innerHTML = hours.map((h, i) => {
+    const blockKey = `h${i + 6}`;
+    const val = blocks[blockKey] || '';
+    return `<div class="tb-hour ${val?'has-content':''}" id="tb-row-${blockKey}">
+      <div class="tb-label">${h}</div>
+      <textarea class="tb-input" rows="1" placeholder="${getTimePlaceholder(i+6)}"
+        oninput="saveTimeBlock('${blockKey}', this.value); this.closest('.tb-hour').classList.toggle('has-content', !!this.value.trim())"
+        >${esc(val)}</textarea>
+    </div>`;
+  }).join('');
+}
+function getTimePlaceholder(hour) {
+  if (hour >= 6 && hour < 9)   return 'Morning routine...';
+  if (hour >= 9 && hour < 12)  return 'Deep work block...';
+  if (hour >= 12 && hour < 13) return 'Lunch...';
+  if (hour >= 13 && hour < 17) return 'Meetings / work...';
+  if (hour >= 17 && hour < 19) return 'Wind down / exercise...';
+  return 'Evening...';
+}
+function saveTimeBlock(blockKey, value) {
+  const key = getPlanDateKey(_planDateOffset);
+  const plan = getPlanData(key) || {};
+  if (!plan.blocks) plan.blocks = {};
+  plan.blocks[blockKey] = value;
+  savePlanData(key, plan);
 }
 
 // ══════════════════════════════════════════════
