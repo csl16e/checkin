@@ -120,24 +120,25 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
-  padding: 6px 10px;
+  gap: 2px;
+  padding: 5px 4px;
   background: none;
   border: none;
   cursor: pointer;
   color: rgba(201,152,31,0.45);
   transition: color 0.2s, transform 0.15s;
   -webkit-tap-highlight-color: transparent;
-  min-width: 52px;
+  flex: 1;
+  min-width: 0;
   position: relative;
 }
 .bnav-btn.active { color: var(--gold-light); }
 .bnav-btn:active { transform: scale(0.88); }
-.bnav-icon { font-size: 1.45rem; line-height: 1; }
+.bnav-icon { font-size: 1.15rem; line-height: 1; }
 .bnav-label {
   font-family: 'Metamorphous', sans-serif;
-  font-size: 0.52rem;
-  letter-spacing: 0.05em;
+  font-size: 0.42rem;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -154,48 +155,6 @@ body {
   50% { opacity:0.5; transform:scale(0.7); }
 }
 
-/* ─── MORE SHEET ─── */
-#more-sheet {
-  position: fixed; inset: 0; z-index: 500;
-  pointer-events: none;
-}
-#more-sheet.open { pointer-events: all; }
-#more-backdrop {
-  position: absolute; inset: 0;
-  background: rgba(4,2,1,0.7);
-  opacity: 0; transition: opacity 0.25s;
-}
-#more-sheet.open #more-backdrop { opacity: 1; }
-#more-tray {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  background: linear-gradient(180deg, #1e1208 0%, #150c06 100%);
-  border-top: 1px solid rgba(201,152,31,0.35);
-  border-radius: 20px 20px 0 0;
-  padding: 16px 0 calc(16px + env(safe-area-inset-bottom, 8px));
-  transform: translateY(100%);
-  transition: transform 0.3s cubic-bezier(0.34,1.1,0.64,1);
-}
-#more-sheet.open #more-tray { transform: translateY(0); }
-.more-tray-handle {
-  width: 40px; height: 4px; border-radius: 2px;
-  background: rgba(201,152,31,0.3);
-  margin: 0 auto 16px;
-}
-.more-tray-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 2px; padding: 0 8px;
-}
-.more-tray-btn {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 6px; padding: 16px 8px;
-  background: none; border: none; cursor: pointer;
-  color: var(--gold-light);
-  -webkit-tap-highlight-color: transparent;
-  border-radius: 12px; transition: background 0.15s;
-}
-.more-tray-btn:active { background: rgba(201,152,31,0.12); }
-.more-tray-icon { font-size: 1.8rem; }
-.more-tray-label { font-family:'Metamorphous',serif; font-size:0.65rem; color:rgba(232,213,168,0.8); }
 
 /* ─── SCREEN TRANSITIONS ─── */
 .screen { transition: opacity 0.18s ease, transform 0.22s ease; }
@@ -1811,33 +1770,19 @@ textarea { min-height: 76px; }
     <span class="bnav-icon">📅</span>
     <span class="bnav-label">Plan</span>
   </button>
-  <button class="bnav-btn" id="bnav-more" onclick="openMoreSheet()">
-    <span class="bnav-icon">···</span>
-    <span class="bnav-label">More</span>
+  <button class="bnav-btn" id="bnav-chapter" onclick="showScreen('chapter')">
+    <span class="bnav-icon">📜</span>
+    <span class="bnav-label">Chapter</span>
+  </button>
+  <button class="bnav-btn" id="bnav-overview" onclick="showScreen('overview')">
+    <span class="bnav-icon">⚔️</span>
+    <span class="bnav-label">Hero</span>
+  </button>
+  <button class="bnav-btn" id="bnav-log" onclick="showScreen('log')">
+    <span class="bnav-icon">📚</span>
+    <span class="bnav-label">Log</span>
   </button>
 </nav>
-
-<!-- ══════════ MORE SHEET ══════════ -->
-<div id="more-sheet">
-  <div id="more-backdrop" onclick="closeMoreSheet()"></div>
-  <div id="more-tray">
-    <div class="more-tray-handle"></div>
-    <div class="more-tray-grid">
-      <button class="more-tray-btn" onclick="closeMoreSheet(); showScreen('chapter')">
-        <span class="more-tray-icon">📜</span>
-        <span class="more-tray-label">Chapter</span>
-      </button>
-      <button class="more-tray-btn" onclick="closeMoreSheet(); showScreen('overview')">
-        <span class="more-tray-icon">⚔️</span>
-        <span class="more-tray-label">Character</span>
-      </button>
-      <button class="more-tray-btn" onclick="closeMoreSheet(); showScreen('log')">
-        <span class="more-tray-icon">📚</span>
-        <span class="more-tray-label">Log</span>
-      </button>
-    </div>
-  </div>
-</div>
 
 </div><!-- #app -->
 
@@ -2149,10 +2094,6 @@ function showScreen(name) {
   document.getElementById('screen-'+name).classList.add('active');
   const nb=document.getElementById('nav-'+name); if(nb) nb.classList.add('active');
   const bb=document.getElementById('bnav-'+name); if(bb) bb.classList.add('active');
-  // For More sheet screens, highlight the More button
-  if(['chapter','overview','log'].includes(name)) {
-    const mb=document.getElementById('bnav-more'); if(mb) mb.classList.add('active');
-  }
   // Scroll screen back to top
   const sc = document.getElementById('screen-'+name);
   if (sc) sc.scrollTop = 0;
@@ -2166,12 +2107,6 @@ function showScreen(name) {
   if(name==='habits')   renderHabits();
   if(name==='focus')    renderFocus();
   if(name==='plan')     renderPlan();
-}
-function openMoreSheet() {
-  document.getElementById('more-sheet').classList.add('open');
-}
-function closeMoreSheet() {
-  document.getElementById('more-sheet').classList.remove('open');
 }
 function goToToday() { initCurPos(getData()); showScreen('daily'); }
 
@@ -2622,8 +2557,8 @@ function updateChapterNavBadge() {
   const done = journalCompletedCount(data);
   const chN = Math.floor(done / 7);
   const pending = done > 0 && done % 7 === 0 && !data.chapters[chN - 1];
-  // Update both old nav-btn and new bottom nav more-button
-  ['nav-chapter', 'bnav-more'].forEach(id => {
+  // Update both old nav-btn and new bottom nav chapter button
+  ['nav-chapter', 'bnav-chapter'].forEach(id => {
     const btn = document.getElementById(id);
     if (!btn) return;
     let dot = btn.querySelector('.ch-pending-dot, .bnav-dot');
