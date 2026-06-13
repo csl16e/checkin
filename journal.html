@@ -2,8 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hero's Journal — Legend of Istoria</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hero's Journal">
+<meta name="theme-color" content="#0d0a07">
+<title>Hero's Journal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Metamorphous&family=UnifrakturMaguntia&family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=IM+Fell+English:ital@0;1&family=Kalam:wght@300;400;700&family=Caveat:wght@400;600&family=Patrick+Hand&family=Indie+Flower&display=swap" rel="stylesheet">
 <style>
@@ -30,9 +34,10 @@ body {
   font-family: 'Crimson Text', Georgia, serif;
   background: var(--bg-deep);
   color: var(--ink);
-  min-height: 100vh;
   line-height: 1.6;
   font-size: 16px;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 /* ─── STARS ─── */
@@ -44,52 +49,161 @@ body {
 }
 
 /* ─── APP SHELL ─── */
-#app { position:relative; z-index:1; }
+html, body {
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+body {
+  position: fixed;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+#app {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
 
-/* ─── HEADER ─── */
+/* ─── TOP HEADER (slim) ─── */
 #app-header {
-  background: linear-gradient(135deg, #1a0f0a 0%, #2d1a08 100%);
-  border-bottom: 2px solid var(--gold);
-  padding: 10px 16px;
+  background: linear-gradient(180deg, #1a0f0a 0%, #150c06 100%);
+  border-bottom: 1px solid rgba(201,152,31,0.3);
+  padding: 12px 16px 10px;
+  padding-top: calc(12px + env(safe-area-inset-top, 0px));
   display: none;
   align-items: center;
   justify-content: space-between;
-  position: sticky;
-  top: 0;
+  flex-shrink: 0;
   z-index: 100;
-  flex-wrap: wrap;
-  gap: 8px;
 }
 #app-header h1 {
   font-family: 'Metamorphous', 'Cinzel Decorative', serif;
   color: var(--gold-light);
-  font-size: 0.95rem;
+  font-size: 1rem;
   text-shadow: 0 0 20px var(--gold-glow);
-  white-space: nowrap;
+  letter-spacing: 0.03em;
 }
-#nav-tabs { display:flex; gap:4px; flex-wrap:wrap; }
-.nav-btn {
-  background: transparent;
-  border: 1px solid var(--gold);
-  color: var(--gold-light);
-  font-family: 'Metamorphous', 'Cinzel', serif;
-  font-size: 0.65rem;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: all 0.2s;
-  letter-spacing: 0.04em;
+/* Hide old top nav tabs — navigation moves to bottom bar */
+#nav-tabs { display: none !important; }
+
+/* ─── SCREEN CONTAINER ─── */
+#screen-wrap {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
 }
-.nav-btn:hover, .nav-btn.active {
-  background: var(--gold);
-  color: var(--bg-deep);
-  box-shadow: 0 0 12px rgba(201,152,31,0.5);
-  transform: translateY(-1px);
+.screen {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
 }
 
-/* ─── SCREENS ─── */
-.screen { display:none; }
-.screen.active { display:block; }
+/* ─── BOTTOM NAV BAR ─── */
+#bottom-nav {
+  display: none;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, #150c06 0%, #0d0a07 100%);
+  border-top: 1px solid rgba(201,152,31,0.25);
+  padding: 6px 0 calc(6px + env(safe-area-inset-bottom, 4px));
+  justify-content: space-around;
+  align-items: flex-end;
+  z-index: 200;
+}
+.bnav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(201,152,31,0.45);
+  transition: color 0.2s, transform 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  min-width: 52px;
+  position: relative;
+}
+.bnav-btn.active { color: var(--gold-light); }
+.bnav-btn:active { transform: scale(0.88); }
+.bnav-icon { font-size: 1.45rem; line-height: 1; }
+.bnav-label {
+  font-family: 'Metamorphous', sans-serif;
+  font-size: 0.52rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.bnav-dot {
+  position: absolute;
+  top: 4px; right: 8px;
+  width: 8px; height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.5; transform:scale(0.7); }
+}
+
+/* ─── MORE SHEET ─── */
+#more-sheet {
+  position: fixed; inset: 0; z-index: 500;
+  pointer-events: none;
+}
+#more-sheet.open { pointer-events: all; }
+#more-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(4,2,1,0.7);
+  opacity: 0; transition: opacity 0.25s;
+}
+#more-sheet.open #more-backdrop { opacity: 1; }
+#more-tray {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(180deg, #1e1208 0%, #150c06 100%);
+  border-top: 1px solid rgba(201,152,31,0.35);
+  border-radius: 20px 20px 0 0;
+  padding: 16px 0 calc(16px + env(safe-area-inset-bottom, 8px));
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.34,1.1,0.64,1);
+}
+#more-sheet.open #more-tray { transform: translateY(0); }
+.more-tray-handle {
+  width: 40px; height: 4px; border-radius: 2px;
+  background: rgba(201,152,31,0.3);
+  margin: 0 auto 16px;
+}
+.more-tray-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; padding: 0 8px;
+}
+.more-tray-btn {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px; padding: 16px 8px;
+  background: none; border: none; cursor: pointer;
+  color: var(--gold-light);
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 12px; transition: background 0.15s;
+}
+.more-tray-btn:active { background: rgba(201,152,31,0.12); }
+.more-tray-icon { font-size: 1.8rem; }
+.more-tray-label { font-family:'Metamorphous',serif; font-size:0.65rem; color:rgba(232,213,168,0.8); }
+
+/* ─── SCREEN TRANSITIONS ─── */
+.screen { transition: opacity 0.18s ease, transform 0.22s ease; }
+.screen:not(.active) { opacity: 0; pointer-events: none; }
+.screen.active { opacity: 1; }
+
+/* nav-btn kept for JS compatibility, hide visually */
+.nav-btn { display: none !important; }
 .page-wrap { max-width: 760px; margin: 0 auto; padding: 20px 16px 40px; }
 
 /* ─── PARCHMENT ─── */
@@ -481,7 +595,7 @@ textarea { min-height: 76px; }
 /* ─── PDF SPREAD — full viewport ─── */
 
 /* Daily screen = full height below header */
-#screen-daily { padding:0; display:none; flex-direction:column; align-items:center; height:calc(100vh - 49px); overflow:hidden; background:#0d0a07; }
+#screen-daily { padding:0; display:none; flex-direction:column; align-items:center; height:100%; overflow:hidden; background:#0d0a07; }
 #screen-daily.active { display:flex; }
 /* Font toolbar stretches full width above the spread */
 .font-toolbar { width:100%; flex-shrink:0; justify-content:center; }
@@ -489,7 +603,7 @@ textarea { min-height: 76px; }
 /* Spread fills viewport, maintains 856:612 aspect ratio (49px header + 32px font toolbar) */
 .pdf-spread {
   /* Width = min(viewport width, height-derived width) */
-  width: min(100vw, calc((100vh - 81px) * 856 / 612));
+  width: min(100vw, calc((100dvh - 120px) * 856 / 612));
   aspect-ratio: 856 / 612;
   position: relative;
   background: #f2e6c8;
@@ -1167,19 +1281,22 @@ textarea { min-height: 76px; }
 
 <!-- ══════════ HEADER ══════════ -->
 <header id="app-header">
-  <a href="index.html" style="font-family:'Cinzel',serif;font-size:0.65rem;color:rgba(201,152,31,0.7);text-decoration:none;letter-spacing:0.05em;white-space:nowrap" title="Back to Dashboard">🏠 Home</a>
-  <h1>⚔️ Hero's Journal</h1>
-  <nav id="nav-tabs">
-    <button class="nav-btn" id="nav-daily"    onclick="goToToday()">📖 Today</button>
-    <button class="nav-btn" id="nav-habits"   onclick="showScreen('habits')">⚡ Habits</button>
-    <button class="nav-btn" id="nav-focus"    onclick="showScreen('focus')">⏱️ Focus</button>
-    <button class="nav-btn" id="nav-plan"     onclick="showScreen('plan')">📅 Plan</button>
-    <button class="nav-btn" id="nav-chapter"  onclick="showScreen('chapter')">📜 Chapter</button>
-    <button class="nav-btn" id="nav-overview" onclick="showScreen('overview')">⚔️ Character</button>
-    <button class="nav-btn" id="nav-log"      onclick="showScreen('log')">📚 Log</button>
+  <div style="font-size:1.1rem">⚔️</div>
+  <h1>Hero's Journal</h1>
+  <button onclick="openSettings()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--gold);padding:4px 8px" title="Settings">⚙</button>
+  <!-- keep hidden nav-btns for JS .active class compatibility -->
+  <nav id="nav-tabs" style="display:none">
+    <button class="nav-btn" id="nav-daily"></button>
+    <button class="nav-btn" id="nav-habits"></button>
+    <button class="nav-btn" id="nav-focus"></button>
+    <button class="nav-btn" id="nav-plan"></button>
+    <button class="nav-btn" id="nav-chapter"></button>
+    <button class="nav-btn" id="nav-overview"></button>
+    <button class="nav-btn" id="nav-log"></button>
   </nav>
 </header>
 
+<div id="screen-wrap">
 
 <!-- ══════════ ONBOARDING ══════════ -->
 <div id="screen-onboarding" class="screen active">
@@ -1674,6 +1791,54 @@ textarea { min-height: 76px; }
 </div>
 
 
+</div><!-- #screen-wrap -->
+
+<!-- ══════════ BOTTOM NAV ══════════ -->
+<nav id="bottom-nav">
+  <button class="bnav-btn" id="bnav-daily" onclick="goToToday()">
+    <span class="bnav-icon">📖</span>
+    <span class="bnav-label">Today</span>
+  </button>
+  <button class="bnav-btn" id="bnav-habits" onclick="showScreen('habits')">
+    <span class="bnav-icon">⚡</span>
+    <span class="bnav-label">Habits</span>
+  </button>
+  <button class="bnav-btn" id="bnav-focus" onclick="showScreen('focus')">
+    <span class="bnav-icon">⏱️</span>
+    <span class="bnav-label">Focus</span>
+  </button>
+  <button class="bnav-btn" id="bnav-plan" onclick="showScreen('plan')">
+    <span class="bnav-icon">📅</span>
+    <span class="bnav-label">Plan</span>
+  </button>
+  <button class="bnav-btn" id="bnav-more" onclick="openMoreSheet()">
+    <span class="bnav-icon">···</span>
+    <span class="bnav-label">More</span>
+  </button>
+</nav>
+
+<!-- ══════════ MORE SHEET ══════════ -->
+<div id="more-sheet">
+  <div id="more-backdrop" onclick="closeMoreSheet()"></div>
+  <div id="more-tray">
+    <div class="more-tray-handle"></div>
+    <div class="more-tray-grid">
+      <button class="more-tray-btn" onclick="closeMoreSheet(); showScreen('chapter')">
+        <span class="more-tray-icon">📜</span>
+        <span class="more-tray-label">Chapter</span>
+      </button>
+      <button class="more-tray-btn" onclick="closeMoreSheet(); showScreen('overview')">
+        <span class="more-tray-icon">⚔️</span>
+        <span class="more-tray-label">Character</span>
+      </button>
+      <button class="more-tray-btn" onclick="closeMoreSheet(); showScreen('log')">
+        <span class="more-tray-icon">📚</span>
+        <span class="more-tray-label">Log</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 </div><!-- #app -->
 
 <!-- ══════════ SETTINGS OVERLAY + DRAWER ══════════ -->
@@ -1980,8 +2145,17 @@ let _curPosReady = false;
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
   const nb=document.getElementById('nav-'+name); if(nb) nb.classList.add('active');
+  const bb=document.getElementById('bnav-'+name); if(bb) bb.classList.add('active');
+  // For More sheet screens, highlight the More button
+  if(['chapter','overview','log'].includes(name)) {
+    const mb=document.getElementById('bnav-more'); if(mb) mb.classList.add('active');
+  }
+  // Scroll screen back to top
+  const sc = document.getElementById('screen-'+name);
+  if (sc) sc.scrollTop = 0;
   if(name==='daily') {
     if (!_curPosReady) { initCurPos(getData()); _curPosReady = true; }
     renderDaily();
@@ -1992,6 +2166,12 @@ function showScreen(name) {
   if(name==='habits')   renderHabits();
   if(name==='focus')    renderFocus();
   if(name==='plan')     renderPlan();
+}
+function openMoreSheet() {
+  document.getElementById('more-sheet').classList.add('open');
+}
+function closeMoreSheet() {
+  document.getElementById('more-sheet').classList.remove('open');
 }
 function goToToday() { initCurPos(getData()); showScreen('daily'); }
 
@@ -2028,6 +2208,7 @@ function obComplete() {
   if(!document.getElementById('ob-sig').value.trim()){toast('Sign your name to begin!');return;}
   saveData(newData(name,q,ns));
   document.getElementById('app-header').style.display='flex';
+  document.getElementById('bottom-nav').style.display='flex';
   showScreen('daily');
 }
 
@@ -2439,21 +2620,22 @@ function dismissChapterModal(goToChapter) {
 function updateChapterNavBadge() {
   const data = getData(); if (!data) return;
   const done = journalCompletedCount(data);
-  // Use done count (not curPos) to identify which chapter review is pending.
-  // curPos may already point to the next chapter after completing ch N.
-  const chN = Math.floor(done / 7); // done=7 → chN=1, done=14 → chN=2, etc.
+  const chN = Math.floor(done / 7);
   const pending = done > 0 && done % 7 === 0 && !data.chapters[chN - 1];
-  const btn = document.getElementById('nav-chapter');
-  if (!btn) return;
-  let dot = btn.querySelector('.ch-pending-dot');
-  if (pending && !dot) {
-    btn.style.position = 'relative';
-    dot = document.createElement('span');
-    dot.className = 'ch-pending-dot';
-    btn.appendChild(dot);
-  } else if (!pending && dot) {
-    dot.remove();
-  }
+  // Update both old nav-btn and new bottom nav more-button
+  ['nav-chapter', 'bnav-more'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    let dot = btn.querySelector('.ch-pending-dot, .bnav-dot');
+    if (pending && !dot) {
+      dot = document.createElement('span');
+      dot.className = id.startsWith('bnav') ? 'bnav-dot' : 'ch-pending-dot';
+      btn.style.position = 'relative';
+      btn.appendChild(dot);
+    } else if (!pending && dot) {
+      dot.remove();
+    }
+  });
 }
 
 function renderChapter() {
@@ -3193,6 +3375,7 @@ function saveTimeBlock(blockKey, value) {
 const existing=getData();
 if(existing){
   document.getElementById('app-header').style.display='flex';
+  document.getElementById('bottom-nav').style.display='flex';
   showScreen('daily');
 }
 // else onboarding is already the active screen
