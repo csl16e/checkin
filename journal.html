@@ -161,99 +161,264 @@ body {
 
 
 /* ─── FINANCE SCREEN ─── */
-.fin-card {
-  background: linear-gradient(135deg, rgba(201,152,31,0.06) 0%, rgba(13,10,7,0.4) 100%);
-  border: 1px solid rgba(201,152,31,0.2);
-  border-radius: 14px;
+:root {
+  --fin-accent:  #7c6aff;
+  --fin-accent2: #a78bfa;
+  --fin-bg:      #0f0f12;
+  --fin-bg2:     #16161a;
+  --fin-card:    #1c1c21;
+  --fin-border:  rgba(255,255,255,0.07);
+  --fin-text1:   #f0f0f6;
+  --fin-text2:   #88889a;
+  --fin-text3:   #44445a;
+  --fin-green:   #22d3a5;
+  --fin-red:     #f87171;
+}
+#screen-finance {
+  background: var(--fin-bg);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.fin-wrap { padding: 0 0 100px; }
+
+/* Header */
+.fin-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--fin-border);
+}
+.fin-header-title { font-size: 1rem; font-weight: 700; color: var(--fin-text1); letter-spacing: -0.3px; }
+.fin-header-month { font-size: 0.75rem; color: var(--fin-text2); margin-top: 1px; }
+.fin-header-actions { display: flex; gap: 8px; }
+.fin-icon-btn {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--fin-card); border: 1px solid var(--fin-border);
+  color: var(--fin-text2); font-size: 0.95rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.fin-icon-btn:active { opacity: 0.7; }
+
+/* Monthly Overview */
+.fin-overview {
+  margin: 12px 16px;
+  background: var(--fin-card);
+  border-radius: 16px;
   padding: 16px;
-  margin-bottom: 14px;
+  border: 1px solid var(--fin-border);
 }
-.fin-card-title {
-  font-family: 'Metamorphous', serif;
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 12px;
+.fin-ov-bar-track {
+  height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px;
+  overflow: hidden; margin: 10px 0 12px;
 }
-.fin-net-worth-box {
-  background: linear-gradient(135deg, rgba(201,152,31,0.12), rgba(201,152,31,0.03));
-  border: 1px solid rgba(201,152,31,0.35);
-  border-radius: 14px;
-  padding: 18px 16px;
-  margin-bottom: 14px;
-  text-align: center;
+.fin-ov-bar-fill {
+  height: 100%; border-radius: 4px;
+  background: linear-gradient(90deg, var(--fin-accent), var(--fin-accent2));
+  transition: width 0.5s ease;
 }
-.fin-nw-label { font-family:'Metamorphous',serif; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(201,152,31,0.6); margin-bottom:4px; }
-.fin-nw-amount { font-family:'Metamorphous',serif; font-size:2rem; color:var(--gold-light); }
-.fin-nw-amount.negative { color:#f87171; }
-.fin-nw-row { display:flex; gap:10px; margin-top:12px; }
-.fin-nw-cell { flex:1; background:rgba(0,0,0,0.2); border-radius:8px; padding:8px; text-align:center; }
-.fin-nw-cell-label { font-size:0.55rem; color:rgba(232,213,168,0.5); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px; }
-.fin-nw-cell-val { font-size:0.9rem; color:var(--gold-light); font-family:'Metamorphous',serif; }
-.fin-nw-input { width:100%; background:rgba(0,0,0,0.3); border:1px solid rgba(201,152,31,0.2); border-radius:6px; padding:4px 8px; color:var(--gold-light); font-size:0.85rem; text-align:center; margin-top:4px; font-family:'Metamorphous',serif; }
-.fin-nw-input:focus { outline:none; border-color:rgba(201,152,31,0.5); }
+.fin-ov-bar-fill.over { background: linear-gradient(90deg, var(--fin-red), #ff9999); }
+.fin-ov-stats { display: flex; gap: 6px; }
+.fin-ov-stat { flex: 1; background: rgba(255,255,255,0.04); border-radius: 10px; padding: 10px 8px; text-align: center; }
+.fin-ov-stat-val { font-size: 0.95rem; font-weight: 700; color: var(--fin-text1); letter-spacing: -0.3px; }
+.fin-ov-stat-val.green { color: var(--fin-green); }
+.fin-ov-stat-val.red   { color: var(--fin-red); }
+.fin-ov-stat-val.accent { color: var(--fin-accent2); }
+.fin-ov-stat-label { font-size: 0.6rem; color: var(--fin-text3); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+.fin-ov-pct { font-size: 0.8rem; font-weight: 600; color: var(--fin-text2); }
 
-.fin-quick-add { display:flex; flex-direction:column; gap:8px; }
-.fin-row { display:flex; gap:8px; }
-.fin-input {
-  flex:1; background:rgba(0,0,0,0.3); border:1px solid rgba(201,152,31,0.2);
-  border-radius:8px; padding:9px 12px; color:var(--gold-light);
-  font-size:0.9rem; font-family:'Crimson Text',serif;
+/* Section headers */
+.fin-section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 6px;
 }
-.fin-input:focus { outline:none; border-color:rgba(201,152,31,0.5); }
-.fin-input::placeholder { color:rgba(232,213,168,0.3); }
-.fin-select {
-  background:rgba(0,0,0,0.4); border:1px solid rgba(201,152,31,0.2);
-  border-radius:8px; padding:9px 8px; color:var(--gold-light);
-  font-size:0.85rem; font-family:'Crimson Text',serif;
+.fin-section-title { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--fin-text2); }
+.fin-section-action { font-size: 0.7rem; color: var(--fin-accent2); cursor: pointer; }
+
+/* Category rows */
+.fin-cats { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+.fin-cat-row {
+  background: var(--fin-card); border-radius: 12px;
+  padding: 12px 14px; border: 1px solid var(--fin-border);
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
 }
-.fin-select:focus { outline:none; }
-.fin-add-btn {
-  width:100%; padding:10px; background:linear-gradient(135deg,rgba(201,152,31,0.25),rgba(201,152,31,0.1));
-  border:1px solid rgba(201,152,31,0.4); border-radius:8px; color:var(--gold-light);
-  font-family:'Metamorphous',serif; font-size:0.75rem; letter-spacing:0.08em; cursor:pointer;
-  transition:background 0.2s;
+.fin-cat-row:active { background: rgba(255,255,255,0.06); }
+.fin-cat-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.fin-cat-emoji { font-size: 1.2rem; flex-shrink: 0; }
+.fin-cat-name { font-size: 0.88rem; font-weight: 600; color: var(--fin-text1); flex: 1; }
+.fin-cat-amounts { font-size: 0.78rem; color: var(--fin-text2); font-variant-numeric: tabular-nums; }
+.fin-cat-amounts.over { color: var(--fin-red); }
+.fin-cat-track { height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.fin-cat-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
+
+/* Edit limit inline */
+.fin-cat-edit { display: none; margin-top: 10px; border-top: 1px solid var(--fin-border); padding-top: 10px; }
+.fin-cat-edit.open { display: flex; gap: 8px; align-items: center; }
+.fin-cat-edit input {
+  flex: 1; background: rgba(255,255,255,0.06); border: 1px solid var(--fin-border);
+  border-radius: 8px; padding: 7px 10px; color: var(--fin-text1);
+  font-size: 0.85rem;
 }
-.fin-add-btn:active { background:rgba(201,152,31,0.35); }
+.fin-cat-edit input:focus { outline: none; border-color: var(--fin-accent); }
+.fin-cat-edit-save {
+  padding: 7px 14px; background: var(--fin-accent); border: none;
+  border-radius: 8px; color: #fff; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+}
 
-.fin-budget-bar-wrap { margin-bottom:10px; }
-.fin-budget-bar-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
-.fin-budget-bar-label { font-size:0.8rem; color:rgba(232,213,168,0.85); }
-.fin-budget-bar-amounts { font-size:0.7rem; color:rgba(232,213,168,0.5); }
-.fin-budget-track { height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; }
-.fin-budget-fill { height:100%; border-radius:3px; transition:width 0.5s ease; }
-.fin-budget-over { color:#f87171 !important; }
+/* FAB add button */
+#fin-fab {
+  position: fixed; right: 20px; bottom: 80px;
+  width: 52px; height: 52px; border-radius: 26px;
+  background: var(--fin-accent); border: none;
+  color: #fff; font-size: 1.5rem; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  display: none; align-items: center; justify-content: center;
+  z-index: 300; -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s;
+}
+#fin-fab:active { transform: scale(0.92); }
 
-.fin-savings-wrap { }
-.fin-savings-label { display:flex; justify-content:space-between; margin-bottom:6px; }
-.fin-savings-name { font-size:0.85rem; color:rgba(232,213,168,0.85); }
-.fin-savings-pct { font-size:0.8rem; color:var(--gold); font-family:'Metamorphous',serif; }
-.fin-savings-track { height:10px; background:rgba(255,255,255,0.06); border-radius:5px; overflow:hidden; margin-bottom:8px; }
-.fin-savings-fill { height:100%; background:linear-gradient(90deg,rgba(201,152,31,0.6),var(--gold)); border-radius:5px; transition:width 0.5s ease; }
-.fin-savings-inputs { display:flex; gap:8px; margin-top:8px; }
-.fin-savings-inputs input { flex:1; background:rgba(0,0,0,0.3); border:1px solid rgba(201,152,31,0.2); border-radius:8px; padding:7px 10px; color:var(--gold-light); font-size:0.85rem; font-family:'Crimson Text',serif; }
-.fin-savings-inputs input:focus { outline:none; border-color:rgba(201,152,31,0.5); }
-.fin-savings-inputs input::placeholder { color:rgba(232,213,168,0.3); }
-.fin-edit-btn { padding:6px 12px; background:rgba(201,152,31,0.1); border:1px solid rgba(201,152,31,0.25); border-radius:6px; color:rgba(201,152,31,0.7); font-size:0.7rem; cursor:pointer; font-family:'Metamorphous',serif; white-space:nowrap; }
+/* Add Transaction modal */
+#fin-modal-backdrop {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6); z-index: 400;
+  align-items: flex-end; justify-content: center;
+}
+#fin-modal-backdrop.open { display: flex; }
+#fin-modal {
+  background: var(--fin-bg2); border-radius: 20px 20px 0 0;
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 8px));
+  width: 100%; max-width: 480px;
+  border-top: 1px solid var(--fin-border);
+}
+.fin-modal-title { font-size: 1rem; font-weight: 700; color: var(--fin-text1); margin-bottom: 16px; }
+.fin-modal-row { margin-bottom: 12px; }
+.fin-modal-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--fin-text2); margin-bottom: 5px; }
+.fin-modal-input {
+  width: 100%; background: var(--fin-card); border: 1px solid var(--fin-border);
+  border-radius: 10px; padding: 11px 14px; color: var(--fin-text1);
+  font-size: 1rem; font-variant-numeric: tabular-nums;
+}
+.fin-modal-input:focus { outline: none; border-color: var(--fin-accent); }
+.fin-modal-seg { display: flex; gap: 6px; }
+.fin-modal-seg-btn {
+  flex: 1; padding: 9px; background: var(--fin-card); border: 1px solid var(--fin-border);
+  border-radius: 8px; color: var(--fin-text2); font-size: 0.8rem; font-weight: 500; cursor: pointer;
+}
+.fin-modal-seg-btn.active { background: var(--fin-accent); border-color: var(--fin-accent); color: #fff; }
+.fin-modal-add-btn {
+  width: 100%; padding: 13px; background: var(--fin-accent); border: none;
+  border-radius: 12px; color: #fff; font-size: 0.95rem; font-weight: 700;
+  cursor: pointer; margin-top: 4px; letter-spacing: -0.2px;
+}
 
-.fin-tx-list { display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
-.fin-tx-item { display:flex; align-items:center; gap:10px; padding:8px 10px; background:rgba(0,0,0,0.2); border-radius:8px; }
-.fin-tx-emoji { font-size:1.1rem; flex-shrink:0; }
-.fin-tx-info { flex:1; min-width:0; }
-.fin-tx-note { font-size:0.85rem; color:rgba(232,213,168,0.85); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.fin-tx-meta { font-size:0.65rem; color:rgba(232,213,168,0.4); }
-.fin-tx-amount { font-family:'Metamorphous',serif; font-size:0.9rem; flex-shrink:0; }
-.fin-tx-amount.expense { color:#f87171; }
-.fin-tx-amount.income { color:#22d3a5; }
-.fin-tx-del { background:none; border:none; color:rgba(232,213,168,0.2); font-size:0.8rem; cursor:pointer; padding:2px 4px; flex-shrink:0; }
-.fin-tx-del:hover { color:#f87171; }
-.fin-empty { text-align:center; padding:20px; color:rgba(232,213,168,0.3); font-size:0.85rem; font-style:italic; }
+/* Savings card */
+.fin-savings-card {
+  margin: 6px 16px;
+  background: var(--fin-card); border-radius: 16px;
+  padding: 14px 16px; border: 1px solid var(--fin-border);
+}
+.fin-sav-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.fin-sav-name { font-size: 0.9rem; font-weight: 600; color: var(--fin-text1); }
+.fin-sav-pct { font-size: 0.85rem; font-weight: 700; color: var(--fin-accent2); }
+.fin-sav-amounts { font-size: 0.72rem; color: var(--fin-text2); margin-bottom: 6px; }
+.fin-sav-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.fin-sav-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--fin-accent), var(--fin-accent2)); transition: width 0.5s; }
+.fin-sav-edit { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+.fin-sav-edit input {
+  flex: 1; min-width: 80px; background: rgba(255,255,255,0.06); border: 1px solid var(--fin-border);
+  border-radius: 8px; padding: 7px 10px; color: var(--fin-text1); font-size: 0.85rem;
+}
+.fin-sav-edit input:focus { outline: none; border-color: var(--fin-accent); }
+.fin-sav-save {
+  padding: 7px 14px; background: var(--fin-accent); border: none;
+  border-radius: 8px; color: #fff; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+}
 
-.fin-income-row { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
-.fin-income-label { font-size:0.8rem; color:rgba(232,213,168,0.6); flex-shrink:0; }
-.fin-income-input { flex:1; background:rgba(0,0,0,0.3); border:1px solid rgba(201,152,31,0.2); border-radius:8px; padding:7px 10px; color:#22d3a5; font-size:0.9rem; font-family:'Metamorphous',serif; }
-.fin-income-input:focus { outline:none; border-color:rgba(34,211,165,0.4); }
+/* Net worth card */
+.fin-nw-card {
+  margin: 6px 16px;
+  background: var(--fin-card); border-radius: 16px;
+  padding: 14px 16px; border: 1px solid var(--fin-border);
+}
+.fin-nw-big { font-size: 1.8rem; font-weight: 800; color: var(--fin-text1); letter-spacing: -1px; margin: 6px 0 10px; }
+.fin-nw-big.negative { color: var(--fin-red); }
+.fin-nw-cells { display: flex; gap: 8px; }
+.fin-nw-cell { flex: 1; background: rgba(255,255,255,0.04); border-radius: 10px; padding: 10px; }
+.fin-nw-cell-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--fin-text3); margin-bottom: 4px; }
+.fin-nw-cell-val { font-size: 0.95rem; font-weight: 700; color: var(--fin-text1); }
+.fin-nw-cell-val.red { color: var(--fin-red); }
+.fin-nw-cell input {
+  width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--fin-border);
+  border-radius: 6px; padding: 5px 8px; color: var(--fin-text1); font-size: 0.85rem;
+  margin-top: 5px; font-variant-numeric: tabular-nums;
+}
+.fin-nw-cell input:focus { outline: none; border-color: var(--fin-accent); }
+
+/* Transactions */
+.fin-txs { padding: 0 16px; display: flex; flex-direction: column; gap: 2px; }
+.fin-tx-date-header { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fin-text3); padding: 10px 2px 4px; }
+.fin-tx-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 10px;
+  background: var(--fin-card); border: 1px solid var(--fin-border);
+  margin-bottom: 4px;
+}
+.fin-tx-icon { width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+.fin-tx-info { flex: 1; min-width: 0; }
+.fin-tx-title { font-size: 0.88rem; font-weight: 500; color: var(--fin-text1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fin-tx-sub { font-size: 0.68rem; color: var(--fin-text3); }
+.fin-tx-amt { font-size: 0.9rem; font-weight: 700; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+.fin-tx-amt.expense { color: var(--fin-red); }
+.fin-tx-amt.income  { color: var(--fin-green); }
+.fin-tx-del { background: none; border: none; color: var(--fin-text3); font-size: 0.75rem; cursor: pointer; padding: 4px; flex-shrink: 0; }
+
+/* Customize modal */
+#fin-cust-backdrop {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6); z-index: 400;
+  align-items: flex-end; justify-content: center;
+}
+#fin-cust-backdrop.open { display: flex; }
+#fin-cust-panel {
+  background: var(--fin-bg2); border-radius: 20px 20px 0 0;
+  padding: 20px 20px calc(24px + env(safe-area-inset-bottom, 8px));
+  width: 100%; max-width: 480px;
+  border-top: 1px solid var(--fin-border);
+}
+.fin-cust-title { font-size: 1rem; font-weight: 700; color: var(--fin-text1); margin-bottom: 4px; }
+.fin-cust-sub { font-size: 0.75rem; color: var(--fin-text2); margin-bottom: 16px; }
+.fin-cust-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--fin-text2); margin-bottom: 8px; }
+.fin-accents { display: flex; gap: 10px; margin-bottom: 18px; }
+.fin-accent-swatch {
+  width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+  border: 3px solid transparent; transition: border-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.fin-accent-swatch.selected { border-color: #fff; }
+.fin-bgs { display: flex; gap: 10px; margin-bottom: 18px; }
+.fin-bg-swatch {
+  flex: 1; height: 40px; border-radius: 10px; cursor: pointer;
+  border: 2px solid transparent; transition: border-color 0.15s;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 600; color: rgba(255,255,255,0.6);
+  -webkit-tap-highlight-color: transparent;
+}
+.fin-bg-swatch.selected { border-color: var(--fin-accent); color: #fff; }
+.fin-income-setup { display: flex; gap: 8px; align-items: center; margin-bottom: 18px; }
+.fin-income-setup label { font-size: 0.8rem; color: var(--fin-text2); flex-shrink: 0; }
+.fin-income-setup input {
+  flex: 1; background: var(--fin-card); border: 1px solid var(--fin-border);
+  border-radius: 10px; padding: 9px 12px; color: var(--fin-text1); font-size: 0.9rem;
+}
+.fin-income-setup input:focus { outline: none; border-color: var(--fin-accent); }
+.fin-cust-save {
+  width: 100%; padding: 12px; background: var(--fin-accent); border: none;
+  border-radius: 12px; color: #fff; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+}
+
+/* Empty state */
+.fin-empty-tx { text-align: center; padding: 24px 16px; color: var(--fin-text3); font-size: 0.85rem; }
 
 /* ─── SCREEN TRANSITIONS ─── */
 .screen { transition: opacity 0.18s ease, transform 0.22s ease; }
@@ -1851,77 +2016,96 @@ textarea { min-height: 76px; }
 
 <!-- ══════════ SCREEN: FINANCE ══════════ -->
 <div class="screen" id="screen-finance">
-  <div class="page-wrap">
+  <div class="fin-wrap">
 
-    <div class="fin-net-worth-box" id="fin-nw-box">
-      <div class="fin-nw-label">Net Worth</div>
-      <div class="fin-nw-amount" id="fin-nw-total">$0</div>
-      <div class="fin-nw-row">
+    <!-- Header -->
+    <div class="fin-header">
+      <div>
+        <div class="fin-header-title">💰 Budget Tracker</div>
+        <div class="fin-header-month" id="fin-month-label"></div>
+      </div>
+      <div class="fin-header-actions">
+        <button class="fin-icon-btn" onclick="openFinCust()" title="Customize">🎨</button>
+        <button class="fin-icon-btn" onclick="openFinModal()" title="Add transaction">＋</button>
+      </div>
+    </div>
+
+    <!-- Monthly Overview -->
+    <div class="fin-overview">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <span style="font-size:0.8rem;font-weight:600;color:var(--fin-text2)">MONTHLY SPENDING</span>
+        <span class="fin-ov-pct" id="fin-ov-pct">0%</span>
+      </div>
+      <div class="fin-ov-bar-track">
+        <div class="fin-ov-bar-fill" id="fin-ov-bar" style="width:0%"></div>
+      </div>
+      <div class="fin-ov-stats">
+        <div class="fin-ov-stat">
+          <div class="fin-ov-stat-val green" id="fin-ov-income">$0</div>
+          <div class="fin-ov-stat-label">Income</div>
+        </div>
+        <div class="fin-ov-stat">
+          <div class="fin-ov-stat-val red" id="fin-ov-spent">$0</div>
+          <div class="fin-ov-stat-label">Spent</div>
+        </div>
+        <div class="fin-ov-stat">
+          <div class="fin-ov-stat-val accent" id="fin-ov-left">$0</div>
+          <div class="fin-ov-stat-label">Left</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Budget Bars -->
+    <div class="fin-section-head">
+      <span class="fin-section-title">Spending by Category</span>
+    </div>
+    <div class="fin-cats" id="fin-cats"></div>
+
+    <!-- Savings Quest -->
+    <div class="fin-section-head">
+      <span class="fin-section-title">Savings Quest</span>
+    </div>
+    <div class="fin-savings-card">
+      <div class="fin-sav-top">
+        <div class="fin-sav-name" id="fin-sav-name">Emergency Fund</div>
+        <div class="fin-sav-pct" id="fin-sav-pct">0%</div>
+      </div>
+      <div class="fin-sav-amounts" id="fin-sav-amounts">$0 saved of $1,000 goal</div>
+      <div class="fin-sav-track"><div class="fin-sav-fill" id="fin-sav-fill" style="width:0%"></div></div>
+      <div class="fin-sav-edit">
+        <input id="fin-sav-name-in" placeholder="Goal name" type="text">
+        <input id="fin-sav-target-in" placeholder="Target $" type="number">
+        <input id="fin-sav-current-in" placeholder="Saved $" type="number">
+        <button class="fin-sav-save" onclick="saveFinSavings()">Save</button>
+      </div>
+    </div>
+
+    <!-- Net Worth -->
+    <div class="fin-section-head">
+      <span class="fin-section-title">Net Worth</span>
+    </div>
+    <div class="fin-nw-card">
+      <div style="font-size:0.7rem;color:var(--fin-text2)">Total Assets − Total Debts</div>
+      <div class="fin-nw-big" id="fin-nw-big">$0</div>
+      <div class="fin-nw-cells">
         <div class="fin-nw-cell">
           <div class="fin-nw-cell-label">Assets</div>
-          <div class="fin-nw-cell-val" id="fin-nw-assets-disp">$0</div>
-          <input class="fin-nw-input" id="fin-nw-assets" type="number" placeholder="0" oninput="saveNetWorth()">
+          <div class="fin-nw-cell-val" id="fin-nw-a-val">$0</div>
+          <input id="fin-nw-assets" type="number" placeholder="0" oninput="saveNetWorth()">
         </div>
         <div class="fin-nw-cell">
           <div class="fin-nw-cell-label">Debts</div>
-          <div class="fin-nw-cell-val" id="fin-nw-debts-disp" style="color:#f87171">$0</div>
-          <input class="fin-nw-input" id="fin-nw-debts" type="number" placeholder="0" oninput="saveNetWorth()">
+          <div class="fin-nw-cell-val red" id="fin-nw-d-val">$0</div>
+          <input id="fin-nw-debts" type="number" placeholder="0" oninput="saveNetWorth()">
         </div>
       </div>
     </div>
 
-    <!-- Quick Add Transaction -->
-    <div class="fin-card">
-      <div class="fin-card-title">✦ Log Transaction</div>
-      <div class="fin-quick-add">
-        <div class="fin-row">
-          <input class="fin-input" id="fin-amount" type="number" placeholder="Amount $" style="flex:1.2">
-          <select class="fin-select" id="fin-type" onchange="updateFinCategoryOptions()">
-            <option value="expense">Expense</option>
-            <option value="income">Income</option>
-          </select>
-        </div>
-        <div class="fin-row">
-          <select class="fin-select" id="fin-cat" style="flex:1"></select>
-          <input class="fin-input" id="fin-note" placeholder="Note..." style="flex:1.5">
-        </div>
-        <button class="fin-add-btn" onclick="addFinTransaction()">⚔ Add to Ledger</button>
-      </div>
+    <!-- Transactions -->
+    <div class="fin-section-head">
+      <span class="fin-section-title">Recent Transactions</span>
     </div>
-
-    <!-- Monthly Budget -->
-    <div class="fin-card">
-      <div class="fin-card-title">📊 Monthly Budget</div>
-      <div class="fin-income-row">
-        <span class="fin-income-label">Monthly Income $</span>
-        <input class="fin-income-input" id="fin-income-input" type="number" placeholder="0" oninput="saveFinIncome()">
-      </div>
-      <div id="fin-budget-bars"></div>
-    </div>
-
-    <!-- Savings Quest -->
-    <div class="fin-card">
-      <div class="fin-card-title">🎯 Savings Quest</div>
-      <div class="fin-savings-wrap">
-        <div class="fin-savings-label">
-          <span class="fin-savings-name" id="fin-savings-name">Emergency Fund</span>
-          <span class="fin-savings-pct" id="fin-savings-pct">0%</span>
-        </div>
-        <div class="fin-savings-track"><div class="fin-savings-fill" id="fin-savings-fill" style="width:0%"></div></div>
-        <div style="display:flex;gap:6px;margin-bottom:6px">
-          <input class="fin-input" id="fin-savings-name-input" placeholder="Goal name..." style="flex:2">
-          <input class="fin-input" id="fin-savings-target" type="number" placeholder="Target $" style="flex:1">
-          <input class="fin-input" id="fin-savings-current" type="number" placeholder="Saved $" style="flex:1">
-        </div>
-        <button class="fin-add-btn" onclick="saveFinSavings()">✦ Update Quest</button>
-      </div>
-    </div>
-
-    <!-- Recent Transactions -->
-    <div class="fin-card">
-      <div class="fin-card-title">📜 Ledger</div>
-      <div class="fin-tx-list" id="fin-tx-list"></div>
-    </div>
+    <div class="fin-txs" id="fin-txs"></div>
 
   </div>
 </div>
@@ -1971,6 +2155,54 @@ textarea { min-height: 76px; }
     <span class="bnav-icon">💰</span>
   </button>
 </nav>
+
+<!-- FAB -->
+<button id="fin-fab" onclick="openFinModal()">＋</button>
+
+<!-- Add Transaction Modal -->
+<div id="fin-modal-backdrop" onclick="if(event.target===this)closeFinModal()">
+  <div id="fin-modal">
+    <div class="fin-modal-title">Add Transaction</div>
+    <div class="fin-modal-row">
+      <div class="fin-modal-label">Amount</div>
+      <input class="fin-modal-input" id="fin-m-amount" type="number" placeholder="$0.00" inputmode="decimal">
+    </div>
+    <div class="fin-modal-row">
+      <div class="fin-modal-label">Type</div>
+      <div class="fin-modal-seg">
+        <button class="fin-modal-seg-btn active" id="fin-seg-expense" onclick="setFinType('expense')">Expense</button>
+        <button class="fin-modal-seg-btn" id="fin-seg-income" onclick="setFinType('income')">Income</button>
+      </div>
+    </div>
+    <div class="fin-modal-row" id="fin-m-cat-row">
+      <div class="fin-modal-label">Category</div>
+      <select class="fin-modal-input" id="fin-m-cat"></select>
+    </div>
+    <div class="fin-modal-row">
+      <div class="fin-modal-label">Note (optional)</div>
+      <input class="fin-modal-input" id="fin-m-note" type="text" placeholder="What was this for?">
+    </div>
+    <button class="fin-modal-add-btn" onclick="addFinTransaction()">Add Transaction</button>
+  </div>
+</div>
+
+<!-- Customize Modal -->
+<div id="fin-cust-backdrop" onclick="if(event.target===this)closeFinCust()">
+  <div id="fin-cust-panel">
+    <div class="fin-cust-title">Customize</div>
+    <div class="fin-cust-sub">Make it yours</div>
+    <div class="fin-cust-label">Accent Color</div>
+    <div class="fin-accents" id="fin-accents"></div>
+    <div class="fin-cust-label">Background</div>
+    <div class="fin-bgs" id="fin-bgs"></div>
+    <div class="fin-cust-label">Monthly Income</div>
+    <div class="fin-income-setup">
+      <label>$</label>
+      <input id="fin-cust-income" type="number" placeholder="e.g. 3500">
+    </div>
+    <button class="fin-cust-save" onclick="saveFinCust()">Save Changes</button>
+  </div>
+</div>
 
 </div><!-- #app -->
 
@@ -2291,6 +2523,7 @@ function toast(msg) {
 // ══════════════════════════════════════════════
 let _curPosReady = false;
 function showScreen(name) {
+  const fab=document.getElementById('fin-fab'); if(fab) fab.style.display='none';
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
@@ -3515,192 +3748,308 @@ function saveTimeBlock(blockKey, value) {
 // ══════════════════════════════════════════════
 // FINANCE
 // ══════════════════════════════════════════════
+const FIN_ACCENTS = ['#7c6aff','#22d3a5','#f97316','#f472b6','#38bdf8','#facc15'];
+const FIN_BG_OPTS = [
+  { id:'dark',   label:'Dark',   bg:'#0f0f12', bg2:'#16161a', card:'#1c1c21' },
+  { id:'deeper', label:'Deeper', bg:'#080810', bg2:'#0f0f18', card:'#14141e' },
+  { id:'warm',   label:'Warm',   bg:'#0f0e0c', bg2:'#161410', card:'#1d1b17' },
+];
+
 function getFinData() {
   const data = getData(); if (!data) return null;
   if (!data.finance) {
     data.finance = {
       accounts: { assets: 0, debts: 0 }, income: 0,
       categories: [
-        { id:'food',    name:'Food',     emoji:'🍔', limit:400, color:'#f97316' },
-        { id:'transport',name:'Transport',emoji:'🚗', limit:200, color:'#38bdf8' },
-        { id:'fun',     name:'Fun',      emoji:'🎮', limit:150, color:'#a78bfa' },
-        { id:'bills',   name:'Bills',    emoji:'💡', limit:300, color:'#facc15' },
-        { id:'shopping',name:'Shopping', emoji:'🛒', limit:200, color:'#f472b6' },
-        { id:'health',  name:'Health',   emoji:'💊', limit:100, color:'#22d3a5' },
-        { id:'other',   name:'Other',    emoji:'📦', limit:100, color:'rgba(201,152,31,0.6)' }
+        { id:'food',     name:'Food',      emoji:'🍔', limit:400,  color:'#f97316' },
+        { id:'transport',name:'Transport', emoji:'🚗', limit:200,  color:'#38bdf8' },
+        { id:'fun',      name:'Fun',       emoji:'🎮', limit:150,  color:'#a78bfa' },
+        { id:'bills',    name:'Bills',     emoji:'💡', limit:300,  color:'#facc15' },
+        { id:'shopping', name:'Shopping',  emoji:'🛒', limit:200,  color:'#f472b6' },
+        { id:'health',   name:'Health',    emoji:'💊', limit:100,  color:'#22d3a5' },
+        { id:'other',    name:'Other',     emoji:'📦', limit:100,  color:'#888899' },
       ],
       transactions: [],
-      savings: { name:'Emergency Fund', target:1000, current:0 }
+      savings: { name:'Emergency Fund', target:1000, current:0 },
+      prefs: { accent:'#7c6aff', bg:'dark' }
     };
     saveData(data);
   }
+  if (!data.finance.prefs) { data.finance.prefs = { accent:'#7c6aff', bg:'dark' }; saveData(data); }
   return data.finance;
+}
+
+function applyFinPrefs(fin) {
+  const prefs = fin.prefs || {};
+  const accent = prefs.accent || '#7c6aff';
+  const bgOpt  = FIN_BG_OPTS.find(b => b.id === (prefs.bg || 'dark')) || FIN_BG_OPTS[0];
+  const root   = document.documentElement;
+  root.style.setProperty('--fin-accent',  accent);
+  root.style.setProperty('--fin-accent2', accent + 'cc');
+  root.style.setProperty('--fin-bg',      bgOpt.bg);
+  root.style.setProperty('--fin-bg2',     bgOpt.bg2);
+  root.style.setProperty('--fin-card',    bgOpt.card);
+  document.getElementById('screen-finance').style.background = bgOpt.bg;
 }
 
 function renderFinance() {
   const fin = getFinData(); if (!fin) return;
-  const data = getData();
+  applyFinPrefs(fin);
+
+  // Month label
+  const now = new Date();
+  document.getElementById('fin-month-label').textContent =
+    now.toLocaleDateString('en-US', { month:'long', year:'numeric' });
+
+  // Overview
+  const month = todayStr().slice(0,7);
+  let totalSpent = 0;
+  (fin.transactions||[]).filter(t=>t.type==='expense'&&(t.date||'').startsWith(month))
+    .forEach(t=>{ totalSpent += t.amount; });
+  const totalBudget = (fin.categories||[]).reduce((s,c)=>s+c.limit,0);
+  const income = fin.income || 0;
+  const pct = income > 0 ? Math.min(100, Math.round(totalSpent/income*100)) : (totalBudget>0?Math.min(100,Math.round(totalSpent/totalBudget*100)):0);
+  const leftAmt = (income||totalBudget) - totalSpent;
+  document.getElementById('fin-ov-pct').textContent  = pct+'%';
+  document.getElementById('fin-ov-bar').style.width  = pct+'%';
+  document.getElementById('fin-ov-bar').className    = 'fin-ov-bar-fill'+(pct>=100?' over':'');
+  document.getElementById('fin-ov-income').textContent = '$'+Math.round(income||totalBudget).toLocaleString();
+  document.getElementById('fin-ov-spent').textContent  = '$'+Math.round(totalSpent).toLocaleString();
+  document.getElementById('fin-ov-left').textContent   = (leftAmt<0?'-':'')+'$'+Math.abs(Math.round(leftAmt)).toLocaleString();
+
+  // Category rows
+  renderFinCats(fin, month);
+
+  // Savings
+  const sav = fin.savings||{};
+  const savPct = sav.target>0 ? Math.min(100,Math.round(sav.current/sav.target*100)) : 0;
+  document.getElementById('fin-sav-name').textContent = sav.name||'Savings Quest';
+  document.getElementById('fin-sav-pct').textContent  = savPct+'%';
+  document.getElementById('fin-sav-amounts').textContent = '$'+(sav.current||0).toLocaleString()+' saved of $'+(sav.target||0).toLocaleString()+' goal';
+  document.getElementById('fin-sav-fill').style.width = savPct+'%';
+  document.getElementById('fin-sav-name-in').value    = sav.name||'';
+  document.getElementById('fin-sav-target-in').value  = sav.target||'';
+  document.getElementById('fin-sav-current-in').value = sav.current||'';
 
   // Net worth
-  document.getElementById('fin-nw-assets').value = fin.accounts.assets || '';
-  document.getElementById('fin-nw-debts').value  = fin.accounts.debts  || '';
-  updateNetWorthDisplay(fin);
-
-  // Income
-  document.getElementById('fin-income-input').value = fin.income || '';
-
-  // Category options
-  updateFinCategoryOptions();
-
-  // Budget bars
-  renderFinBudgetBars(fin);
-
-  // Savings quest
-  const sav = fin.savings;
-  document.getElementById('fin-savings-name').textContent = sav.name || 'Savings Quest';
-  document.getElementById('fin-savings-name-input').value = sav.name || '';
-  document.getElementById('fin-savings-target').value  = sav.target  || '';
-  document.getElementById('fin-savings-current').value = sav.current || '';
-  const pct = sav.target > 0 ? Math.min(100, Math.round((sav.current / sav.target) * 100)) : 0;
-  document.getElementById('fin-savings-pct').textContent  = pct + '%';
-  document.getElementById('fin-savings-fill').style.width = pct + '%';
+  const a = parseFloat(fin.accounts?.assets)||0;
+  const d = parseFloat(fin.accounts?.debts)||0;
+  const nw = a-d;
+  const nwEl = document.getElementById('fin-nw-big');
+  nwEl.textContent = (nw<0?'-':'')+'$'+Math.abs(nw).toLocaleString();
+  nwEl.className = 'fin-nw-big'+(nw<0?' negative':'');
+  document.getElementById('fin-nw-a-val').textContent = '$'+a.toLocaleString();
+  document.getElementById('fin-nw-d-val').textContent = '$'+d.toLocaleString();
+  document.getElementById('fin-nw-assets').value = a||'';
+  document.getElementById('fin-nw-debts').value  = d||'';
 
   // Transactions
   renderFinTxList(fin);
+
+  // Show FAB
+  const fab = document.getElementById('fin-fab');
+  if (fab) fab.style.display = 'flex';
 }
 
-function updateNetWorthDisplay(fin) {
-  const a = parseFloat(fin.accounts.assets) || 0;
-  const d = parseFloat(fin.accounts.debts)  || 0;
-  const nw = a - d;
-  const fmtEl = document.getElementById('fin-nw-total');
-  fmtEl.textContent = '$' + Math.abs(nw).toLocaleString();
-  fmtEl.className = 'fin-nw-amount' + (nw < 0 ? ' negative' : '');
-  document.getElementById('fin-nw-assets-disp').textContent = '$' + a.toLocaleString();
-  document.getElementById('fin-nw-debts-disp').textContent  = '$' + d.toLocaleString();
+function renderFinCats(fin, month) {
+  const container = document.getElementById('fin-cats'); if (!container) return;
+  const spent = {};
+  (fin.transactions||[]).filter(t=>t.type==='expense'&&(t.date||'').startsWith(month))
+    .forEach(t=>{ spent[t.category]=(spent[t.category]||0)+t.amount; });
+
+  container.innerHTML = (fin.categories||[]).map(cat=>{
+    const s = spent[cat.id]||0;
+    const pct = cat.limit>0 ? Math.min(100,Math.round(s/cat.limit*100)) : 0;
+    const over = s>cat.limit && cat.limit>0;
+    return `<div class="fin-cat-row" onclick="toggleFinCatEdit('${cat.id}')">
+      <div class="fin-cat-top">
+        <span class="fin-cat-emoji">${cat.emoji}</span>
+        <span class="fin-cat-name">${cat.name}</span>
+        <span class="fin-cat-amounts ${over?'over':''}">${'$'+Math.round(s)} / $${cat.limit}</span>
+      </div>
+      <div class="fin-cat-track">
+        <div class="fin-cat-fill" style="width:${pct}%;background:${over?'#f87171':cat.color}"></div>
+      </div>
+      <div class="fin-cat-edit" id="fin-edit-${cat.id}">
+        <input type="number" placeholder="Budget limit $" value="${cat.limit}" id="fin-limit-${cat.id}" onclick="event.stopPropagation()">
+        <button class="fin-cat-edit-save" onclick="event.stopPropagation();saveFinCatLimit('${cat.id}')">Save</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-function saveNetWorth() {
-  const data = getData(); if (!data) return;
-  if (!data.finance) getFinData();
-  data.finance.accounts.assets = parseFloat(document.getElementById('fin-nw-assets').value) || 0;
-  data.finance.accounts.debts  = parseFloat(document.getElementById('fin-nw-debts').value)  || 0;
-  saveData(data);
-  updateNetWorthDisplay(data.finance);
+function toggleFinCatEdit(id) {
+  const el = document.getElementById('fin-edit-'+id); if (!el) return;
+  el.classList.toggle('open');
 }
 
-function saveFinIncome() {
-  const data = getData(); if (!data) return;
-  if (!data.finance) getFinData();
-  data.finance.income = parseFloat(document.getElementById('fin-income-input').value) || 0;
-  saveData(data);
-  renderFinBudgetBars(data.finance);
+function saveFinCatLimit(id) {
+  const data = getData(); if (!data||!data.finance) return;
+  const val = parseFloat(document.getElementById('fin-limit-'+id)?.value)||0;
+  const cat = data.finance.categories.find(c=>c.id===id);
+  if (cat) { cat.limit = val; saveData(data); renderFinance(); toast('Budget updated'); }
 }
 
-function updateFinCategoryOptions() {
+function renderFinTxList(fin) {
+  const container = document.getElementById('fin-txs'); if (!container) return;
+  const txs = (fin.transactions||[]).slice(0,30);
+  if (!txs.length) { container.innerHTML='<div class="fin-empty-tx">No transactions yet — tap + to add one</div>'; return; }
+  const catMap = {}; (fin.categories||[]).forEach(c=>{catMap[c.id]=c;});
+  // Group by date
+  const groups = {};
+  txs.forEach(tx=>{
+    const d = tx.date||todayStr();
+    if (!groups[d]) groups[d]=[];
+    groups[d].push(tx);
+  });
+  const today = todayStr();
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  const yStr = yesterday.toISOString().slice(0,10);
+  container.innerHTML = Object.keys(groups).sort((a,b)=>b.localeCompare(a)).map(date=>{
+    const label = date===today?'Today':date===yStr?'Yesterday':new Date(date+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const rows = groups[date].map(tx=>{
+      const cat = catMap[tx.category]||{emoji:'💰'};
+      const sign = tx.type==='income'?'+':'-';
+      return `<div class="fin-tx-row">
+        <div class="fin-tx-icon">${cat.emoji||'💰'}</div>
+        <div class="fin-tx-info">
+          <div class="fin-tx-title">${tx.note||tx.category}</div>
+          <div class="fin-tx-sub">${cat.name||tx.category}</div>
+        </div>
+        <span class="fin-tx-amt ${tx.type}">${sign}$${tx.amount.toFixed(2)}</span>
+        <button class="fin-tx-del" onclick="deleteFinTransaction(${tx.id})">✕</button>
+      </div>`;
+    }).join('');
+    return `<div class="fin-tx-date-header">${label}</div>${rows}`;
+  }).join('');
+}
+
+// Modal
+let _finTxType = 'expense';
+function openFinModal() {
+  _finTxType = 'expense';
+  document.getElementById('fin-seg-expense').classList.add('active');
+  document.getElementById('fin-seg-income').classList.remove('active');
+  updateFinModalCats();
+  document.getElementById('fin-m-amount').value = '';
+  document.getElementById('fin-m-note').value   = '';
+  document.getElementById('fin-modal-backdrop').classList.add('open');
+  setTimeout(()=>document.getElementById('fin-m-amount').focus(), 100);
+}
+function closeFinModal() { document.getElementById('fin-modal-backdrop').classList.remove('open'); }
+function setFinType(type) {
+  _finTxType = type;
+  document.getElementById('fin-seg-expense').classList.toggle('active', type==='expense');
+  document.getElementById('fin-seg-income').classList.toggle('active', type==='income');
+  updateFinModalCats();
+}
+function updateFinModalCats() {
   const fin = getFinData(); if (!fin) return;
-  const type = document.getElementById('fin-type').value;
-  const sel  = document.getElementById('fin-cat');
+  const sel = document.getElementById('fin-m-cat');
   sel.innerHTML = '';
-  if (type === 'income') {
-    ['💼 Salary','💸 Freelance','🎁 Gift','📈 Investment','📦 Other'].forEach(opt => {
-      const o = document.createElement('option'); o.textContent = opt; sel.appendChild(o);
+  if (_finTxType==='income') {
+    ['💼 Salary','💸 Freelance','🎁 Gift','📈 Investment','📦 Other'].forEach(opt=>{
+      const o=document.createElement('option'); o.textContent=opt; sel.appendChild(o);
     });
   } else {
-    fin.categories.forEach(cat => {
-      const o = document.createElement('option');
-      o.value = cat.id; o.textContent = cat.emoji + ' ' + cat.name; sel.appendChild(o);
+    (fin.categories||[]).forEach(cat=>{
+      const o=document.createElement('option'); o.value=cat.id; o.textContent=cat.emoji+' '+cat.name; sel.appendChild(o);
     });
   }
 }
 
 function addFinTransaction() {
-  const amount = parseFloat(document.getElementById('fin-amount').value);
-  if (!amount || amount <= 0) { toast('Enter an amount first!'); return; }
-  const type = document.getElementById('fin-type').value;
-  const cat  = document.getElementById('fin-cat').value;
-  const note = document.getElementById('fin-note').value.trim() || cat;
+  const amount = parseFloat(document.getElementById('fin-m-amount').value);
+  if (!amount||amount<=0) { toast('Enter an amount'); return; }
+  const cat  = document.getElementById('fin-m-cat').value;
+  const note = document.getElementById('fin-m-note').value.trim()||cat;
   const data = getData(); if (!data) return;
   if (!data.finance) getFinData();
-  data.finance.transactions.unshift({
-    id: Date.now(), date: todayStr(), amount, type, category: cat, note
-  });
-  // Keep last 100
-  if (data.finance.transactions.length > 100) data.finance.transactions = data.finance.transactions.slice(0, 100);
+  data.finance.transactions.unshift({ id:Date.now(), date:todayStr(), amount, type:_finTxType, category:cat, note });
+  if (data.finance.transactions.length>200) data.finance.transactions=data.finance.transactions.slice(0,200);
   saveData(data);
-  document.getElementById('fin-amount').value = '';
-  document.getElementById('fin-note').value   = '';
-  renderFinBudgetBars(data.finance);
-  renderFinTxList(data.finance);
-  toast('Transaction logged ✦');
+  closeFinModal();
+  renderFinance();
+  toast(_finTxType==='income'?'Income added ✓':'Expense logged ✓');
 }
 
 function deleteFinTransaction(id) {
-  const data = getData(); if (!data || !data.finance) return;
-  data.finance.transactions = data.finance.transactions.filter(t => t.id !== id);
+  const data = getData(); if (!data||!data.finance) return;
+  data.finance.transactions = data.finance.transactions.filter(t=>t.id!==id);
+  saveData(data); renderFinance();
+}
+
+function saveNetWorth() {
+  const data = getData(); if (!data) return;
+  if (!data.finance) getFinData();
+  if (!data.finance.accounts) data.finance.accounts = {};
+  data.finance.accounts.assets = parseFloat(document.getElementById('fin-nw-assets').value)||0;
+  data.finance.accounts.debts  = parseFloat(document.getElementById('fin-nw-debts').value)||0;
   saveData(data);
-  renderFinBudgetBars(data.finance);
-  renderFinTxList(data.finance);
-}
-
-function renderFinBudgetBars(fin) {
-  const container = document.getElementById('fin-budget-bars'); if (!container) return;
-  const month = todayStr().slice(0, 7); // YYYY-MM
-  const spent = {};
-  (fin.transactions || []).filter(t => t.type === 'expense' && t.date && t.date.startsWith(month))
-    .forEach(t => { spent[t.category] = (spent[t.category] || 0) + t.amount; });
-
-  container.innerHTML = fin.categories.map(cat => {
-    const s = spent[cat.id] || 0;
-    const pct = cat.limit > 0 ? Math.min(100, Math.round((s / cat.limit) * 100)) : 0;
-    const over = s > cat.limit;
-    return `<div class="fin-budget-bar-wrap">
-      <div class="fin-budget-bar-header">
-        <span class="fin-budget-bar-label">${cat.emoji} ${cat.name}</span>
-        <span class="fin-budget-bar-amounts ${over ? 'fin-budget-over' : ''}">$${s.toFixed(0)} / $${cat.limit}</span>
-      </div>
-      <div class="fin-budget-track">
-        <div class="fin-budget-fill" style="width:${pct}%;background:${over ? '#f87171' : cat.color}"></div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderFinTxList(fin) {
-  const container = document.getElementById('fin-tx-list'); if (!container) return;
-  const txs = (fin.transactions || []).slice(0, 20);
-  if (!txs.length) { container.innerHTML = '<div class="fin-empty">No transactions yet. Start logging your gold!</div>'; return; }
-  const catMap = {};
-  (fin.categories || []).forEach(c => { catMap[c.id] = c; });
-  container.innerHTML = txs.map(tx => {
-    const cat = catMap[tx.category] || { emoji: '📦' };
-    const sign = tx.type === 'income' ? '+' : '-';
-    const dateLabel = tx.date === todayStr() ? 'Today' : tx.date;
-    return `<div class="fin-tx-item">
-      <span class="fin-tx-emoji">${cat.emoji || '💰'}</span>
-      <div class="fin-tx-info">
-        <div class="fin-tx-note">${tx.note}</div>
-        <div class="fin-tx-meta">${dateLabel}</div>
-      </div>
-      <span class="fin-tx-amount ${tx.type}">${sign}$${tx.amount.toFixed(2)}</span>
-      <button class="fin-tx-del" onclick="deleteFinTransaction(${tx.id})">✕</button>
-    </div>`;
-  }).join('');
+  const a=data.finance.accounts.assets, d=data.finance.accounts.debts, nw=a-d;
+  const nwEl=document.getElementById('fin-nw-big');
+  nwEl.textContent=(nw<0?'-':'')+'$'+Math.abs(nw).toLocaleString();
+  nwEl.className='fin-nw-big'+(nw<0?' negative':'');
+  document.getElementById('fin-nw-a-val').textContent='$'+a.toLocaleString();
+  document.getElementById('fin-nw-d-val').textContent='$'+d.toLocaleString();
 }
 
 function saveFinSavings() {
   const data = getData(); if (!data) return;
   if (!data.finance) getFinData();
-  const name    = document.getElementById('fin-savings-name-input').value.trim() || 'Savings Quest';
-  const target  = parseFloat(document.getElementById('fin-savings-target').value)  || 0;
-  const current = parseFloat(document.getElementById('fin-savings-current').value) || 0;
+  const name    = document.getElementById('fin-sav-name-in').value.trim()||'Savings Quest';
+  const target  = parseFloat(document.getElementById('fin-sav-target-in').value)||0;
+  const current = parseFloat(document.getElementById('fin-sav-current-in').value)||0;
   data.finance.savings = { name, target, current };
   saveData(data);
-  const pct = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
-  document.getElementById('fin-savings-name').textContent = name;
-  document.getElementById('fin-savings-pct').textContent  = pct + '%';
-  document.getElementById('fin-savings-fill').style.width = pct + '%';
-  toast('Savings quest updated ✦');
+  const pct = target>0?Math.min(100,Math.round(current/target*100)):0;
+  document.getElementById('fin-sav-name').textContent    = name;
+  document.getElementById('fin-sav-pct').textContent     = pct+'%';
+  document.getElementById('fin-sav-amounts').textContent = '$'+current.toLocaleString()+' saved of $'+target.toLocaleString()+' goal';
+  document.getElementById('fin-sav-fill').style.width    = pct+'%';
+  toast('Quest updated ✓');
+}
+
+// Customization
+function openFinCust() {
+  const fin = getFinData(); if (!fin) return;
+  const prefs = fin.prefs||{};
+  // Accents
+  const accContainer = document.getElementById('fin-accents');
+  accContainer.innerHTML = FIN_ACCENTS.map(a=>
+    `<div class="fin-accent-swatch ${a===(prefs.accent||'#7c6aff')?'selected':''}" style="background:${a}" onclick="selectFinAccent('${a}',this)"></div>`
+  ).join('');
+  // Backgrounds
+  const bgContainer = document.getElementById('fin-bgs');
+  bgContainer.innerHTML = FIN_BG_OPTS.map(b=>
+    `<div class="fin-bg-swatch ${b.id===(prefs.bg||'dark')?'selected':''}" style="background:${b.bg};border-color:${b.id===(prefs.bg||'dark')?'var(--fin-accent)':'transparent'}" onclick="selectFinBg('${b.id}',this)">${b.label}</div>`
+  ).join('');
+  // Income
+  document.getElementById('fin-cust-income').value = fin.income||'';
+  document.getElementById('fin-cust-backdrop').classList.add('open');
+}
+function closeFinCust() { document.getElementById('fin-cust-backdrop').classList.remove('open'); }
+function selectFinAccent(color, el) {
+  document.querySelectorAll('.fin-accent-swatch').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectFinBg(id, el) {
+  document.querySelectorAll('.fin-bg-swatch').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function saveFinCust() {
+  const data = getData(); if (!data) return;
+  if (!data.finance) getFinData();
+  const accent = document.querySelector('.fin-accent-swatch.selected')?.style.background || '#7c6aff';
+  const bgEl   = document.querySelector('.fin-bg-swatch.selected');
+  const bgId   = FIN_BG_OPTS.find(b=>bgEl?.textContent?.trim()===b.label)?.id || 'dark';
+  const income = parseFloat(document.getElementById('fin-cust-income').value)||0;
+  data.finance.prefs   = { accent, bg: bgId };
+  data.finance.income  = income;
+  saveData(data);
+  closeFinCust();
+  renderFinance();
+  toast('Saved ✓');
 }
 
 // ══════════════════════════════════════════════
