@@ -13,19 +13,19 @@
 <style>
   :root {
     /* ── Themeable (overridden by JS) ── */
-    --bg:      #0f0f14;
-    --bg2:     #16161f;
-    --bg3:     #1e1e2a;
-    --card:    #1a1a26;
-    --card2:   #22223a;
-    --border:  #2a2a42;
+    --bg:      #111114;
+    --bg2:     #18181c;
+    --bg3:     #1e1e22;
+    --card:    #1c1c20;
+    --card2:   #222226;
+    --border:  #2a2a30;
     --accent:  #7c6aff;
     --accent2: #a78bfa;
-    --text1:   #f0f0f8;
-    --text2:   #9090b8;
-    --text3:   #5a5a7a;
-    --nav-bg:  #16161f;
-    --wallpaper: linear-gradient(145deg,#0d0d1a 0%,#1a1040 100%);
+    --text1:   #e8e8ee;
+    --text2:   #888899;
+    --text3:   #55556a;
+    --nav-bg:  #18181c;
+    --wallpaper: #111114;
     --font: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     --radius: 16px;
     --radius-sm: 10px;
@@ -155,10 +155,10 @@
   @media (min-width: 768px) { .logo { display: none; } }
   .logo-icon {
     width: 34px; height: 34px; border-radius: 10px;
-    background: linear-gradient(135deg, var(--accent), var(--green));
+    background: rgba(255,255,255,0.06);
     display: flex; align-items: center; justify-content: center;
     font-size: 17px; flex-shrink: 0;
-    box-shadow: 0 2px 12px color-mix(in srgb, var(--accent) 50%, transparent);
+    box-shadow: none;
   }
   .logo-text { font-size: 16px; font-weight: 800; letter-spacing: -0.4px; }
   .logo-text span { color: var(--accent2); }
