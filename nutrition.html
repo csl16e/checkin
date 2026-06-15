@@ -1354,6 +1354,9 @@
     </div>
     <a href="index.html" style="display:block;text-align:center;font-size:0.65rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:6px 0 10px;letter-spacing:0.08em;font-family:sans-serif" title="Back to Dashboard">🏠 Dashboard</a>
     <nav class="sidebar-nav">
+      <div class="snav-item" onclick="window.location.href='journal.html'" style="border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:6px;padding-bottom:10px">
+        <span class="snav-icon">🗡️</span><span class="snav-label">Hero's Journal</span>
+      </div>
       <div class="snav-item active" id="snav-dashboard" onclick="showSection('dashboard',this)">
         <span class="snav-icon">🏠</span><span class="snav-label">Home</span>
       </div>
@@ -1677,6 +1680,9 @@
 
   <!-- Bottom Navigation -->
   <div class="bottom-nav" id="bottomNav">
+    <div class="nav-item" id="nav-journal" onclick="window.location.href='journal.html'" style="color:var(--text3)">
+      <div class="nav-pip"></div><div class="nav-icon">🗡️</div><div class="nav-label">Journal</div>
+    </div>
     <div class="nav-item active" id="nav-dashboard" onclick="showSection('dashboard',this)">
       <div class="nav-pip"></div><div class="nav-icon">🏠</div><div class="nav-label">Home</div>
     </div>
