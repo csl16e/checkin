@@ -8491,6 +8491,16 @@ changeDate = function(d) {
   _origChangeDate(d);
 };
 
+// Hide chrome when embedded in Hero's Journal iframe
+if (window.self !== window.top) {
+  const bn = document.getElementById('bottomNav');
+  if (bn) bn.style.display = 'none';
+  const sb = document.getElementById('sidebar');
+  if (sb) sb.style.display = 'none';
+  // Remove the topbar journal link too (redundant inside iframe)
+  document.querySelectorAll('[onclick*="journal.html"]').forEach(el => el.style.display='none');
+}
+
 // Initial streak render on load
 updateTopbarStreak();
 // Trigger initial XP/motive render
