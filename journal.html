@@ -120,12 +120,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 5px 4px;
+  justify-content: center;
+  gap: 0;
+  padding: 6px 2px 8px;
   background: none;
   border: none;
   cursor: pointer;
-  color: rgba(201,152,31,0.45);
+  color: rgba(201,152,31,0.38);
   transition: color 0.2s, transform 0.15s;
   -webkit-tap-highlight-color: transparent;
   flex: 1;
@@ -133,19 +134,22 @@ body {
   position: relative;
 }
 .bnav-btn.active { color: var(--gold-light); }
-.bnav-btn:active { transform: scale(0.88); }
-.bnav-icon { font-size: 1.15rem; line-height: 1; }
-.bnav-label {
-  font-family: 'Metamorphous', sans-serif;
-  font-size: 0.42rem;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  white-space: nowrap;
+.bnav-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%; transform: translateX(-50%);
+  width: 18px; height: 2px;
+  background: var(--gold);
+  border-radius: 1px;
 }
+.bnav-btn:active { transform: scale(0.85); }
+.bnav-icon { font-size: 1.3rem; line-height: 1; }
+.bnav-label { display: none; }
 .bnav-dot {
   position: absolute;
-  top: 4px; right: 8px;
-  width: 8px; height: 8px;
+  top: 4px; right: calc(50% - 16px);
+  width: 7px; height: 7px;
   background: var(--gold);
   border-radius: 50%;
   animation: pulse-dot 2s ease-in-out infinite;
@@ -155,6 +159,101 @@ body {
   50% { opacity:0.5; transform:scale(0.7); }
 }
 
+
+/* ─── FINANCE SCREEN ─── */
+.fin-card {
+  background: linear-gradient(135deg, rgba(201,152,31,0.06) 0%, rgba(13,10,7,0.4) 100%);
+  border: 1px solid rgba(201,152,31,0.2);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+.fin-card-title {
+  font-family: 'Metamorphous', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.fin-net-worth-box {
+  background: linear-gradient(135deg, rgba(201,152,31,0.12), rgba(201,152,31,0.03));
+  border: 1px solid rgba(201,152,31,0.35);
+  border-radius: 14px;
+  padding: 18px 16px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+.fin-nw-label { font-family:'Metamorphous',serif; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(201,152,31,0.6); margin-bottom:4px; }
+.fin-nw-amount { font-family:'Metamorphous',serif; font-size:2rem; color:var(--gold-light); }
+.fin-nw-amount.negative { color:#f87171; }
+.fin-nw-row { display:flex; gap:10px; margin-top:12px; }
+.fin-nw-cell { flex:1; background:rgba(0,0,0,0.2); border-radius:8px; padding:8px; text-align:center; }
+.fin-nw-cell-label { font-size:0.55rem; color:rgba(232,213,168,0.5); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px; }
+.fin-nw-cell-val { font-size:0.9rem; color:var(--gold-light); font-family:'Metamorphous',serif; }
+.fin-nw-input { width:100%; background:rgba(0,0,0,0.3); border:1px solid rgba(201,152,31,0.2); border-radius:6px; padding:4px 8px; color:var(--gold-light); font-size:0.85rem; text-align:center; margin-top:4px; font-family:'Metamorphous',serif; }
+.fin-nw-input:focus { outline:none; border-color:rgba(201,152,31,0.5); }
+
+.fin-quick-add { display:flex; flex-direction:column; gap:8px; }
+.fin-row { display:flex; gap:8px; }
+.fin-input {
+  flex:1; background:rgba(0,0,0,0.3); border:1px solid rgba(201,152,31,0.2);
+  border-radius:8px; padding:9px 12px; color:var(--gold-light);
+  font-size:0.9rem; font-family:'Crimson Text',serif;
+}
+.fin-input:focus { outline:none; border-color:rgba(201,152,31,0.5); }
+.fin-input::placeholder { color:rgba(232,213,168,0.3); }
+.fin-select {
+  background:rgba(0,0,0,0.4); border:1px solid rgba(201,152,31,0.2);
+  border-radius:8px; padding:9px 8px; color:var(--gold-light);
+  font-size:0.85rem; font-family:'Crimson Text',serif;
+}
+.fin-select:focus { outline:none; }
+.fin-add-btn {
+  width:100%; padding:10px; background:linear-gradient(135deg,rgba(201,152,31,0.25),rgba(201,152,31,0.1));
+  border:1px solid rgba(201,152,31,0.4); border-radius:8px; color:var(--gold-light);
+  font-family:'Metamorphous',serif; font-size:0.75rem; letter-spacing:0.08em; cursor:pointer;
+  transition:background 0.2s;
+}
+.fin-add-btn:active { background:rgba(201,152,31,0.35); }
+
+.fin-budget-bar-wrap { margin-bottom:10px; }
+.fin-budget-bar-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+.fin-budget-bar-label { font-size:0.8rem; color:rgba(232,213,168,0.85); }
+.fin-budget-bar-amounts { font-size:0.7rem; color:rgba(232,213,168,0.5); }
+.fin-budget-track { height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; }
+.fin-budget-fill { height:100%; border-radius:3px; transition:width 0.5s ease; }
+.fin-budget-over { color:#f87171 !important; }
+
+.fin-savings-wrap { }
+.fin-savings-label { display:flex; justify-content:space-between; margin-bottom:6px; }
+.fin-savings-name { font-size:0.85rem; color:rgba(232,213,168,0.85); }
+.fin-savings-pct { font-size:0.8rem; color:var(--gold); font-family:'Metamorphous',serif; }
+.fin-savings-track { height:10px; background:rgba(255,255,255,0.06); border-radius:5px; overflow:hidden; margin-bottom:8px; }
+.fin-savings-fill { height:100%; background:linear-gradient(90deg,rgba(201,152,31,0.6),var(--gold)); border-radius:5px; transition:width 0.5s ease; }
+.fin-savings-inputs { display:flex; gap:8px; margin-top:8px; }
+.fin-savings-inputs input { flex:1; background:rgba(0,0,0,0.3); border:1px solid rgba(201,152,31,0.2); border-radius:8px; padding:7px 10px; color:var(--gold-light); font-size:0.85rem; font-family:'Crimson Text',serif; }
+.fin-savings-inputs input:focus { outline:none; border-color:rgba(201,152,31,0.5); }
+.fin-savings-inputs input::placeholder { color:rgba(232,213,168,0.3); }
+.fin-edit-btn { padding:6px 12px; background:rgba(201,152,31,0.1); border:1px solid rgba(201,152,31,0.25); border-radius:6px; color:rgba(201,152,31,0.7); font-size:0.7rem; cursor:pointer; font-family:'Metamorphous',serif; white-space:nowrap; }
+
+.fin-tx-list { display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
+.fin-tx-item { display:flex; align-items:center; gap:10px; padding:8px 10px; background:rgba(0,0,0,0.2); border-radius:8px; }
+.fin-tx-emoji { font-size:1.1rem; flex-shrink:0; }
+.fin-tx-info { flex:1; min-width:0; }
+.fin-tx-note { font-size:0.85rem; color:rgba(232,213,168,0.85); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fin-tx-meta { font-size:0.65rem; color:rgba(232,213,168,0.4); }
+.fin-tx-amount { font-family:'Metamorphous',serif; font-size:0.9rem; flex-shrink:0; }
+.fin-tx-amount.expense { color:#f87171; }
+.fin-tx-amount.income { color:#22d3a5; }
+.fin-tx-del { background:none; border:none; color:rgba(232,213,168,0.2); font-size:0.8rem; cursor:pointer; padding:2px 4px; flex-shrink:0; }
+.fin-tx-del:hover { color:#f87171; }
+.fin-empty { text-align:center; padding:20px; color:rgba(232,213,168,0.3); font-size:0.85rem; font-style:italic; }
+
+.fin-income-row { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.fin-income-label { font-size:0.8rem; color:rgba(232,213,168,0.6); flex-shrink:0; }
+.fin-income-input { flex:1; background:rgba(0,0,0,0.3); border:1px solid rgba(201,152,31,0.2); border-radius:8px; padding:7px 10px; color:#22d3a5; font-size:0.9rem; font-family:'Metamorphous',serif; }
+.fin-income-input:focus { outline:none; border-color:rgba(34,211,165,0.4); }
 
 /* ─── SCREEN TRANSITIONS ─── */
 .screen { transition: opacity 0.18s ease, transform 0.22s ease; }
@@ -1750,6 +1849,83 @@ textarea { min-height: 76px; }
 </div>
 
 
+<!-- ══════════ SCREEN: FINANCE ══════════ -->
+<div class="screen" id="screen-finance">
+  <div class="page-wrap">
+
+    <div class="fin-net-worth-box" id="fin-nw-box">
+      <div class="fin-nw-label">Net Worth</div>
+      <div class="fin-nw-amount" id="fin-nw-total">$0</div>
+      <div class="fin-nw-row">
+        <div class="fin-nw-cell">
+          <div class="fin-nw-cell-label">Assets</div>
+          <div class="fin-nw-cell-val" id="fin-nw-assets-disp">$0</div>
+          <input class="fin-nw-input" id="fin-nw-assets" type="number" placeholder="0" oninput="saveNetWorth()">
+        </div>
+        <div class="fin-nw-cell">
+          <div class="fin-nw-cell-label">Debts</div>
+          <div class="fin-nw-cell-val" id="fin-nw-debts-disp" style="color:#f87171">$0</div>
+          <input class="fin-nw-input" id="fin-nw-debts" type="number" placeholder="0" oninput="saveNetWorth()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Add Transaction -->
+    <div class="fin-card">
+      <div class="fin-card-title">✦ Log Transaction</div>
+      <div class="fin-quick-add">
+        <div class="fin-row">
+          <input class="fin-input" id="fin-amount" type="number" placeholder="Amount $" style="flex:1.2">
+          <select class="fin-select" id="fin-type" onchange="updateFinCategoryOptions()">
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+          </select>
+        </div>
+        <div class="fin-row">
+          <select class="fin-select" id="fin-cat" style="flex:1"></select>
+          <input class="fin-input" id="fin-note" placeholder="Note..." style="flex:1.5">
+        </div>
+        <button class="fin-add-btn" onclick="addFinTransaction()">⚔ Add to Ledger</button>
+      </div>
+    </div>
+
+    <!-- Monthly Budget -->
+    <div class="fin-card">
+      <div class="fin-card-title">📊 Monthly Budget</div>
+      <div class="fin-income-row">
+        <span class="fin-income-label">Monthly Income $</span>
+        <input class="fin-income-input" id="fin-income-input" type="number" placeholder="0" oninput="saveFinIncome()">
+      </div>
+      <div id="fin-budget-bars"></div>
+    </div>
+
+    <!-- Savings Quest -->
+    <div class="fin-card">
+      <div class="fin-card-title">🎯 Savings Quest</div>
+      <div class="fin-savings-wrap">
+        <div class="fin-savings-label">
+          <span class="fin-savings-name" id="fin-savings-name">Emergency Fund</span>
+          <span class="fin-savings-pct" id="fin-savings-pct">0%</span>
+        </div>
+        <div class="fin-savings-track"><div class="fin-savings-fill" id="fin-savings-fill" style="width:0%"></div></div>
+        <div style="display:flex;gap:6px;margin-bottom:6px">
+          <input class="fin-input" id="fin-savings-name-input" placeholder="Goal name..." style="flex:2">
+          <input class="fin-input" id="fin-savings-target" type="number" placeholder="Target $" style="flex:1">
+          <input class="fin-input" id="fin-savings-current" type="number" placeholder="Saved $" style="flex:1">
+        </div>
+        <button class="fin-add-btn" onclick="saveFinSavings()">✦ Update Quest</button>
+      </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="fin-card">
+      <div class="fin-card-title">📜 Ledger</div>
+      <div class="fin-tx-list" id="fin-tx-list"></div>
+    </div>
+
+  </div>
+</div>
+
 </div><!-- #screen-wrap -->
 
 <!-- ══════════ BOTTOM NAV ══════════ -->
@@ -1785,6 +1961,9 @@ textarea { min-height: 76px; }
   <button class="bnav-btn" id="bnav-food" onclick="window.location.href='nutrition.html'">
     <span class="bnav-icon">🍽️</span>
     <span class="bnav-label">Food</span>
+  </button>
+  <button class="bnav-btn" id="bnav-finance" onclick="showScreen('finance')">
+    <span class="bnav-icon">💰</span>
   </button>
 </nav>
 
@@ -1874,7 +2053,22 @@ function newData(name, quest, northStar) {
     braindump: [],
     focus: { sessions: {}, currentTask: '' },
     dopamine_menu: ['🚶 Go for a 10-min walk','🎮 Play a game for 15 min','📱 Scroll guilt-free for 10 min','☕ Make a nice drink','🎵 Dance to one song','🛁 Quick refresh','🌿 Sit outside for 5 min'],
-    plan: {}
+    plan: {},
+    finance: {
+      accounts: { assets: 0, debts: 0 },
+      income: 0,
+      categories: [
+        { id:'food',    name:'Food',      emoji:'🍔', limit:400, color:'#f97316' },
+        { id:'transport',name:'Transport',emoji:'🚗', limit:200, color:'#38bdf8' },
+        { id:'fun',     name:'Fun',       emoji:'🎮', limit:150, color:'#a78bfa' },
+        { id:'bills',   name:'Bills',     emoji:'💡', limit:300, color:'#facc15' },
+        { id:'shopping',name:'Shopping',  emoji:'🛒', limit:200, color:'#f472b6' },
+        { id:'health',  name:'Health',    emoji:'💊', limit:100, color:'#22d3a5' },
+        { id:'other',   name:'Other',     emoji:'📦', limit:100, color:'rgba(201,152,31,0.6)' }
+      ],
+      transactions: [],
+      savings: { name:'Emergency Fund', target:1000, current:0 }
+    }
   };
 }
 
@@ -2111,6 +2305,7 @@ function showScreen(name) {
   if(name==='habits')   renderHabits();
   if(name==='focus')    renderFocus();
   if(name==='plan')     renderPlan();
+  if(name==='finance')  renderFinance();
 }
 function goToToday() { initCurPos(getData()); showScreen('daily'); }
 
@@ -3306,6 +3501,197 @@ function saveTimeBlock(blockKey, value) {
   if (!plan.blocks) plan.blocks = {};
   plan.blocks[blockKey] = value;
   savePlanData(key, plan);
+}
+
+// ══════════════════════════════════════════════
+// FINANCE
+// ══════════════════════════════════════════════
+function getFinData() {
+  const data = getData(); if (!data) return null;
+  if (!data.finance) {
+    data.finance = {
+      accounts: { assets: 0, debts: 0 }, income: 0,
+      categories: [
+        { id:'food',    name:'Food',     emoji:'🍔', limit:400, color:'#f97316' },
+        { id:'transport',name:'Transport',emoji:'🚗', limit:200, color:'#38bdf8' },
+        { id:'fun',     name:'Fun',      emoji:'🎮', limit:150, color:'#a78bfa' },
+        { id:'bills',   name:'Bills',    emoji:'💡', limit:300, color:'#facc15' },
+        { id:'shopping',name:'Shopping', emoji:'🛒', limit:200, color:'#f472b6' },
+        { id:'health',  name:'Health',   emoji:'💊', limit:100, color:'#22d3a5' },
+        { id:'other',   name:'Other',    emoji:'📦', limit:100, color:'rgba(201,152,31,0.6)' }
+      ],
+      transactions: [],
+      savings: { name:'Emergency Fund', target:1000, current:0 }
+    };
+    saveData(data);
+  }
+  return data.finance;
+}
+
+function renderFinance() {
+  const fin = getFinData(); if (!fin) return;
+  const data = getData();
+
+  // Net worth
+  document.getElementById('fin-nw-assets').value = fin.accounts.assets || '';
+  document.getElementById('fin-nw-debts').value  = fin.accounts.debts  || '';
+  updateNetWorthDisplay(fin);
+
+  // Income
+  document.getElementById('fin-income-input').value = fin.income || '';
+
+  // Category options
+  updateFinCategoryOptions();
+
+  // Budget bars
+  renderFinBudgetBars(fin);
+
+  // Savings quest
+  const sav = fin.savings;
+  document.getElementById('fin-savings-name').textContent = sav.name || 'Savings Quest';
+  document.getElementById('fin-savings-name-input').value = sav.name || '';
+  document.getElementById('fin-savings-target').value  = sav.target  || '';
+  document.getElementById('fin-savings-current').value = sav.current || '';
+  const pct = sav.target > 0 ? Math.min(100, Math.round((sav.current / sav.target) * 100)) : 0;
+  document.getElementById('fin-savings-pct').textContent  = pct + '%';
+  document.getElementById('fin-savings-fill').style.width = pct + '%';
+
+  // Transactions
+  renderFinTxList(fin);
+}
+
+function updateNetWorthDisplay(fin) {
+  const a = parseFloat(fin.accounts.assets) || 0;
+  const d = parseFloat(fin.accounts.debts)  || 0;
+  const nw = a - d;
+  const fmtEl = document.getElementById('fin-nw-total');
+  fmtEl.textContent = '$' + Math.abs(nw).toLocaleString();
+  fmtEl.className = 'fin-nw-amount' + (nw < 0 ? ' negative' : '');
+  document.getElementById('fin-nw-assets-disp').textContent = '$' + a.toLocaleString();
+  document.getElementById('fin-nw-debts-disp').textContent  = '$' + d.toLocaleString();
+}
+
+function saveNetWorth() {
+  const data = getData(); if (!data) return;
+  if (!data.finance) getFinData();
+  data.finance.accounts.assets = parseFloat(document.getElementById('fin-nw-assets').value) || 0;
+  data.finance.accounts.debts  = parseFloat(document.getElementById('fin-nw-debts').value)  || 0;
+  saveData(data);
+  updateNetWorthDisplay(data.finance);
+}
+
+function saveFinIncome() {
+  const data = getData(); if (!data) return;
+  if (!data.finance) getFinData();
+  data.finance.income = parseFloat(document.getElementById('fin-income-input').value) || 0;
+  saveData(data);
+  renderFinBudgetBars(data.finance);
+}
+
+function updateFinCategoryOptions() {
+  const fin = getFinData(); if (!fin) return;
+  const type = document.getElementById('fin-type').value;
+  const sel  = document.getElementById('fin-cat');
+  sel.innerHTML = '';
+  if (type === 'income') {
+    ['💼 Salary','💸 Freelance','🎁 Gift','📈 Investment','📦 Other'].forEach(opt => {
+      const o = document.createElement('option'); o.textContent = opt; sel.appendChild(o);
+    });
+  } else {
+    fin.categories.forEach(cat => {
+      const o = document.createElement('option');
+      o.value = cat.id; o.textContent = cat.emoji + ' ' + cat.name; sel.appendChild(o);
+    });
+  }
+}
+
+function addFinTransaction() {
+  const amount = parseFloat(document.getElementById('fin-amount').value);
+  if (!amount || amount <= 0) { toast('Enter an amount first!'); return; }
+  const type = document.getElementById('fin-type').value;
+  const cat  = document.getElementById('fin-cat').value;
+  const note = document.getElementById('fin-note').value.trim() || cat;
+  const data = getData(); if (!data) return;
+  if (!data.finance) getFinData();
+  data.finance.transactions.unshift({
+    id: Date.now(), date: todayStr(), amount, type, category: cat, note
+  });
+  // Keep last 100
+  if (data.finance.transactions.length > 100) data.finance.transactions = data.finance.transactions.slice(0, 100);
+  saveData(data);
+  document.getElementById('fin-amount').value = '';
+  document.getElementById('fin-note').value   = '';
+  renderFinBudgetBars(data.finance);
+  renderFinTxList(data.finance);
+  toast('Transaction logged ✦');
+}
+
+function deleteFinTransaction(id) {
+  const data = getData(); if (!data || !data.finance) return;
+  data.finance.transactions = data.finance.transactions.filter(t => t.id !== id);
+  saveData(data);
+  renderFinBudgetBars(data.finance);
+  renderFinTxList(data.finance);
+}
+
+function renderFinBudgetBars(fin) {
+  const container = document.getElementById('fin-budget-bars'); if (!container) return;
+  const month = todayStr().slice(0, 7); // YYYY-MM
+  const spent = {};
+  (fin.transactions || []).filter(t => t.type === 'expense' && t.date && t.date.startsWith(month))
+    .forEach(t => { spent[t.category] = (spent[t.category] || 0) + t.amount; });
+
+  container.innerHTML = fin.categories.map(cat => {
+    const s = spent[cat.id] || 0;
+    const pct = cat.limit > 0 ? Math.min(100, Math.round((s / cat.limit) * 100)) : 0;
+    const over = s > cat.limit;
+    return `<div class="fin-budget-bar-wrap">
+      <div class="fin-budget-bar-header">
+        <span class="fin-budget-bar-label">${cat.emoji} ${cat.name}</span>
+        <span class="fin-budget-bar-amounts ${over ? 'fin-budget-over' : ''}">$${s.toFixed(0)} / $${cat.limit}</span>
+      </div>
+      <div class="fin-budget-track">
+        <div class="fin-budget-fill" style="width:${pct}%;background:${over ? '#f87171' : cat.color}"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderFinTxList(fin) {
+  const container = document.getElementById('fin-tx-list'); if (!container) return;
+  const txs = (fin.transactions || []).slice(0, 20);
+  if (!txs.length) { container.innerHTML = '<div class="fin-empty">No transactions yet. Start logging your gold!</div>'; return; }
+  const catMap = {};
+  (fin.categories || []).forEach(c => { catMap[c.id] = c; });
+  container.innerHTML = txs.map(tx => {
+    const cat = catMap[tx.category] || { emoji: '📦' };
+    const sign = tx.type === 'income' ? '+' : '-';
+    const dateLabel = tx.date === todayStr() ? 'Today' : tx.date;
+    return `<div class="fin-tx-item">
+      <span class="fin-tx-emoji">${cat.emoji || '💰'}</span>
+      <div class="fin-tx-info">
+        <div class="fin-tx-note">${tx.note}</div>
+        <div class="fin-tx-meta">${dateLabel}</div>
+      </div>
+      <span class="fin-tx-amount ${tx.type}">${sign}$${tx.amount.toFixed(2)}</span>
+      <button class="fin-tx-del" onclick="deleteFinTransaction(${tx.id})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function saveFinSavings() {
+  const data = getData(); if (!data) return;
+  if (!data.finance) getFinData();
+  const name    = document.getElementById('fin-savings-name-input').value.trim() || 'Savings Quest';
+  const target  = parseFloat(document.getElementById('fin-savings-target').value)  || 0;
+  const current = parseFloat(document.getElementById('fin-savings-current').value) || 0;
+  data.finance.savings = { name, target, current };
+  saveData(data);
+  const pct = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
+  document.getElementById('fin-savings-name').textContent = name;
+  document.getElementById('fin-savings-pct').textContent  = pct + '%';
+  document.getElementById('fin-savings-fill').style.width = pct + '%';
+  toast('Savings quest updated ✦');
 }
 
 // ══════════════════════════════════════════════
