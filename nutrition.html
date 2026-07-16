@@ -573,17 +573,39 @@
   .recipe-total-val { font-size: 18px; font-weight: 800; }
   .recipe-total-name { font-size: 11px; color: var(--text2); }
 
-  .serving-size-row {
-    background: var(--bg3); border-radius: var(--radius-sm); padding: 14px;
-    margin-bottom: 16px;
+  .recipe-portion-box {
+    background: var(--bg3); border-radius: var(--radius); padding: 16px;
+    margin: 16px 0; border: 1px solid var(--border);
   }
-  .serving-size-row label { font-size: 13px; color: var(--text2); display: block; margin-bottom: 8px; }
-  .portion-slider { width: 100%; accent-color: var(--accent); cursor: pointer; }
-  .portion-display { display: flex; justify-content: space-between; margin-top: 8px; }
-  .portion-pct { font-size: 24px; font-weight: 800; color: var(--accent2); }
-  .portion-stats { text-align: right; }
-  .portion-cals { font-size: 18px; font-weight: 700; }
-  .portion-label { font-size: 11px; color: var(--text2); }
+  .portion-box-title { font-size: 12px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+  .portion-stepper-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .portion-step-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--card2); border: 1px solid var(--border);
+    color: var(--text1); font-size: 1.3rem; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    -webkit-tap-highlight-color: transparent; flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .portion-step-btn:active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .portion-val-wrap { text-align: center; min-width: 60px; }
+  .portion-val-num { font-size: 1.6rem; font-weight: 800; color: var(--text1); line-height: 1; }
+  .portion-val-unit { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .portion-of-label { font-size: 13px; color: var(--text3); }
+  .portion-total-input {
+    width: 52px; background: var(--card2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 8px; color: var(--text1); font-size: 14px;
+    font-weight: 700; text-align: center;
+  }
+  .portion-total-input:focus { outline: none; border-color: var(--accent); }
+  .portion-total-label { font-size: 12px; color: var(--text3); }
+  .portion-cal-box {
+    background: var(--card); border-radius: 10px; padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .portion-cal-num { font-size: 1.8rem; font-weight: 800; color: var(--accent2); letter-spacing: -1px; flex-shrink: 0; }
+  .portion-cal-meta { font-size: 12px; color: var(--text2); line-height: 1.6; }
+  .portion-cal-label { font-size: 11px; color: var(--text3); }
 
   .recipe-save-btn {
     width: 100%; padding: 14px;
@@ -606,6 +628,49 @@
   .saved-recipe-name { font-size: 14px; font-weight: 700; }
   .saved-recipe-info { font-size: 12px; color: var(--text2); margin-top: 2px; }
   .saved-recipe-cals { font-size: 15px; font-weight: 800; color: var(--accent2); }
+
+  .saved-recipe-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px; margin-bottom: 10px;
+  }
+  .src-info { margin-bottom: 12px; }
+  .src-name { font-size: 15px; font-weight: 700; color: var(--text1); margin-bottom: 3px; }
+  .src-meta { font-size: 12px; color: var(--text2); }
+  .src-macro-pills { display: flex; gap: 6px; margin-top: 5px; flex-wrap: wrap; }
+  .src-pill { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+  .src-log-row {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 10px; background: var(--bg3); border-radius: 10px; margin-bottom: 10px;
+  }
+  .src-step {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--card2); border: 1px solid var(--border);
+    color: var(--text1); font-size: 1.1rem; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    -webkit-tap-highlight-color: transparent; flex-shrink: 0;
+  }
+  .src-step:active { background: var(--accent); color: #fff; }
+  .src-log-count { font-size: 16px; font-weight: 800; color: var(--text1); min-width: 28px; text-align: center; }
+  .src-log-unit { font-size: 12px; color: var(--text3); }
+  .src-meal-sel {
+    flex: 1; min-width: 100px; background: var(--card2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 8px; color: var(--text1); font-size: 12px; font-weight: 600;
+  }
+  .src-log-btn {
+    padding: 7px 14px; background: var(--accent); border: none;
+    border-radius: 8px; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer;
+    white-space: nowrap; -webkit-tap-highlight-color: transparent;
+  }
+  .src-log-btn:active { opacity: 0.85; }
+  .src-actions { display: flex; gap: 8px; }
+  .src-edit-btn {
+    flex: 1; padding: 7px; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text2); font-size: 12px; font-weight: 600; cursor: pointer;
+  }
+  .src-del-btn {
+    padding: 7px 12px; background: none; border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text3); font-size: 12px; cursor: pointer;
+  }
 
   /* ── Toasts ── */
   .toast-wrap { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
@@ -1558,9 +1623,9 @@
 
         <input class="recipe-name-input" id="recipeName" placeholder="Recipe name (e.g. Chicken Stir Fry)">
 
-        <div class="recipe-servings-row">
+        <div class="recipe-servings-row" style="display:none">
           <label>Total servings in this recipe:</label>
-          <input class="recipe-servings-input" id="recipeServings" type="number" value="4" min="1" onchange="updateRecipeTotals()">
+          <input class="recipe-servings-input" type="number" value="4" min="1">
         </div>
 
         <div class="recipe-ingredients" id="recipeIngredients"></div>
@@ -1577,17 +1642,24 @@
           </div>
         </div>
 
-        <div class="serving-size-row">
-          <label>How much of the recipe are you eating? <strong id="portionPctLabel">25%</strong> (1 of <span id="portionServLabel">4</span> servings)</label>
-          <input type="range" class="portion-slider" id="portionSlider" min="1" max="100" value="25" oninput="updatePortionDisplay()">
-          <div class="portion-display">
-            <div>
-              <div class="portion-pct" id="portionPct">25%</div>
-              <div style="font-size:12px;color:var(--text2)">of recipe</div>
+        <div class="recipe-portion-box">
+          <div class="portion-box-title">I'm eating…</div>
+          <div class="portion-stepper-row">
+            <button class="portion-step-btn" onclick="stepPortion(-0.5)">−</button>
+            <div class="portion-val-wrap">
+              <div class="portion-val-num" id="portionServCount">1</div>
+              <div class="portion-val-unit">serving</div>
             </div>
-            <div class="portion-stats">
-              <div class="portion-cals" id="portionCals">0 cal</div>
-              <div class="portion-label">this serving</div>
+            <button class="portion-step-btn" onclick="stepPortion(0.5)">+</button>
+            <span class="portion-of-label">of</span>
+            <input class="portion-total-input" id="recipeServings" type="number" value="4" min="1" onchange="updateRecipeTotals()">
+            <span class="portion-total-label">total servings</span>
+          </div>
+          <div class="portion-cal-box">
+            <div class="portion-cal-num" id="portionCals">0</div>
+            <div>
+              <div class="portion-cal-meta" id="portionMacroMeta">0g protein · 0g carbs · 0g fat</div>
+              <div class="portion-cal-label">for this serving</div>
             </div>
           </div>
         </div>
@@ -5196,17 +5268,40 @@ function renderSavedRecipes() {
     el.innerHTML = '<div class="empty-state">No saved recipes yet. Build one above!</div>';
     return;
   }
-  el.innerHTML = recipes.map((r, i) => `
-    <div class="saved-recipe-item">
-      <div style="flex:1;min-width:0" onclick="loadRecipe(${i})" style="cursor:pointer">
-        <div class="saved-recipe-name">${r.name}</div>
-        <div class="saved-recipe-info">${r.servings} serving${r.servings!==1?'s':''} · ${r.ingredients.length} ingredient${r.ingredients.length!==1?'s':''} · ${r.totalCal} cal total</div>
+  el.innerHTML = recipes.map((r, i) => {
+    const perServ = r.servings > 0 ? Math.round(r.totalCal / r.servings) : 0;
+    const perPro  = r.servings > 0 ? Math.round((r.totalProtein||0) / r.servings * 10) / 10 : 0;
+    const perCarb = r.servings > 0 ? Math.round((r.totalCarbs||0) / r.servings * 10) / 10 : 0;
+    const perFat  = r.servings > 0 ? Math.round((r.totalFat||0) / r.servings * 10) / 10 : 0;
+    return `<div class="saved-recipe-card">
+      <div class="src-info">
+        <div class="src-name">${r.name}</div>
+        <div class="src-meta">${r.servings} serving${r.servings!==1?'s':''} · ${r.ingredients.length} ingredient${r.ingredients.length!==1?'s':''} · ${perServ} cal/serving</div>
+        <div class="src-macro-pills">
+          <span class="src-pill" style="background:rgba(124,106,255,0.15);color:var(--protein)">${perPro}g P</span>
+          <span class="src-pill" style="background:rgba(56,189,248,0.15);color:var(--carbs)">${perCarb}g C</span>
+          <span class="src-pill" style="background:rgba(249,115,22,0.15);color:var(--fat)">${perFat}g F</span>
+        </div>
       </div>
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-        <button onclick="loadRecipe(${i})" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer">Edit</button>
-        <button onclick="deleteRecipe(${i})" style="background:var(--bg3);color:var(--text3);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer">✕</button>
+      <div class="src-log-row">
+        <button class="src-step" onclick="stepQuickLog(${i},-0.5)">−</button>
+        <span class="src-log-count" id="ql-n-${i}">1</span>
+        <button class="src-step" onclick="stepQuickLog(${i},0.5)">+</button>
+        <span class="src-log-unit">serving</span>
+        <select class="src-meal-sel" id="ql-m-${i}">
+          <option value="breakfast">🌅 Breakfast</option>
+          <option value="lunch">☀️ Lunch</option>
+          <option value="dinner" selected>🌙 Dinner</option>
+          <option value="snacks">🍎 Snacks</option>
+        </select>
+        <button class="src-log-btn" onclick="quickLogRecipe(${i})">Log ✓</button>
       </div>
-    </div>`).join('');
+      <div class="src-actions">
+        <button class="src-edit-btn" onclick="loadRecipe(${i})">✏️ Edit Recipe</button>
+        <button class="src-del-btn" onclick="deleteRecipe(${i})">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ══════════════════════════════════
@@ -5540,28 +5635,61 @@ function updateRecipeTotals() {
   updatePortionDisplay();
 }
 
+let _portionServings = 1;
+function stepPortion(delta) {
+  const total = parseFloat(document.getElementById('recipeServings')?.value) || 4;
+  _portionServings = Math.max(0.5, Math.min(total, _portionServings + delta));
+  document.getElementById('portionServCount').textContent = _portionServings;
+  updatePortionDisplay();
+}
 function updatePortionDisplay() {
-  const pct = parseInt(document.getElementById('portionSlider').value);
-  const servings = parseInt(document.getElementById('recipeServings').value) || 1;
-  const totals = recipeIngredients.reduce((t, ing) => ({
-    cal: t.cal + ing.cal,
-  }), { cal: 0 });
+  const total = parseFloat(document.getElementById('recipeServings')?.value) || 4;
+  if (_portionServings > total) _portionServings = total;
+  document.getElementById('portionServCount').textContent = _portionServings;
+  const pct = _portionServings / total;
+  const cal  = Math.round((parseFloat(document.getElementById('rtCal')?.textContent)||0) * pct);
+  const pro  = Math.round((parseFloat(document.getElementById('rtPro')?.textContent)||0) * pct * 10)/10;
+  const carb = Math.round((parseFloat(document.getElementById('rtCarb')?.textContent)||0) * pct * 10)/10;
+  const fat  = Math.round((parseFloat(document.getElementById('rtFat')?.textContent)||0) * pct * 10)/10;
+  document.getElementById('portionCals').textContent = cal;
+  const meta = document.getElementById('portionMacroMeta');
+  if (meta) meta.textContent = `${pro}g protein · ${carb}g carbs · ${fat}g fat`;
+}
 
-  const portionCal = Math.round(totals.cal * pct / 100);
-  const fraction = (pct / 100 * servings).toFixed(1);
-
-  document.getElementById('portionPct').textContent = pct + '%';
-  document.getElementById('portionPctLabel').textContent = pct + '%';
-  document.getElementById('portionServLabel').textContent = servings;
-  document.getElementById('portionCals').textContent = portionCal + ' cal';
-  document.getElementById('portionSlider').style.accentColor = 'var(--accent)';
+const _qlCounts = {};
+function stepQuickLog(idx, delta) {
+  if (_qlCounts[idx] === undefined) _qlCounts[idx] = 1;
+  _qlCounts[idx] = Math.max(0.5, _qlCounts[idx] + delta);
+  const el = document.getElementById('ql-n-' + idx);
+  if (el) el.textContent = _qlCounts[idx];
+}
+function quickLogRecipe(idx) {
+  const r = recipes[idx]; if (!r) return;
+  const n = _qlCounts[idx] !== undefined ? _qlCounts[idx] : 1;
+  const pct = r.servings > 0 ? n / r.servings : 1;
+  const meal = document.getElementById('ql-m-' + idx)?.value || 'dinner';
+  const day = getDay();
+  if (!day.meals[meal]) day.meals[meal] = [];
+  day.meals[meal].push({
+    name: r.name + (n !== 1 ? ' (' + n + ' serving' + (n !== 1 ? 's' : '') + ')' : ''),
+    servingLabel: n + ' of ' + r.servings + ' serving' + (r.servings !== 1 ? 's' : ''),
+    cal:     Math.round(r.totalCal * pct),
+    protein: Math.round((r.totalProtein || 0) * pct * 10) / 10,
+    carbs:   Math.round((r.totalCarbs   || 0) * pct * 10) / 10,
+    fat:     Math.round((r.totalFat     || 0) * pct * 10) / 10,
+    fiber:   Math.round((r.totalFiber   || 0) * pct * 10) / 10,
+    sugar:   0, sodium: 0
+  });
+  saveDay();
+  renderAll();
+  showToast('✅ Logged ' + n + ' serving' + (n !== 1 ? 's' : '') + ' of ' + r.name);
 }
 
 function saveRecipeToDiary() {
   if (recipeIngredients.length === 0) { showToast('⚠️ Add ingredients first', 'warn'); return; }
   const name = document.getElementById('recipeName').value.trim() || 'My Recipe';
   const servings = parseInt(document.getElementById('recipeServings').value) || 1;
-  const pct = parseInt(document.getElementById('portionSlider').value) / 100;
+  const total = parseFloat(document.getElementById('recipeServings').value) || 4; const pct = _portionServings / total;
 
   const totals = recipeIngredients.reduce((t, ing) => {
     for (const k of Object.keys(t)) t[k] += ing[k] || 0;
@@ -5589,8 +5717,8 @@ function saveRecipeToDiary() {
   const day = getDay();
   const mealTarget = document.getElementById('recipeMealTarget')?.value || 'snacks';
   day.meals[mealTarget].push({
-    name: `${name} (${Math.round(pct * 100)}%)`,
-    servingLabel: `${Math.round(pct * 100)}% of recipe (${servings} servings total)`,
+    name: `${name}${_portionServings !== 1 ? ' (' + _portionServings + ' serving' + (_portionServings !== 1 ? 's' : '') + ')' : ''}`,
+    servingLabel: `${_portionServings} of ${servings} serving${servings !== 1 ? 's' : ''}`,
     ...portion
   });
 
