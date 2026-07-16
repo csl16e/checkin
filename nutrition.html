@@ -1406,6 +1406,78 @@
     border-color: color-mix(in srgb, var(--accent) 40%, transparent);
     color: var(--text1);
   }
+
+  /* ─────────────────────────────────────────
+     iPad & tablet layout  ≥ 768 px
+     Extends the existing sidebar rules above.
+  ───────────────────────────────────────── */
+  @media (min-width: 768px) {
+
+    /* ── General polish ── */
+    body { font-size: 1.05rem; touch-action: manipulation; }
+    button, .nav-item, .meal-header, .food-result { touch-action: manipulation; min-height: 44px; }
+
+    /* ── Main content area padding ── */
+    .main { padding: 28px 36px 48px; }
+
+    /* ── Meals section: 2×2 grid (breakfast+lunch / dinner+snacks) ── */
+    .meals-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    /* Micros card spans full width below the 2-col meal grid */
+    .micros-card { grid-column: 1 / -1; }
+
+    /* ── Card padding bump ── */
+    .meal-card { border-radius: 18px; }
+    .meal-header { padding: 18px 20px; }
+    .recipe-builder { padding: 24px; }
+    .recipe-builder h2 { font-size: 20px; }
+
+    /* ── Recipe builder: 2-column on iPad ── */
+    .recipe-builder-inner {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ── Saved recipes: responsive grid ── */
+    .saved-recipes-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .saved-recipe-card { margin-bottom: 0; }
+
+    /* ── Goals strip: show more without scrolling ── */
+    .goals-strip {
+      flex-wrap: wrap;
+      overflow-x: visible;
+    }
+
+    /* ── Topbar: more breathing room ── */
+    .topbar { padding: 14px 28px; }
+
+    /* ── Food result list: 2-column grid ── */
+    #food-results, .modal-body .food-result:first-child ~ .food-result {
+      /* handled via grid on the container */
+    }
+    .food-results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .food-result { border-right: 1px solid var(--border); }
+    .food-result:nth-child(2n) { border-right: none; }
+
+    /* ── Section headers ── */
+    .section-title { font-size: 18px; }
+    .section-header { margin-bottom: 16px; }
+
+    /* ── Smooth scroll ── */
+    .main { scroll-behavior: smooth; }
+  }
 </style>
 </head>
 <body>

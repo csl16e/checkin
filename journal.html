@@ -1493,6 +1493,122 @@ textarea { min-height: 76px; }
 .plan-day-nav { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 14px; }
 .plan-day-btn { background: none; border: none; color: var(--gold); cursor: pointer; font-size: 1.2rem; padding: 4px 8px; }
 .plan-day-label { font-family: 'Metamorphous',serif; font-size: 0.85rem; color: var(--ink); text-align: center; min-width: 120px; }
+
+/* ─────────────────────────────────────────
+   iPad & tablet layout  ≥ 768 px
+   Does NOT change anything below 768 px.
+───────────────────────────────────────── */
+@media (min-width: 768px) {
+
+  /* ── General polish ── */
+  body { font-size: 17px; }
+  html, body { overscroll-behavior: none; }
+  .btn, button { touch-action: manipulation; min-height: 44px; }
+
+  /* ── Sidebar nav replaces bottom nav ── */
+  #bottom-nav {
+    /* Override the flex-direction:row from mobile */
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 72px;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    padding: env(safe-area-inset-top, 16px) 0 16px;
+    border-top: none !important;
+    border-right: 1px solid rgba(201,152,31,0.15);
+    background: linear-gradient(180deg, #1a0f0a 0%, #0d0a07 100%) !important;
+    z-index: 200;
+  }
+
+  .bnav-btn {
+    width: 100%;
+    flex: 0 0 auto;
+    height: 64px;
+    flex-direction: column;
+    padding: 10px 4px;
+    min-height: 64px;
+  }
+  .bnav-btn.active::after {
+    /* Left-edge pip instead of bottom pip */
+    bottom: auto;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 32px;
+    border-radius: 0 2px 2px 0;
+  }
+  .bnav-icon { font-size: 1.6rem; }
+  .bnav-label {
+    display: block;
+    font-size: 0.52rem;
+    letter-spacing: 0.04em;
+    opacity: 0.75;
+    margin-top: 2px;
+  }
+  .bnav-btn.active .bnav-label { opacity: 1; }
+
+  /* Finance tab has no label span — add spacing compensation */
+  #bnav-finance { padding-bottom: 4px; }
+
+  /* ── Shift content right to clear sidebar ── */
+  /* #app stays flex-direction:column — sidebar is fixed-positioned out of flow */
+  #app-header { margin-left: 72px; }
+  #screen-wrap { margin-left: 72px; }
+
+  /* ── FAB: lift above sidebar, keep right edge ── */
+  #fin-fab {
+    bottom: 24px;
+    right: 24px;
+  }
+
+  /* ── Page content: cap width, center, more padding ── */
+  .page-wrap {
+    max-width: 960px;
+    padding: 28px 32px 60px;
+  }
+
+  /* ── Parchment cards: more padding on iPad ── */
+  .parchment { padding: 32px 36px 28px; }
+
+  /* ── Finance screen: 2-column category grid ── */
+  .fin-cats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .fin-wrap { padding: 0 0 60px; }
+  .fin-overview { margin: 16px 20px; }
+  .fin-cats { padding: 0 20px; }
+  .fin-section-head { padding: 16px 20px 8px; }
+
+  /* ── Habits: larger grid cells ── */
+  .habit-grid {
+    grid-template-columns: repeat(auto-fill, minmax(28px, 1fr));
+  }
+
+  /* ── Task list: 2-column on wide screens ── */
+  .task-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 16px;
+  }
+
+  /* ── Focus / plan: slightly wider content ── */
+  #screen-focus .page-wrap,
+  #screen-plan .page-wrap {
+    max-width: 800px;
+  }
+
+  /* ── Daily spread: give it more room ── */
+  .pdf-spread {
+    width: min(calc(100vw - 72px), calc((100dvh - 80px) * 856 / 612));
+  }
+
+  /* ── Smooth scroll on all screens ── */
+  .screen { scroll-behavior: smooth; }
+}
 </style>
 </head>
 <body>
